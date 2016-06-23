@@ -1,3 +1,7 @@
+#tabla_primera{
+
+
+	}
 #tabla_segunda {
 	/* Margenes */
 	margin-bottom: 10px;
@@ -109,3 +113,31 @@
 	/* Alineación */
 	text-align: center;
 	}
+/*Primera fila*/
+table.header tr:first-child {
+ font-weight: bold;
+ color:#fff;
+ background-color: #444;
+ border-bottom:1px #000 solid;
+}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

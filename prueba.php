@@ -4,8 +4,17 @@
 		<title>Page Title</title>
 	</head>
 	<body>
+		<table>
+			<tr>
+				<td>
+			
+				
+			
+			
+		
+		</table>
 		<?php
-	  include('clases/clase_base.php');
+	  include('clase_base.php');
 	  $base = new base;
 	  
 	  $base -> consulta = 'SELECT codigo_postal,ciudad,id as Ficha from llamadas limit 2,10';
@@ -31,5 +40,10 @@
 	  $base -> tabla();
   
 		?>
+		</td>
+		</tr>
+			<tr>
+				<td>asdsad</td>
+			</tr>
 	</body>
 </html>

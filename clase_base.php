@@ -87,10 +87,17 @@ class base
 	public $select_option_value = 'id';
 	public $select_option_texto = array();
 	
-	
 
 public function tabla() {
 	
+	function limpiarArray($array) {
+		$array = array_map('trim', $array);
+		$array = array_map('stripslashes', $array);
+		return $array;
+		
+		}
+
+		
 	require($this-> ruta_archivo_config);
 	
 	# Realizamos la conexion
@@ -111,6 +118,9 @@ public function tabla() {
 		}
 		
 		if ($_POST) {
+			
+			$_POST = limpiarArray($_POST);
+			
 			$maximo = $db -> query('select MAX(id) from '.$this->select_tabla);
 			$maximo = mysqli_fetch_array($maximo);
 			
@@ -134,9 +144,9 @@ public function tabla() {
 		?>
 		
 	<form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>" style="margin:0px;">
-	<link rel="stylesheet" type="text/css" href="clases/css/styles.css">
+	<link rel="stylesheet" type="text/css" href="styles.css">
 		<!-- Primera Tabla: Contiene todo el listado -->
-			<table width="100%" class='<?=$this->table_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
+			<table id='tabla_primera' width="100%" class='<?=$this->table_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
 				<tr>
 				  <td>	
 					 <!-- Segunda Tabla: - Imagen del listado
@@ -158,6 +168,7 @@ public function tabla() {
 					 # Mensaje a mostrar en caso de que exista
 					 if (!empty($_GET['mensaje']))
 					  {
+						  $_GET = limpiarArray($_GET);
 						  ?>
 						  <tr class='mensaje_fila'>
 							<td>
