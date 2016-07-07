@@ -495,6 +495,10 @@ public function tabla() {
 									</td>
 								</tr>
 						 </table>
+							<?php
+						
+						?>
+						
 						 
 						 <?php
 						 # Mensaje a mostrar en caso de que exista
