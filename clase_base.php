@@ -142,7 +142,10 @@ class base
 	public $tabla_titulo;
 	public $tabla_ruta;
 	public $tabla_imagen='images/icono-zonas.png';
-		
+	
+	// Migas de Pan
+	public $migasdepan=1;
+	public $migas;		
 		
 	# MENSAJE INFORMACION
 	# -------
@@ -325,6 +328,26 @@ public function tabla() {
 									</td>
 								</tr>
 						 </table>
+						 
+						 <?php
+						 if ($this-> migasdepan==1) {
+							 ?>
+							 <tr>
+								<td bgcolor="#222222">
+									<div class="migasoff">
+										<?php
+										foreach ($this-> migas as $texto => $enlace) {
+											?>
+											<a href="<?=$enlace?>" class="migas"> <?=$texto?> </a>
+											<?php
+											}
+										?>
+									</div>
+								</td>
+							 </tr>
+							 <?php
+							 }
+						 ?>
 						 
 						 <?php
 						 # Mensaje a mostrar en caso de que exista
