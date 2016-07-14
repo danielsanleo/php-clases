@@ -336,10 +336,15 @@ public function tabla() {
 								<td bgcolor="#222222">
 									<div class="migasoff">
 										<?php
+										$total_enlaces = count($this->migas);
+										$contador = 0;
 										foreach ($this-> migas as $texto => $enlace) {
+											
 											?>
-											<a href="<?=$enlace?>" class="migas"> <?=$texto?> </a>
+											<a href="<?=$enlace?>" class="migas"> <?=$texto?> <?php if ($contador < $total_enlaces-1) { echo "»"; } ?></a>
 											<?php
+											
+											$contador++;
 											}
 										?>
 									</div>
