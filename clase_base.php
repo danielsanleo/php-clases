@@ -181,6 +181,13 @@ class base
 	public $boton_value;
 	public $boton_texto;
 	
+	// ESTADO
+	// Con el primer array establecemos los estados que queramos. 
+	//~ $listado -> estados = array( '0' => 'Apto','1' => 'No Apto' );
+    	//~ $listado -> estados_colores = array( '0' => '#ff0000','1' => '#00cc00' );
+	public $estados = array();
+	public $estados_colores = array();
+	
 	// ELIMINAR
 	public $eliminiar = 0;
 	public $eliminar_imagen = 'images/boton-eliminar.png';
@@ -713,15 +720,16 @@ public function tabla() {
 													<?php
 													break;
 													
-												case 'activo':
-													if ($fila[$i]==1) {
+												case 'estado':
+													if ( array_key_exists($fila[$i],$this -> estados)) {
+														$clave = $fila[$i];
 														?>
-														<td bgcolor="#3ADF00" class='<?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>'></td>
+														<td bgcolor="<?=$this -> estados_colores[$clave]?>" class='<?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>'> <?=$this -> estados[$clave]?> </td>
 														<?php
 														}
 													else {
 														?>
-														<td bgcolor="#FF0000" class='<?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>'></td>
+														<td> Error: Estado No definido </td>
 														<?php
 														}
 													break;
