@@ -3,53 +3,44 @@
 	<head>
 		<title>Page Title</title>
 		 <link rel="stylesheet" href="animate.css">
+		 <link rel="stylesheet" type="text/css" href="css/estilos_base.css">
 	</head>
-	
 	
 	<body>
 		<?php
 		
-		  include('clase_base.php');
-		  $base = new base;
-			
-		  
-		  $base -> consulta = 'SELECT codigo_postal,ciudad,id as Ficha,id as Eliminar  from llamadas limit 1,10';
-		  
-		  $base -> table_titulo = '<a href="menu.php?action=sub-datos">Listado</a> &raquo; Oficinas';
-		  $base -> table_width = '100%';
-		  $base -> table_ruta = "menu.php?action=admin-oficinas-listado";
-		  
-		  $base -> td_img_ficha = 'images/ico-ficha.png';
-		  
-		  $base -> td_class_columna = 'textoBlanco';
-		  $base -> td_class_fila = 'texto';
-		  $base -> tabla_mensaje_class = 'bordeExterior';
-		  
-		  $base -> tabla_primera_width = '30%';
-		  
-		  
-		  
-		  $base -> boton_type ='submit';
-		  $base -> boton_name ='enlace';
-		  $base -> eliminar_tabla = 'llamadas';
-		  
-		  $base -> columna = array('1' => 'imagen','3' => 'eliminar');
-		  
-		  $base -> animacion = array('1' => 'fadeIn', '2' => 'fadeIn', '3' => 'fadeIn' ,'0' => 'fadeIn'  );
-		  
-		  $base -> ruta_ficha='menu.php?action=admin-oficinas-gestion&id=';
-		  $base -> nuevo_registro=1;
-		  $base -> url_nuevo='prueba-gestion.php';
-		  
-		  $base -> tabla();
+		require("clases/clase_base.php");
+		$base = new base;
+		
+		$base -> consulta = "SELECT imagen,nombre,cantidad,valor,descripcion,iditem AS Eliminar,iditem as Mensaje 
+		                        FROM personaje_items INNER JOIN productos 
+		                        ON personaje_items.iditem=productos.id  
+		                        WHERE idpersonaje=$idpersonaje";
+		
+		$base -> mensaje_consulta = "SELECT nombre_atributo,valor_atributo from producto_atributos inner join atributos on producto_atributos.id_atributo=atributos.id where id_producto=";
+		$base -> campos = array(0,1);
 		
 		
+		$base -> tabla_primera_marginLeft = '10%';
+		$base -> tabla_primera_marginTop = '3%';
 		
+		$base -> migasdepan = 0;
+		$base -> footer = 0;
+		
+		$base -> tabla_primera_width = '75%';
+		$base -> tabla_titulo = "Items del personaje: ";
+		
+		$base -> tabla_imagen = 'images/cofre.png';
+		$base -> tabla_ruta = 'menu.php?action=items.php';
+		
+		$base -> columna = array('0' => 'imagen','5' => 'operacion','6' => 'mensaje');
+		
+		$base -> animacion = array('1' => 'fadeIn','0' => 'fadeIn', '2' => 'fadeIn', '3' => 'fadeIn','4' => 'fadeIn','5' => 'fadeIn');
+		$base -> nuevo_registro = 0;
+		$base -> boton_submit = 1;
+		$base -> boton_submit_texto = 'Aplicar';
+		$base -> tabla();
 
-    
-
-		
-		
 		?>
 	</body>
 </html>
