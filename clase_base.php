@@ -724,7 +724,7 @@ public function tabla() {
 													if ( array_key_exists($fila[$i],$this -> estados)) {
 														$clave = $fila[$i];
 														?>
-														<td bgcolor="<?=$this -> estados_colores[$clave]?>" class='<?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>'> <?=$this -> estados[$clave]?> </td>
+														<td bgcolor="<?=$this -> estados_colores[$clave]?>" class='tabla_listado_celda <?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>'> <?=$this -> estados[$clave]?> </td>
 														<?php
 														}
 													else {
