@@ -155,7 +155,7 @@ class base
 public function __construct() {
 		require($this-> ruta_archivo_config);
 
-        $db = new mysqli("detrazos.es", "appdelacalle",'sAmArw396%', "detrazos_delacalle") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+        $db = new mysqli("", "appdelacalle",'sAmArw396%', "detrazos_delacalle") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
         $this -> db = $db;
     }
 # El destructor cierra la conexión con la BBDD
