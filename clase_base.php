@@ -542,6 +542,23 @@ public function tabla() {
 															<?php
 															}
 														break;
+													
+													case 'fecha':
+												
+													if (!empty($fila[$i])) {
+														?>
+														<td class="tabla_listado_celda <?=$this->td_class_fila?> <?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>" bgcolor="<?=$fondo_color;?>"> 
+														<?=DateTime::createFromFormat('Y-m-d', $fila[$i]) -> format('d/m/Y');?>
+														</td>
+														<?php
+														}
+													else {
+														?>
+														<td class="tabla_listado_celda <?=$this->td_class_fila?> <?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>" bgcolor="<?=$fondo_color;?>"></td>
+														<?php
+														}
+													
+													break;
 														
 													case 'mensaje':
 														?>
