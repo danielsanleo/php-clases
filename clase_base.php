@@ -4,23 +4,19 @@ class base
     # CONSULTA GENERAL
     # ----------------
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
-
     # Variables Globales
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
     public $ruta_archivo_config = 'config.php';
     public $protocolo = 'http://';
     public $db;
-
     # MODULOS  EJ: array('2' => 'ficha'); 
     # -----------------------------------
     public $columna = array();
-
     # Animaciones
     # Para habilitar el modulo hay que incluir en la cabecera HTML
     # el link hacia los estilos: <link rel="stylesheet" href="clases/animate.css">
     public $animacion = array();
-
     # BARRA DE MENUS
     # --------------
     // Hace referencia a la barra de menus situada encima del listado y los filtros
@@ -30,12 +26,10 @@ class base
     # Arrays con las urls y las imagenes, los que tengan las mismas claves se entiende que deben aparecer como IMAGEN => URL
     public $menu_url = array( 1 => 'http://www.google.com' );
     public $menu_imagen = array( 1 => 'images/boton-nuevo-operador.png' );
-
     # TOTAL REGISTROS
     # ---------------
     // Si es igual a uno, muestra el total de registros encontrados
     public $mostrar_total_registros = 1;
-
     # FORM
     # ----
     public $form_name = 'formulario';
@@ -154,7 +148,6 @@ class base
 # El constructor realiza la conexion con la BBDD
 public function __construct() {
 	require($this-> ruta_archivo_config);
-
         $db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
         $this -> db = $db;
     }
@@ -492,7 +485,6 @@ public function tabla() {
 																				param,
 																				params_arr = [],
 																				queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-
 																	if (queryString !== "") {
 																		params_arr = queryString.split("&");
 																		
@@ -506,7 +498,6 @@ public function tabla() {
 																	}
 																	return rtn;
 																}
-
 																function eliminar(id) {
 																	var url = window.location.href;
 																	
@@ -653,6 +644,9 @@ public function tabla() {
 							</td>
 							<?php
 							}
+						?>
+						</table>
+						<?php
 						if ($this->boton_submit==1) {
 							?>
 							<td colspan='<?=count($columnas)?>' bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
@@ -661,7 +655,6 @@ public function tabla() {
 							<?php
 							}
 							?>
-						</table>
 					</table>
 				</tr>
 				
