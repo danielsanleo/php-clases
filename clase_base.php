@@ -13,10 +13,12 @@ class base
     # MODULOS  EJ: array('2' => 'ficha'); 
     # -----------------------------------
     public $columna = array();
+    
     # Animaciones
     # Para habilitar el modulo hay que incluir en la cabecera HTML
     # el link hacia los estilos: <link rel="stylesheet" href="clases/animate.css">
     public $animacion = array();
+    
     # BARRA DE MENUS
     # --------------
     // Hace referencia a la barra de menus situada encima del listado y los filtros
@@ -26,10 +28,14 @@ class base
     # Arrays con las urls y las imagenes, los que tengan las mismas claves se entiende que deben aparecer como IMAGEN => URL
     public $menu_url = array( 1 => 'http://www.google.com' );
     public $menu_imagen = array( 1 => 'images/boton-nuevo-operador.png' );
+    
     # TOTAL REGISTROS
     # ---------------
     // Si es igual a uno, muestra el total de registros encontrados
     public $mostrar_total_registros = 1;
+    public $tipo_registro = ' registros';
+    
+    
     # FORM
     # ----
     public $form_name = 'formulario';
@@ -71,7 +77,6 @@ class base
     public $tabla_mensaje_class = 'bordeExterior';
     public $mensaje_tiempo = 3000;
     public $mensaje_imagen = 'images/icoInfo.png';
-    
     
     # --------- #
     #  MÓDULOS  #
@@ -148,7 +153,8 @@ class base
 # El constructor realiza la conexion con la BBDD
 public function __construct() {
 	require($this-> ruta_archivo_config);
-        $db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+        //~ $db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+        $db = new mysqli("detrazos.es", "appdelacalle",'sAmArw396%', "detrazos_delacalle") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
         $this -> db = $db;
     }
 # El destructor cierra la conexión con la BBDD
@@ -214,11 +220,12 @@ public function tabla() {
             }
         }
         
-        $url_formulario = $this->protocolo . $_SERVER['HTTP_HOST'] .":". $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+        
+        $url_formulario = $this->protocolo . $_SERVER['HTTP_HOST'] .':'. $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
         ?>
         <style>
             <?php
-            if (in_array("mensaje", $this->columna)) {
+            if (in_array('mensaje', $this->columna)) {
                 ?>
                  /* CSS Para la visualizacion del modulo mensaje */
                 /* ########################################### */
@@ -274,17 +281,20 @@ public function tabla() {
                   <td>
                     <?php
                     if ($this->tabla_segunda_activar==1) {
+                        # Segunda Tabla: 
+                        #   - Imagen del listado
+                        #   - Migas de Pan      
                         ?>
-                         <!-- Segunda Tabla: 
-                             - Imagen del listado
-                             - Migas de Pan      
-                         -->
-                         <table id='tabla_segunda' class='<?=$this->tabla_segunda_class;?>' >
+                        <table id='tabla_segunda' class='<?=$this->tabla_segunda_class;?>'>
                             <tr>
                                 <td id='tabla_segunda_td'>
                                     <table id='sub_tabla_segunda'>
                                     <tr>
-                                        <td id='sub_tabla_segunda_td'> <a href="<?=$this->tabla_ruta?>"> <img id='sub_tabla_segunda_img' src="<?=$this->tabla_imagen?>" alt="<?=$this->sub_tabla_segunda_img_alt?>" ></a></td>
+                                        <td id='sub_tabla_segunda_td'> 
+											<a href="<?=$this->tabla_ruta?>"> 
+												<img id='sub_tabla_segunda_img' src="<?=$this->tabla_imagen?>" alt="<?=$this->sub_tabla_segunda_img_alt?>" >
+											</a>
+										</td>
                                         <td id='sub_tabla_segunda_td_titulo'><?=$this->tabla_titulo?></td>
                                     </tr>
                                 </td>
@@ -302,9 +312,8 @@ public function tabla() {
                                         $contador = 0;
                                         foreach ($this-> migas as $texto => $enlace) {
                                             ?>
-                                            <a href="<?=$enlace?>" class="migas"> <?=$texto?> <?php if ($contador < $total_enlaces-1) { echo "»"; } ?></a>
+                                            <a href="<?=$enlace?>" class="migas"> <?=$texto?> <?=($contador < $total_enlaces-1)?'»':''; ?></a>
                                             <?php
-                                            
                                             $contador++;
                                             }
                                         ?>
@@ -313,16 +322,14 @@ public function tabla() {
                              </tr>
                              <?php
                              }
-                         ?>
-                         
-                         <?php
+
+
                          # Mensaje a mostrar en caso de que exista
-                         if (!empty($_GET['mensaje']))
-                          {
+                         # A los tres segundos se borra
+                         if (!empty($_GET['mensaje'])) {
                               $_GET = limpiarArray($_GET);
-                              # A los tres segundos se borra el mensaje
                               ?>
-                              <script >
+                              <script>
                                 function myFunction() {
                                     setTimeout(function(){
                                         var tabla = document.getElementById('tabla_mensaje_texto');
@@ -330,7 +337,7 @@ public function tabla() {
                                         }, <?=$this->mensaje_tiempo?>);
                                 }
                                 myFunction();
-                                </script>
+                              </script>
                               <tr class='mensaje_fila'>
                                 <td>
                                   <table id='tabla_mensaje_texto' width="45%" class="<?=$this->tabla_mensaje_class?>" border="0" align="center" cellpadding="4" cellspacing="0" bgcolor="#BBBBBB" >
@@ -365,20 +372,19 @@ public function tabla() {
 							</tr>
 						  <?php
 						  }
-                             
+
 						## Total de registros encontrados
 						if ($this -> mostrar_total_registros == true && $total_registros > 0) {
 							?>
 							<tr id='total_registros_fila'>
 								<td>
-									<div id='total_registros_texto'>Se han encontrado <?=$total_registros;?> registros</div>
+									<div id='total_registros_texto'>Se han encontrado <?=$total_registros;?> <?=$this -> tipo_registro?></div>
 								</td>
 							</tr>
 							<?php
 						}
 					}
 					?>
-                
 					<table id='tabla_listado'>
 						<tr id='tabla_listado_columna'>
 						<?php       
@@ -402,7 +408,7 @@ public function tabla() {
 								$columnas[] = $casilla;
 								$n_columna++;  
 							}
-						}               
+						}           
 						?> 
 						</tr>
 						<?php
@@ -426,7 +432,15 @@ public function tabla() {
 								<tr>
 								<?php
 								
-								for ($i=0; $i < $total_columnas; $i++) {
+								for ($i = 0; $i < $total_columnas; $i++) {
+									
+									# Animaciones
+									if (!empty($this->animacion) && !empty($this->animacion[$i])) {
+										$animacion = 'animated ' . $this -> animacion[$i];
+										}
+									else {
+										$animacion='';
+										}
 									
 									# En caso de estar vacío el array de las columnas mostramos solo el contenido de la columna
 									if (!empty($this->columna)) {
@@ -443,7 +457,7 @@ public function tabla() {
 													case 'imagen':
 														if (!empty($fila[$i])) {
 															?>
-															<td class='tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>' bgcolor="<?=$fondo_color;?>"> 
+															<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
 																<img height='<?=$this->img_width?>' width='<?=$this->img_height?>' class='<?=$this->img_class?>' src='<?=$this->img_ruta.$fila[$i]?>' alt="foto"> 
 															</td>
 															<?php
@@ -457,7 +471,7 @@ public function tabla() {
 														
 													case 'ficha':
 														?>
-														<td class='tabla_listado_celda  <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>' bgcolor="<?=$fondo_color;?>"> 
+														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
 															<div align="center">
 																<a href="<?=$this->ficha_url .$fila[$i]?>">
 																	<img src="<?=$this->ficha_img?>" alt="Ver Ficha" title="Ver Ficha" width="16" border="0" />
@@ -469,13 +483,13 @@ public function tabla() {
 														
 													case 'button':
 														?>
-														<td class='tabla_listado_celda  <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>' bgcolor="<?=$fondo_color;?>"> <button value="<?=$this->boton_value?>" name='<?=$this->boton_name?>' type="<?=$this->boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
+														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> <button value="<?=$this->boton_value?>" name='<?=$this->boton_name?>' type="<?=$this->boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
 														<?php
 														break;
 														
 													case 'eliminar':
 														?>
-														<td class='tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>' bgcolor="<?=$fondo_color;?>" align='center'> 
+														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>" align='center'> 
 															<a href="javascript:eliminar('<?=$fila[$i];?>');">
 																<img src="<?=$this->eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0" />
 															</a>
@@ -514,7 +528,7 @@ public function tabla() {
 													case 'operacion':
 													
 														?>
-														<td class='tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>' bgcolor="<?=$fondo_color;?>" align='center'> 
+														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>" align='center'> 
 															<input name='<?=$this->name_operacion?>[<?=$fila[$i]?>]' type='<?=$this->type?>' min="0"> 
 														</td>
 														<?php
@@ -553,7 +567,7 @@ public function tabla() {
 														
 													case 'mensaje':
 														?>
-														<td class='tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>' bgcolor="<?=$fondo_color;?>">
+														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
 															<div class="tooltip"> <img class="mensaje_imagen" src="<?=$this->mensaje_img_ruta?>">
 															  <span class="tooltiptext">
 																  <?php
@@ -592,7 +606,7 @@ public function tabla() {
 													case 'select':
 														$registros = $db -> query($this->select_consulta);
 														?>
-														<td class='tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo "animated " . $this->animacion[$i]; } ?>' bgcolor="<?=$fondo_color;?>" align='center'>
+														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>" align='center'>
 															<select name='<?=$this->select_name.$fila[$posicion]?>' form='<?=$this->form_id?>' onchange='this.form.submit()'>
 																<option value=''> <?=$this->select_texto_defecto?> </option>
 																<?php
@@ -615,22 +629,23 @@ public function tabla() {
 													}
 												  break;
 												}
-											}
-										if ($i != $posicion)  {
-											?>
-											<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
-												<?=$fila[$i]?> 
-											</td>
-											<?php
-											}
+												else  {
+													?>
+													<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
+														<?=$fila[$i]?> 
+													</td>
+													<?php
+												}
+										}
 									}
 									else {
 										?>
-										<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda "><?=$fila[$i]?> </td>
+										<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda ">
+											<?=$fila[$i]?> 
+										</td>
 										<?php
 										}
 								}
-								
 								?>  
 								</tr>
 								<?php
@@ -639,7 +654,7 @@ public function tabla() {
 						}
 						else {
 							?>
-							<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
+							<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda">
 								No se encontraron resultados 
 							</td>
 							<?php
@@ -649,7 +664,7 @@ public function tabla() {
 						<?php
 						if ($this->boton_submit==1) {
 							?>
-							<td colspan='<?=count($columnas)?>' bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
+							<td colspan='<?=$total_columnas?>' bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
 								<button name='submit' type='submit'> <?=$this->submit_texto;?> </button>
 							</td>
 							<?php
