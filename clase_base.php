@@ -96,6 +96,10 @@ class base
     // Muestra la fecha en formato español
     public $fecha_formato_entrada = 'Y-m-d';
     public $fecha_formato_salida = 'd/m/Y';
+
+    // MONEDA
+    // Formatea la fila como si fuera una moneda
+    public $moneda_divisa = '€';
     
     // BUTTON
     public $boton_type = 'submit';
@@ -159,6 +163,7 @@ class base
 public function __construct() {
 	require($this-> ruta_archivo_config);
         $db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+        
         $this -> db = $db;
     }
 # El destructor cierra la conexión con la BBDD
@@ -491,7 +496,7 @@ public function tabla() {
 														
 													case 'button':
 														?>
-														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> <button value="<?=$this->boton_value?>" name='<?=$this->boton_name?>' type="<?=$this->boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
+														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> <button value="<?=$this->boton_value?>" name='<?=$this->boton_name?>' type="<?=$this->boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
 														<?php
 														break;
 														
@@ -501,43 +506,14 @@ public function tabla() {
 															<a href="javascript:eliminar('<?=$fila[$i];?>');">
 																<img src="<?=$this->eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0" />
 															</a>
-															<script type="text/javascript">
-																function removeParam(key, sourceURL) {
-																	var rtn = sourceURL.split("?")[0],
-																				param,
-																				params_arr = [],
-																				queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-																	if (queryString !== "") {
-																		params_arr = queryString.split("&");
-																		
-																		for (var i = params_arr.length - 1; i >= 0; i -= 1) {
-																			param = params_arr[i].split("=")[0];
-																			if (param === key) {
-																				params_arr.splice(i, 1);
-																			}
-																		}
-																		rtn = rtn + "?" + params_arr.join("&");
-																	}
-																	return rtn;
-																}
-																
-																function eliminar(id) {
-																	var url = window.location.href;
-																	
-																	if (confirm('¿Seguro que quiere eliminarlo?')) {
-																		url = removeParam('delid',url);
-																		document.location.href = url+'&delid='+id;
-																	}
-																}
-															</script>
 														</td>
 														<?php
 														break;
 
-													case 'euros':
+													case 'moneda':
 														?>
 														<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?=$animacion?>">
-															<?=$fila[$i]?> €
+															<?=$fila[$i]?> <?=$this -> moneda_divisa?>
 														</td>
 														<?php
 														
@@ -690,7 +666,48 @@ public function tabla() {
 							?>
 					</table>
 				</tr>
-				
+			  <?php
+			  # Mostramos el javascript para el modulo eliminar
+			  ?>
+			  <script type="text/javascript">
+					function removeParam(key, sourceURL) {
+						var rtn = sourceURL.split("?")[0],
+									param,
+									params_arr = [],
+									queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+						
+						var existe = sourceURL.split("?")[1];
+						if (typeof(existe) == 'undefined') {
+							var parametro = '?';
+							}
+						else {
+							var parametro = '&';
+							}
+						
+						if (queryString !== "") {
+							params_arr = queryString.split("&");
+							
+							for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+								param = params_arr[i].split("=")[0];
+								if (param === key) {
+									params_arr.splice(i, 1);
+								}
+							}
+							rtn = rtn + "?" + params_arr.join("&");
+						}
+						return {rtn:rtn,parametro:parametro}	
+					}
+					
+					function eliminar(id) {
+						var url = window.location.href;
+
+						if (confirm('¿Seguro que quiere eliminarlo?')) {
+							url = removeParam('delid',url);
+							document.location.href = url.rtn + url.parametro + 'delid='+id;
+						}
+					}
+				</script>
+			  
               <?php
               if ($this -> footer == 1) {
                   ?>
