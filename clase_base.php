@@ -90,8 +90,13 @@ class base
     public $img_alt = 'Imagen';
     public $img_height;
     public $img_width;
-    
     public $img_class;
+    
+    // FECHA
+    // Muestra la fecha en formato español
+    public $fecha_formato_entrada = 'Y-m-d';
+    public $fecha_formato_salida = 'd/m/Y';
+    
     // BUTTON
     public $boton_type = 'submit';
     public $boton_name = 'enlace';
@@ -153,7 +158,8 @@ class base
 # El constructor realiza la conexion con la BBDD
 public function __construct() {
 	require($this-> ruta_archivo_config);
-        $db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+        //~ $db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+        $db = new mysqli("detrazos.es", "appdelacalle",'sAmArw396%', "detrazos_delacalle") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
         $this -> db = $db;
     }
 # El destructor cierra la conexión con la BBDD
@@ -391,21 +397,28 @@ public function tabla() {
 						$quitar = array('_','-');
 						
 						if ($total_registros > 0) {
+							
+							# Buscamos en el array columna si existe el valor 'clave_primaria' -> en tal caso no mostraremos dicha columna, se utilizará para guardar la clave primaria de la fila
+							$posicion_clave_primaria = array_search('clave_primaria', $this -> columna);
+
 							## Generamos las columnas que contiene la consulta
-							$n_columna = 0;   
+							$n_columnas = 0;
 							while ($finfo = $resultados->fetch_field()) {
 								
-								# Realizamos la conversión de caracteres
-								// - Quitamos guiones, barra baja
-								// - Ponemos la primera con mayuscula
-								$casilla = str_replace($quitar,' ',$finfo->name);
-								$casilla[0] = substr_replace($casilla[0], strtoupper($casilla[0]),0, 1);
-								
-								?>
-								<td class='columna'> <?=$casilla?> </td>
-								<?php 
-								$columnas[] = $casilla;
-								$n_columna++;  
+								if ($posicion_clave_primaria != $n_columnas) {
+									# Realizamos la conversión de caracteres
+									// - Quitamos guiones, barra baja
+									// - Ponemos la primera con mayuscula
+							
+									$casilla = str_replace($quitar,' ',$finfo->name);
+									$casilla[0] = substr_replace($casilla[0], strtoupper($casilla[0]),0, 1);
+									
+									?>
+									<td class='columna'> <?=$casilla?> </td>
+									<?php 
+									$columnas[] = $casilla;
+								}
+								$n_columnas++;
 							}
 						}           
 						?> 
@@ -416,12 +429,13 @@ public function tabla() {
 						# En caso de no existir resultados -> decimos que no se han encontrado
 						if ($total_registros > 0) {
 							
-							## Generamos cada fila de cada columna 
-							$total_columnas = count($columnas);
-							$cont = 0;
+							## Generamos cada fila de cada columna
+							
+							$cnt = 0;
 							while ($fila = mysqli_fetch_array($resultados)) {
+								
 								#Color de fila
-								if (($cont%2)==0) {
+								if (($cnt%2)==0) {
 								  $fondo_color='#FFFFFF';
 								}
 								else {
@@ -430,16 +444,9 @@ public function tabla() {
 								?> 
 								<tr>
 								<?php
-								
-								for ($i = 0; $i < $total_columnas; $i++) {
-									
+								for ($i = 0; $i < $n_columnas; $i++) {
 									# Animaciones
-									if (!empty($this->animacion) && !empty($this->animacion[$i])) {
-										$animacion = 'animated ' . $this -> animacion[$i];
-										}
-									else {
-										$animacion='';
-										}
+									(!empty($this->animacion) && !empty($this->animacion[$i]))?$animacion = 'animated ' . $this -> animacion[$i]:$animacion='';
 									
 									# En caso de estar vacío el array de las columnas mostramos solo el contenido de la columna
 									if (!empty($this->columna)) {
@@ -452,18 +459,21 @@ public function tabla() {
 											if ($i == $posicion)  {
 													
 												switch($valor) {
-													
+													case 'clave_primaria':
+														$clave_primaria = $fila[$i];
+														break;
+
 													case 'imagen':
 														if (!empty($fila[$i])) {
 															?>
 															<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
-																<img height='<?=$this->img_width?>' width='<?=$this->img_height?>' class='<?=$this->img_class?>' src='<?=$this->img_ruta.$fila[$i]?>' alt="foto"> 
+																<img height='<?=$this->img_width?>' width='<?=$this->img_height?>' class='<?=$this->img_class?>' src='<?=$this->img_ruta.$fila[$i]?>' alt="Imagen">
 															</td>
 															<?php
 															}
 														else {
 															?>
-															<td class="tabla_listado_celda " bgcolor="<?=$fondo_color;?>"></td>
+															<td class="tabla_listado_celda " bgcolor="<?=$fondo_color;?>">  </td>
 															<?php
 															}
 														break;
@@ -511,6 +521,7 @@ public function tabla() {
 																	}
 																	return rtn;
 																}
+																
 																function eliminar(id) {
 																	var url = window.location.href;
 																	
@@ -523,7 +534,28 @@ public function tabla() {
 														</td>
 														<?php
 														break;
+
+													case 'euros':
+														?>
+														<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?=$animacion?>">
+															<?=$fila[$i]?> €
+														</td>
+														<?php
 														
+														break;
+													
+													case 'fecha':
+														
+														if (!empty($fila[$i])) {
+															?>
+															<td class="tabla_listado_celda  <?=$animacion?>" bgcolor="<?=$fondo_color;?>"> 
+																<?=DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);?>
+															</td>
+															<?php
+															}
+															
+														break;
+													
 													case 'operacion':
 													
 														?>
@@ -531,6 +563,7 @@ public function tabla() {
 															<input name='<?=$this->name_operacion?>[<?=$fila[$i]?>]' type='<?=$this->type?>' min="0"> 
 														</td>
 														<?php
+														
 														break;
 														
 													case 'estado':
@@ -547,23 +580,6 @@ public function tabla() {
 															}
 														break;
 													
-													case 'fecha':
-												
-													if (!empty($fila[$i])) {
-														?>
-														<td class="tabla_listado_celda <?=$this->td_class_fila?> <?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>" bgcolor="<?=$fondo_color;?>"> 
-														<?=DateTime::createFromFormat('Y-m-d', $fila[$i]) -> format('d/m/Y');?>
-														</td>
-														<?php
-														}
-													else {
-														?>
-														<td class="tabla_listado_celda <?=$this->td_class_fila?> <?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>" bgcolor="<?=$fondo_color;?>"></td>
-														<?php
-														}
-													
-													break;
-														
 													case 'mensaje':
 														?>
 														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
@@ -625,17 +641,19 @@ public function tabla() {
 														</td>
 														<?php
 														break;
-													}
-												  break;
 												}
-												else  {
-													?>
-													<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
-														<?=$fila[$i]?> 
-													</td>
-													<?php
-												}
+												break;
+											}
 										}
+										
+										if ($i != $posicion)  {
+											?>
+											<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?php if (!empty($this->animacion)) { echo"animated " . $this->animacion[$i]; } ?>">
+												<?=$fila[$i]?>
+											</td>
+											<?php
+										}
+										
 									}
 									else {
 										?>
@@ -643,12 +661,13 @@ public function tabla() {
 											<?=$fila[$i]?> 
 										</td>
 										<?php
-										}
+									}
 								}
 								?>  
 								</tr>
 								<?php
-								$cont++;
+								$cnt++;
+							
 							}
 						}
 						else {
@@ -660,10 +679,11 @@ public function tabla() {
 							}
 						?>
 						</table>
+						
 						<?php
 						if ($this->boton_submit==1) {
 							?>
-							<td colspan='<?=$total_columnas?>' bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
+							<td colspan='<?=$n_columnas?>' bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda <?php if (!empty($this->animacion) && !empty($this->animacion[$i])) { echo"animated " . $this->animacion[$i]; } ?>">
 								<button name='submit' type='submit'> <?=$this->submit_texto;?> </button>
 							</td>
 							<?php
