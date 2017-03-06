@@ -84,6 +84,11 @@ class base
     // FICHA
     public $ficha_img;
     public $ficha_url;
+
+    // DESCARGA
+    public $descarga_url; # Path donde se encuentran los archivos
+    public $descarga_nueva_ventana; # ¿Descargar en una nueva ventana? True o False
+    public $descarga_ruta_iconos; # Path de los iconos
     
     // IMAGEN 
     public $img_ruta;
@@ -488,6 +493,81 @@ public function tabla() {
 															<div align="center">
 																<a href="<?=$this->ficha_url .$fila[$i]?>">
 																	<img src="<?=$this->ficha_img?>" alt="Ver Ficha" title="Ver Ficha" width="16" border="0" />
+																</a>
+															</div>
+														</td>
+														<?php
+														break;
+
+													case 'descarga':
+														?>
+														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
+															<div align="center">
+																<a href="<?=$this->descarga_url .$fila[$i]?>" target="<?=$this->descarga_nueva_ventana == true?'target="_blank"':''?>">
+																	<?php
+																	# Obtenemos la extension y mostramos el icono correspondiente
+																	switch (end(explode('.', $fila[$i]))) {
+																		case 'ai':
+																			$archivo_icono = 'ai.png';
+																			break;
+																		case 'mp3':
+																		case 'wav':
+																			$archivo_icono = 'audio.png';
+																			break;
+																		case 'doc':
+																		case 'odf':
+																		case 'docx':
+																			$archivo_icono = 'doc.png';
+																			break;
+																		case 'htm':
+																		case 'html':
+																		case 'php':
+																		case 'asp':
+																			$archivo_icono = 'html.png';
+																			break;
+																		case 'jpg':
+																		case 'jpeg':
+																		case 'gif':
+																		case 'png':
+																			$archivo_icono = 'jpg.png';
+																			break;
+																		case 'pdf':
+																			$archivo_icono = 'pdf.png';
+																			break;
+																		case 'psd':
+																			$archivo_icono = 'psd.png';
+																			break;
+																		case 'rar':
+																			$archivo_icono = 'rar.png';
+																			break;
+																		case 'txt':
+																			$archivo_icono = 'txt.png';
+																			break;
+																		case 'avi':
+																		case 'mpg':
+																		case 'mpeg':
+																		case 'mp4':
+																			$archivo_icono = 'video.png';
+																			break;
+																		case 'xls':
+																		case 'xlsx':
+																			$archivo_icono = 'xls.png';
+																			break;
+																		case 'zip':
+																			$archivo_icono = 'zip.png';
+																			break;
+																		case 'ppt':
+																		case 'pptx':
+																		case 'pps':
+																		case 'ppsx':
+																			$archivo_icono = 'ppt.png';
+																			break;
+																		default:
+																			$archivo_icono = 'txt.png';
+																			break;
+																		}
+																	?>
+																	<img src="<?=$this -> descarga_ruta_iconos.$archivo_icono?>" alt="Descargar Archivo" title="Descargar Archivo" width="16">
 																</a>
 															</div>
 														</td>
