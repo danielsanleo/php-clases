@@ -111,7 +111,12 @@ class base
     public $boton_name = 'enlace';
     public $boton_value;
     public $boton_texto;
-    
+   
+    // TIPO
+    // Sustituye el valor de la fila por el valor acorde en el array
+    // Ej: Convertir los tipos de usuarios, tipos de productos, categorias, etc.
+    public $tipo = array(1 => 'Usuario Admin', 2 => 'Usuario Gestion', 3 => 'Usuario normal');
+	
     // ESTADO
     // Con el primer array establecemos los estados que queramos. 
     //~ $listado -> estados = array( '0' => 'Apto','1' => 'No Apto' );
@@ -495,6 +500,14 @@ public function tabla() {
 																	<img src="<?=$this->ficha_img?>" alt="Ver Ficha" title="Ver Ficha" width="16" border="0" />
 																</a>
 															</div>
+														</td>
+														<?php
+														break;
+														
+													case 'tipo':
+														?>
+														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
+															<?=(!empty($this->tipo[$fila[$i]]))?$this->tipo[$fila[$i]]:"El tipo {$fila[$i]} no existe";?>
 														</td>
 														<?php
 														break;
