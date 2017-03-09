@@ -622,6 +622,13 @@ public function tabla() {
 															</td>
 															<?php
 															}
+														else {
+															?>
+															<td class="tabla_listado_celda  <?=$animacion?>" bgcolor="<?=$fondo_color;?>"> 
+																<?=$fila[$i]?>
+															</td>
+															<?php
+															}
 															
 														break;
 													
