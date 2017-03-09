@@ -111,13 +111,7 @@ class base
     public $boton_name = 'enlace';
     public $boton_value;
     public $boton_texto;
-   
-    // TIPO
-    // Sustituye el valor de la fila por el valor acorde en el array
-    // Ej: Convertir los tipos de usuarios, tipos de productos, categorias, etc.
-    public $tipo = array(1 => 'Usuario Admin', 2 => 'Usuario Gestion', 3 => 'Usuario normal');
-    public $tipo_class = 'texto';
-	
+    
     // ESTADO
     // Con el primer array establecemos los estados que queramos. 
     //~ $listado -> estados = array( '0' => 'Apto','1' => 'No Apto' );
@@ -504,14 +498,6 @@ public function tabla() {
 														</td>
 														<?php
 														break;
-														
-													case 'tipo':
-														?>
-														<td class='tabla_listado_celda <?=$this -> tipo_class?> <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
-															<?=(!empty($this->tipo[$fila[$i]]))?$this->tipo[$fila[$i]]:"El tipo {$fila[$i]} no existe";?>
-														</td>
-														<?php
-														break;
 
 													case 'descarga':
 														?>
@@ -619,13 +605,6 @@ public function tabla() {
 															?>
 															<td class="tabla_listado_celda  <?=$animacion?>" bgcolor="<?=$fondo_color;?>"> 
 																<?=DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);?>
-															</td>
-															<?php
-															}
-														else {
-															?>
-															<td class="tabla_listado_celda  <?=$animacion?>" bgcolor="<?=$fondo_color;?>"> 
-																<?=$fila[$i]?>
 															</td>
 															<?php
 															}
