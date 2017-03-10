@@ -99,6 +99,7 @@ class base
     public $enlace_title = array(1 => 'Texto Alternativo');
     public $enlace_url = array(1 => 'http://menu.php?action=admin-compras-gestion&id=');
     public $enlace_img = array(1 => 'images/imagen.jpg');
+    public $enlace_nueva_ventana = array(1 => true);
     
     // DESCARGA
     public $descarga_url; # Path donde se encuentran los archivos
@@ -557,7 +558,7 @@ public function tabla() {
 														?>
 														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
 															<div style='text-align:center;' >
-																<a href="<?=$this->enlace_url[$i].$fila[$i]?>">
+																<a href="<?=$this->enlace_url[$i].$fila[$i]?>" <?=(!empty($this->enlace_nueva_ventana[$i]) && $this->enlace_nueva_ventana[$i]==1)?'target="_blank"':'';?>>
 																	<img src="<?=$this->enlace_img[$i]?>" alt="<?=$this->enlace_title[$i]?>" title="<?=$this->enlace_title[$i]?>" style='width: 16px;'>
 																</a>
 															</div>
