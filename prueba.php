@@ -1,46 +1,49 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Page Title</title>
-		 <link rel="stylesheet" href="animate.css">
-		 <link rel="stylesheet" type="text/css" href="css/estilos_base.css">
-	</head>
-	
-	<body>
-		<?php
-		
+<?php
+  // SI NO SE TIENEN PERMISOS
+  if ($clase_usuarios->login()!=true)
+  {
+    require_once("includes/acceso-restringido.php");
+  }
+  else {
 		require("clases/clase_base.php");
 		$base = new base;
 		
-		$base -> consulta = "SELECT imagen,nombre,cantidad,valor,descripcion,iditem AS Eliminar,iditem as Mensaje 
-		                        FROM personaje_items INNER JOIN productos 
-		                        ON personaje_items.iditem=productos.id  
-		                        WHERE idpersonaje=$idpersonaje";
+		$base -> ruta_archivo_config = "../config.php"; 
 		
-		$base -> mensaje_consulta = "SELECT nombre_atributo,valor_atributo from producto_atributos inner join atributos on producto_atributos.id_atributo=atributos.id where id_producto=";
-		$base -> campos = array(0,1);
+		$base -> tabla_imagen = "images/icono-productos.png"; 
 		
+		$base -> consulta = "SELECT id as clave_primaria, nombre, email AS Correo, fecha, id AS Editar, id AS Eliminar  FROM proveedores";
 		
-		$base -> tabla_primera_marginLeft = '10%';
-		$base -> tabla_primera_marginTop = '3%';
+		$base -> migasdepan = 1;
+		$base -> migas = array('Menú' => 'menu.php', 'Listado Proveedores' => '');
 		
-		$base -> migasdepan = 0;
-		$base -> footer = 0;
+		$base -> tabla_titulo = "<span class='departamento'>Proveedores &raquo Listado de proveedores</span>";
 		
-		$base -> tabla_primera_width = '75%';
-		$base -> tabla_titulo = "Items del personaje: ";
+		$base -> ficha_url = "menu.php?action=admin-proveedores-gestion&id=";
 		
-		$base -> tabla_imagen = 'images/cofre.png';
-		$base -> tabla_ruta = 'menu.php?action=items.php';
+		$base -> tabla_ruta = 'menu.php?action=admin-proveedores-listado';
 		
-		$base -> columna = array('0' => 'imagen','5' => 'operacion','6' => 'mensaje');
+		$base -> columna = array(0 => 'clave_primaria', 3 => 'fecha', 4 => 'enlace', 5 => 'eliminar');
 		
-		$base -> animacion = array('1' => 'fadeIn','0' => 'fadeIn', '2' => 'fadeIn', '3' => 'fadeIn','4' => 'fadeIn','5' => 'fadeIn');
-		$base -> nuevo_registro = 0;
-		$base -> boton_submit = 1;
-		$base -> boton_submit_texto = 'Aplicar';
+		$base -> eliminar_columna = 'id';
+		$base -> eliminar_tabla = 'proveedores';
+		$base -> eliminar_imagen = "images/boton-eliminar.gif";
+		
+		$base -> enlace_title = array(4 => "Editar");
+		$base -> enlace_img = array(4 => "images/boton-modificar.png");
+		$base -> enlace_url = array(4 => "menu.php?action=admin-proveedores-gestion&id=");
+		
+		$base -> ficha_img = "images/boton-modificar.png ";
+		
+		$base -> menu = 1;
+		$base -> menu_url = array('1' => 'menu.php?action=admin-proveedores-gestion');
+		$base -> menu_imagen = array( 1 => "images/boton-nuevo-proveedor.png");
+		
+		$base -> paginacion = 1;
+		$base -> pagesize = 10;
+		
+		$base -> footer = 1;
+		$base -> radio_inferior = 0;
 		$base -> tabla();
-
-		?>
-	</body>
-</html>
+  }
+?>
