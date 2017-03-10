@@ -8,6 +8,7 @@ class base
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
     public $ruta_archivo_config = 'config.php';
+    public $db_charset = 'utf8';
     public $protocolo = 'http://';
     public $db;
     
@@ -67,7 +68,6 @@ class base
     # \
     #   -Tabla Mensaje
         //Vacio
-    
     
     # |
     # \ 
@@ -167,6 +167,7 @@ class base
         public $mensaje_img_height='25px';
     
     // SELECT (input)
+    ##### Es necesaria una revision para depurar y aplicar la filosofia KISS
     // Consulta para traer los campos
     // La segunda Consulta es para saber el total de campos de la tabla 
     // y poder saber cual de ellos se ha elegido
@@ -189,19 +190,18 @@ class base
     # Permite la paginación de los resultados
     public $paginacion = 1;
     public $pagesize = 2;
+    public $pagesize_opciones = array(10,15,20,25,50,100,150,200,250,300,350);
     private $paginas_total;
     
 # El constructor realiza la conexion con la BBDD
 public function __construct() {
 	require($this-> ruta_archivo_config);
-        $db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
-        //~ $db -> query("SET character_set_results = 'utf8', character_set_client = 'utf8', character_set_connection = 'utf8', character_set_database = 'utf8', character_set_server = 'utf8'");
-        $this -> db = $db;
+	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+	$this -> db -> set_charset($this -> db_charset);
     }
 # El destructor cierra la conexión con la BBDD
 public function __destruct() {
-    $db = $this->db;
-    $db -> close(); 
+    $this -> db -> close();
     }
     
 public function tabla() {
@@ -210,9 +210,8 @@ public function tabla() {
             $array = array_map('stripslashes', $array);
             return $array;
         }
-        
        
-        $db = $this->db;
+        $db = $this -> db;
         
         # Si la paginacion esta habilitada:
         # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion 
@@ -507,7 +506,6 @@ public function tabla() {
 						if ($total_registros > 0) {
 							
 							## Generamos cada fila de cada columna
-							
 							$cnt = 0;
 							while ($fila = mysqli_fetch_array($resultados)) {
 								
@@ -532,7 +530,7 @@ public function tabla() {
 										foreach ($this->columna as $posicion => $valor) {
 											
 											# A continuacion disponemos de los MODULOS:
-											# Si estamos en la columna a modificar, la cambiamos, sino, no hacemos nada
+											# Si estamos en la columna a modificar, la cambiamos, sino, solo mostramos su contenido
 											if ($i == $posicion)  {
 													
 												switch($valor) {
@@ -809,7 +807,7 @@ public function tabla() {
 						else {
 							?>
 							<td style='text-align: center;' bgcolor="#BCBABA" class="tabla_listado_celda">
-								No se encontraron resultados 
+								No se encontraron resultados
 							</td>
 							<?php
 							}
@@ -884,17 +882,13 @@ public function tabla() {
 								</script>
 								Mostrar #
 								<select name="pagesize" id="pagesize" style="width:75px;" onchange='this.form.submit()'>
-									<option value="5" <?php if ($this->pagesize==5) echo 'selected';?>>5</option>
-									<option value="10" <?php if ($this->pagesize==10) echo 'selected';?>>10</option>
-									<option value="15" <?php if ($this->pagesize==15) echo 'selected';?>>15</option>
-									<option value="20" <?php if ($this->pagesize==20) echo 'selected';?>>20</option>
-									<option value="25" <?php if ($this->pagesize==25) echo 'selected';?>>25</option>
-									<option value="50" <?php if ($this->pagesize==50) echo 'selected';?>>50</option>
-									<option value="100" <?php if ($this->pagesize==100) echo 'selected';?>>100</option>
-									<option value="200" <?php if ($this->pagesize==200) echo 'selected';?>>200</option>
-									<option value="250" <?php if ($this->pagesize==250) echo 'selected';?>>250</option>
-									<option value="300" <?php if ($this->pagesize==300) echo 'selected';?>>300</option>
-									<option value="350" <?php if ($this->pagesize==350) echo 'selected';?>>350</option>
+									<?php 
+									foreach ($this -> pagesize_opciones AS $size) {
+										?>
+										<option value="<?=$size?>" <?=($this->pagesize==$size)?'selected':'';?>><?=$size?></option>
+										<?php
+										}
+									?>
 								</select>
 							</td>
 							<td style="text-align:left; padding-left:20px;" >
@@ -948,20 +942,38 @@ public function tabla() {
 				    ?>
 					<tr>
 						<td bgcolor="#FFFFFF">
-							<table style='margin-bottom: 20px;text-align:center;' width="910" border="0"  cellpadding="4" cellspacing="0" bgcolor="#FFFFFF" class="bordeExterior">
+							<table class="bordeExterior" style='width: 910px; margin-bottom: 20px;text-align:center; background-color:#FFFFFF;' cellpadding="4" cellspacing="0">
 								<tr>
-									<td width="2">
-										<div style='text-align:right;' ><a href="javascript:window.history.back();"><img src="images/_active__undo.gif" alt="Volver" title="Volver" width="16" height="16" border="0" /></a></div>
+									<td style='width: 2px;'>
+										<div style='text-align:right;'>
+											<a href="javascript:window.history.back();">
+												<img src="images/_active__undo.gif" alt="Volver" title="Volver" width="16" height="16" border="0">
+											</a>
+										</div>
 									</td>
-									<td width="40"><a href="javascript:window.history.back();" class="enlace">atr&aacute;s</a></td>
-									<td width="2">
-										<div style='text-align:left;'><a href="menu.php?action=soporte"><img src="images/help2.png" alt="Soporte tecnico" title="Soporte" width="16" height="16" border="0" /></a></div>
+									<td width="40">
+										<a href="javascript:window.history.back();" class="enlace">atr&aacute;s</a>
 									</td>
-									<td><a href="menu.php?action=soporte" class="enlace">soporte</a></td>
+									<td style='width: 2px;'>
+										<div style='text-align:left;'>
+											<a href="menu.php?action=soporte">
+												<img style='width:16px; height: 16px;' src="images/help2.png" alt="Soporte tecnico" title="Soporte">
+											</a>
+										</div>
+									</td>
+									<td style='text-align:left;'>
+										<a href="menu.php?action=soporte" class="enlace">soporte</a>
+									</td>
 									<td>
-										<div style='text-align:right;'><a href="salir.php"><img src="images/_active__exit.gif" alt="Cerrar" title="Salir" width="16" height="16" border="0" /></a></div>
+										<div style='text-align:right;'>
+											<a href="salir.php">
+												<img src="images/_active__exit.gif" alt="Cerrar" title="Salir" width="16" height="16" border="0">
+											</a>
+										</div>
 									</td>
-									<td width="80"><a href="salir.php" class="enlace">cerrar sesi&oacute;n</a></td>
+									<td style='width: 80px;'>
+										<a href="salir.php" class="enlace">cerrar sesi&oacute;n</a>
+									</td>
 								</tr>
 							</table>
 						</td>
