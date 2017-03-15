@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Pruebas</title>
+		<link href="estilos.css" rel="stylesheet" type="text/css" />
 		
-		<link href="http://electronova.virtualcab.es/admin/css/estilos.css" rel="stylesheet" type="text/css" />
 		<script src="js/jquery-3.1.1.min.js"></script>
 		<style type="text/css">
 			body {

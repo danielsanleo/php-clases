@@ -922,7 +922,7 @@ public function tabla() {
 										de <?=$this -> paginas_total;?>
 									</td>
 									<td style="text-align:right;">
-										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>)">
+										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" <?php if ($this -> paginas_total != $pagina) { ?> onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>)" <?php } else { ?> <?php }?>>
 											<div class="next" style="cursor:pointer"><span>Siguiente</span></div>
 										</div>
 									</td>
