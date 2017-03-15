@@ -34,7 +34,7 @@ class base
     # TOTAL REGISTROS
     # ---------------
     // Si es igual a uno, muestra el total de registros encontrados
-    public $mostrar_total_registros = 1;
+    public $mostrar_total_registros = 0;
     public $tipo_registro = ' registros';
     
     
