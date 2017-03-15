@@ -871,70 +871,75 @@ public function tabla() {
 				if ($this -> paginacion == 1) {
 					?>
 					<br>
-					<table cellspacing="2" cellpadding="2" border="0" style="text-align:center">
-						<tr>
-							<td style="text-align:left; padding-left:20px;" class="search">
-								<input type='hidden' id='paginacion_accion' name='paginacion_accion' value='null'>
-								<script>
-									function cambiar(accion) {
-										document.getElementById('paginacion_accion').value=accion;
-										document.<?=$this -> form_name?>.submit();
-										}
-								</script>
-								Mostrar #
-								<select name="pagesize" id="pagesize" style="width:75px;" onchange='this.form.submit()'>
-									<?php 
-									foreach ($this -> pagesize_opciones AS $size) {
-										?>
-										<option value="<?=$size?>" <?=($this->pagesize==$size)?'selected':'';?>><?=$size?></option>
-										<?php
-										}
-									?>
-								</select>
-							</td>
-							<td style="text-align:left; padding-left:20px;" >
-								<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="cambiar(0)">
-									<div class="start" style="cursor:pointer">
-										<span>
-											<nobr>Iniciar</nobr>
-										</span>
-									</div>
-								</div>
-							</td>
-							<td style="text-align:left;">
-								<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="cambiar(<?=($pagina>0)?$pagina-1:'0'?>)">
-									<div class="prev"><span>Anterior</span></div>
-								</div>
-							</td>
-							<td class="search" style="padding:0px 10px 0px 10px; text-align:left;">
-								Página
-								<select name="pagina" id="pagina" style="width:75px;" onchange='cambiar(this.form.pagina.value)'>
-									<?php
-									for ($i=1; $i<=$this -> paginas_total ;$i++) {
-										?>
-										<option value="<?=$i?>" <?=($pagina == $i)?' selected':''?>><?=$i?></option>
-										<?php
-										}
-									?>
-								</select>
-								de <?=$this -> paginas_total;?>
-							</td>
-							<td style="text-align:right;">
-								<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>)">
-									<div class="next" style="cursor:pointer"><span>Siguiente</span></div>
-								</div>
-							</td>
-							<td style="padding-right:20px; text-align:right;">
-								<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="cambiar(<?=$this -> paginas_total?>)">
-									<div class="end">
-										<span>
-											<nobr>Final</nobr>
-										</span>
-									</div>
-								</div>
-							</td>
-						</tr>
-					</table>
+					<tr>
+						<td align='center' class="bordeLateral">
+							<table cellspacing="2" cellpadding="2" border="0" style="text-align:center; margin: 10px;">
+								<tr>
+									<td style="text-align:left; padding-left:20px;" class="search">
+										<input type='hidden' id='paginacion_accion' name='paginacion_accion' value='null'>
+										<script>
+											function cambiar(accion) {
+												document.getElementById('paginacion_accion').value=accion;
+												document.<?=$this -> form_name?>.submit();
+												}
+										</script>
+										Mostrar #
+										<select name="pagesize" id="pagesize" style="width:75px;" onchange='this.form.submit()'>
+											<?php 
+											foreach ($this -> pagesize_opciones AS $size) {
+												?>
+												<option value="<?=$size?>" <?=($this->pagesize==$size)?'selected':'';?>><?=$size?></option>
+												<?php
+												}
+											?>
+										</select>
+									</td>
+									<td style="text-align:left; padding-left:20px;" >
+										<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="cambiar(0)">
+											<div class="start" style="cursor:pointer">
+												<span>
+													<nobr>Iniciar</nobr>
+												</span>
+											</div>
+										</div>
+									</td>
+									<td style="text-align:left;">
+										<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="cambiar(<?=($pagina>0)?$pagina-1:'0'?>)">
+											<div class="prev"><span>Anterior</span></div>
+										</div>
+									</td>
+									<td class="search" style="padding:0px 10px 0px 10px; text-align:left;">
+										Página
+										<select name="pagina" id="pagina" style="width:75px;" onchange='cambiar(this.form.pagina.value)'>
+											<?php
+											for ($i=1; $i<=$this -> paginas_total ;$i++) {
+												?>
+												<option value="<?=$i?>" <?=($pagina == $i)?' selected':''?>><?=$i?></option>
+												<?php
+												}
+											?>
+										</select>
+										de <?=$this -> paginas_total;?>
+									</td>
+									<td style="text-align:right;">
+										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>)">
+											<div class="next" style="cursor:pointer"><span>Siguiente</span></div>
+										</div>
+									</td>
+									<td style="padding-right:20px; text-align:right;">
+										<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="cambiar(<?=$this -> paginas_total?>)">
+											<div class="end">
+												<span>
+													<nobr>Final</nobr>
+												</span>
+											</div>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					
 					<br>
 				<?php
 				}
@@ -942,7 +947,7 @@ public function tabla() {
 				if ($this -> footer == 1) {
 				    ?>
 					<tr>
-						<td bgcolor="#FFFFFF">
+						<td align='center' bgcolor="#FFFFFF" class="bordeLateral">
 							<table class="bordeExterior" style='width: 910px; margin-bottom: 20px;text-align:center; background-color:#FFFFFF;' cellpadding="4" cellspacing="0">
 								<tr>
 									<td style='width: 2px;'>
@@ -980,11 +985,11 @@ public function tabla() {
 						</td>
 					</tr>
 				<?php
-				} 
+				}
                   
 				if ($this -> radio_inferior == 1) {
 					?>
-					<tr>
+					<tr style='width:100%;' align='center'>
 						<td> <div class="radioinferior"> </div> </td>
 					</tr>
 					<?php
