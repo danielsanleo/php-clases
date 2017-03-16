@@ -40,7 +40,7 @@
 					
 					$base -> tabla_imagen = "images/icono-compras.png"; 
 					
-					$base -> consulta = "SELECT id_operador, nombre, direccion, activo FROM llamadas";
+					$base -> consulta = "SELECT id_operador AS ID, nombre, direccion, activo FROM llamadas";
 					
 					$base -> migasdepan = 1;
 					$base -> migas = array('Menú' => 'menu.php', 'Listado Compras' => '');
@@ -49,7 +49,7 @@
 					
 					$base -> tabla_ruta = 'menu.php?action=admin-compras-listado';
 					
-					$base -> columna = array(0 => 'clave_primaria', 3 => 'enlace', 4 => 'enlace');
+					$base -> columna = array(3 => 'enlace', 4 => 'enlace');
 					
 					$base -> enlace_title = array(3 => "Ver compra", 4 => "Editar");
 					$base -> enlace_img = array(3 => "images/ver.png", 4 => "images/boton-modificar.png");

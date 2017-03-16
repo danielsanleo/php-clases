@@ -481,19 +481,18 @@ public function tabla() {
 							$n_columnas = 0;
 							while ($finfo = $resultados->fetch_field()) {
 								
-								if ($posicion_clave_primaria != $n_columnas) {
-									# Realizamos la conversión de caracteres
-									// - Quitamos guiones, barra baja
-									// - Ponemos la primera con mayuscula
-							
-									$casilla = str_replace($quitar,' ',$finfo->name);
-									$casilla[0] = substr_replace($casilla[0], strtoupper($casilla[0]),0, 1);
-									
-									?>
-									<td class='columna'> <?=$casilla?> </td>
-									<?php 
-									$columnas[] = $casilla;
-								}
+								# Realizamos la conversión de caracteres
+								// - Quitamos guiones, barra baja
+								// - Ponemos la primera con mayuscula
+						
+								$casilla = str_replace($quitar,' ',$finfo->name);
+								$casilla[0] = substr_replace($casilla[0], strtoupper($casilla[0]),0, 1);
+								
+								?>
+								<td class='columna'> <?=$casilla?> </td>
+								<?php 
+								$columnas[] = $casilla;
+								
 								$n_columnas++;
 							}
 						}           
@@ -533,142 +532,125 @@ public function tabla() {
 											# A continuacion disponemos de los MODULOS:
 											# Si estamos en la columna a modificar, la cambiamos, sino, solo mostramos su contenido
 											if ($i == $posicion)  {
-													
+												?>
+												<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
+												
+												<?php
+												
 												switch($valor) {
-													case 'clave_primaria':
-														$clave_primaria = $fila[$i];
-														break;
-														
 													case 'imagen':
 														if (!empty($fila[$i])) {
 															?>
-															<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
-																<img height='<?=$this->img_width?>' width='<?=$this->img_height?>' class='<?=$this->img_class?>' src='<?=$this->img_ruta.$fila[$i]?>' alt="Imagen">
-															</td>
-															<?php
-															}
-														else {
-															?>
-															<td class="tabla_listado_celda " bgcolor="<?=$fondo_color;?>">  </td>
+															<img height='<?=$this->img_width?>' width='<?=$this->img_height?>' class='<?=$this->img_class?>' src='<?=$this->img_ruta.$fila[$i]?>' alt="Imagen">
 															<?php
 															}
 														break;
 
 													case 'enlace':
 														?>
-														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
-															<div style='text-align:center;' >
-																<a href="<?=$this->enlace_url[$i].$fila[$i]?>" <?=(!empty($this->enlace_nueva_ventana[$i]) && $this->enlace_nueva_ventana[$i]==1)?'target="_blank"':'';?>>
-																	<img src="<?=$this->enlace_img[$i]?>" alt="<?=$this->enlace_title[$i]?>" title="<?=$this->enlace_title[$i]?>" style='width: 16px;'>
-																</a>
-															</div>
-														</td>
+														<div style='text-align:center;' >
+															<a href="<?=$this->enlace_url[$i].$fila[$i]?>" <?=(!empty($this->enlace_nueva_ventana[$i]) && $this->enlace_nueva_ventana[$i]==1)?'target="_blank"':'';?>>
+																<img src="<?=$this->enlace_img[$i]?>" alt="<?=$this->enlace_title[$i]?>" title="<?=$this->enlace_title[$i]?>" style='width: 16px;'>
+															</a>
+														</div>
 														<?php
 														break;
 
 													case 'tipo':
 														?>
-														<td class='tabla_listado_celda  <?=$this -> tipo_class?> <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
-															<?=(!empty($this->tipo[$fila[$i]]))?$this->tipo[$fila[$i]]:"El tipo {$fila[$i]} no existe";?>
-														</td>
+														<?=(!empty($this->tipo[$fila[$i]]))?$this->tipo[$fila[$i]]:"El tipo {$fila[$i]} no existe";?>
 														<?php
 														break;
 
 													case 'descarga':
 														?>
-														<td class='tabla_listado_celda  <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
-															<div style='text-align:center;' >
-																<a href="<?=$this->descarga_url .$fila[$i]?>" target="<?=$this->descarga_nueva_ventana == true?'target="_blank"':''?>">
-																	<?php
-																	# Obtenemos la extension y mostramos el icono correspondiente
-																	switch (end(explode('.', $fila[$i]))) {
-																		case 'ai':
-																			$archivo_icono = 'ai.png';
-																			break;
-																		case 'mp3':
-																		case 'wav':
-																			$archivo_icono = 'audio.png';
-																			break;
-																		case 'doc':
-																		case 'odf':
-																		case 'docx':
-																			$archivo_icono = 'doc.png';
-																			break;
-																		case 'htm':
-																		case 'html':
-																		case 'php':
-																		case 'asp':
-																			$archivo_icono = 'html.png';
-																			break;
-																		case 'jpg':
-																		case 'jpeg':
-																		case 'gif':
-																		case 'png':
-																			$archivo_icono = 'jpg.png';
-																			break;
-																		case 'pdf':
-																			$archivo_icono = 'pdf.png';
-																			break;
-																		case 'psd':
-																			$archivo_icono = 'psd.png';
-																			break;
-																		case 'rar':
-																			$archivo_icono = 'rar.png';
-																			break;
-																		case 'txt':
-																			$archivo_icono = 'txt.png';
-																			break;
-																		case 'avi':
-																		case 'mpg':
-																		case 'mpeg':
-																		case 'mp4':
-																			$archivo_icono = 'video.png';
-																			break;
-																		case 'xls':
-																		case 'xlsx':
-																			$archivo_icono = 'xls.png';
-																			break;
-																		case 'zip':
-																			$archivo_icono = 'zip.png';
-																			break;
-																		case 'ppt':
-																		case 'pptx':
-																		case 'pps':
-																		case 'ppsx':
-																			$archivo_icono = 'ppt.png';
-																			break;
-																		default:
-																			$archivo_icono = 'txt.png';
-																			break;
-																		}
-																	?>
-																	<img src="<?=$this -> descarga_ruta_iconos.$archivo_icono?>" alt="Descargar Archivo" title="Descargar Archivo" width="16">
-																</a>
-															</div>
-														</td>
+														<div style='text-align:center;' >
+															<a href="<?=$this->descarga_url .$fila[$i]?>" target="<?=$this->descarga_nueva_ventana == true?'target="_blank"':''?>">
+																<?php
+																# Obtenemos la extension y mostramos el icono correspondiente
+																switch (end(explode('.', $fila[$i]))) {
+																	case 'ai':
+																		$archivo_icono = 'ai.png';
+																		break;
+																	case 'mp3':
+																	case 'wav':
+																		$archivo_icono = 'audio.png';
+																		break;
+																	case 'doc':
+																	case 'odf':
+																	case 'docx':
+																		$archivo_icono = 'doc.png';
+																		break;
+																	case 'htm':
+																	case 'html':
+																	case 'php':
+																	case 'asp':
+																		$archivo_icono = 'html.png';
+																		break;
+																	case 'jpg':
+																	case 'jpeg':
+																	case 'gif':
+																	case 'png':
+																		$archivo_icono = 'jpg.png';
+																		break;
+																	case 'pdf':
+																		$archivo_icono = 'pdf.png';
+																		break;
+																	case 'psd':
+																		$archivo_icono = 'psd.png';
+																		break;
+																	case 'rar':
+																		$archivo_icono = 'rar.png';
+																		break;
+																	case 'txt':
+																		$archivo_icono = 'txt.png';
+																		break;
+																	case 'avi':
+																	case 'mpg':
+																	case 'mpeg':
+																	case 'mp4':
+																		$archivo_icono = 'video.png';
+																		break;
+																	case 'xls':
+																	case 'xlsx':
+																		$archivo_icono = 'xls.png';
+																		break;
+																	case 'zip':
+																		$archivo_icono = 'zip.png';
+																		break;
+																	case 'ppt':
+																	case 'pptx':
+																	case 'pps':
+																	case 'ppsx':
+																		$archivo_icono = 'ppt.png';
+																		break;
+																	default:
+																		$archivo_icono = 'txt.png';
+																		break;
+																	}
+																?>
+																<img src="<?=$this -> descarga_ruta_iconos.$archivo_icono?>" alt="Descargar Archivo" title="Descargar Archivo" width="16">
+															</a>
+														</div>
 														<?php
 														break;
 														
 													case 'button':
 														?>
-														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> <button value="<?=$this->boton_value?>" name='<?=$this->boton_name?>' type="<?=$this->boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
+														<button value="<?=$this->boton_value?>" name='<?=$this->boton_name?>' type="<?=$this->boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
 														<?php
 														break;
 														
 													case 'eliminar':
 														?>
-														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>" style='text-align:center;' > 
-															<a href="javascript:eliminar('<?=$fila[$i];?>');">
-																<img src="<?=$this->eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0" />
-															</a>
-														</td>
+														<a href="javascript:eliminar('<?=$fila[$i];?>');">
+															<img src="<?=$this->eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0" />
+														</a>
 														<?php
 														break;
 													case 'moneda':
 														?>
-														<td bgcolor="<?=$fondo_color;?>" class="tabla_listado_celda  <?=$animacion?>">
-															<?=$fila[$i]?> <?=$this -> moneda_divisa?>
-														</td>
+														<?=$fila[$i]?> <?=$this -> moneda_divisa?>
 														<?php
 														
 														break;
@@ -676,16 +658,12 @@ public function tabla() {
 													case 'fecha':
 														if (!empty($fila[$i])) {
 															?>
-															<td class="tabla_listado_celda  <?=$animacion?>" bgcolor="<?=$fondo_color;?>"> 
-																<?=DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);?>
-															</td>
+															<?=DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);?>
 															<?php
 															}
 														else {
 															?>
-															<td class="tabla_listado_celda  <?=$animacion?>" bgcolor="<?=$fondo_color;?>"> 
-																<?=$fila[$i]?>
-															</td>
+															<?=$fila[$i]?>
 															<?php
 															}
 															
@@ -694,9 +672,7 @@ public function tabla() {
 													case 'operacion':
 													
 														?>
-														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>" style='text-align:center;' > 
-															<input name='<?=$this->name_operacion?>[<?=$fila[$i]?>]' type='<?=$this->type?>' min="0"> 
-														</td>
+														<input name='<?=$this->name_operacion?>[<?=$fila[$i]?>]' type='<?=$this->type?>' min="0"> 
 														<?php
 														
 														break;
@@ -705,78 +681,77 @@ public function tabla() {
 													
 														if ( array_key_exists($fila[$i],$this -> estados)) {
 															?>
-															<td bgcolor="<?=$this -> estados_colores[$fila[$i]]?>" class='tabla_listado_celda <?php if (!empty($this->animacion)) { echo "animated " . $this->animacion[$i]; } ?>'> <?=$this -> estados[$fila[$i]]?> </td>
+															<?=$this -> estados[$fila[$i]]?>
 															<?php
 															}
 														else {
 															?>
-															<td> Error: Estado No definido </td>
+															Error: Estado No definido
 															<?php
 															}
 														break;
 													
 													case 'mensaje':
 														?>
-														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
-															<div class="tooltip"> <img class="mensaje_imagen" src="<?=$this->mensaje_img_ruta?>">
-															  <span class="tooltiptext">
-																  <?php
-																  if (!empty($this->mensaje_consulta)) {
-																	  # Si la variable clave_primaria existe filtramos la consulta del mensaje por el id correspondiente 
-																	  # para mostrar el mensaje en funcion de la fila. Para ello concatenamos Con la sintaxis: Temporal = Consulta + clave_primaria
-																	  if (!empty($fila[$i])) {
-																		  $this->mensaje_consulta_tmp = $this->mensaje_consulta.$fila[$i];
-																		  }
-																	  else {
-																		  $this->mensaje_consulta_tmp = $this->mensaje_consulta;
-																		  }
-																	  
-																	  $resultados_mensaje = $db -> query($this->mensaje_consulta_tmp);
-																	  
-																	  while ($resultado2 = mysqli_fetch_array($resultados_mensaje)) {
-																			# El array campos permite elegir que columnas de la consulta del mensaje se muestran
-																			foreach ($this->campos as $row) {
-																				echo $resultado2[$row].' ';
-																				}
-																		  echo $this->mensaje_codigo_posterior;
-																		  }
-																	  // Reinicializamos la variable
-																	  $this->mensaje_consulta_tmp='';
+														<div class="tooltip"> <img class="mensaje_imagen" src="<?=$this->mensaje_img_ruta?>">
+														  <span class="tooltiptext">
+															  <?php
+															  if (!empty($this->mensaje_consulta)) {
+																  # Si la variable clave_primaria existe filtramos la consulta del mensaje por el id correspondiente 
+																  # para mostrar el mensaje en funcion de la fila. Para ello concatenamos Con la sintaxis: Temporal = Consulta + clave_primaria
+																  if (!empty($fila[$i])) {
+																	  $this->mensaje_consulta_tmp = $this->mensaje_consulta.$fila[$i];
 																	  }
 																  else {
-																	echo $fila[$i];
-																	}
-																	?>
-																</span>
-															</div>
-														</td>
+																	  $this->mensaje_consulta_tmp = $this->mensaje_consulta;
+																	  }
+																  
+																  $resultados_mensaje = $db -> query($this->mensaje_consulta_tmp);
+																  
+																  while ($resultado2 = mysqli_fetch_array($resultados_mensaje)) {
+																		# El array campos permite elegir que columnas de la consulta del mensaje se muestran
+																		foreach ($this->campos as $row) {
+																			echo $resultado2[$row].' ';
+																			}
+																	  echo $this->mensaje_codigo_posterior;
+																	  }
+																  // Reinicializamos la variable
+																  $this->mensaje_consulta_tmp='';
+																  }
+															  else {
+																echo $fila[$i];
+																}
+																?>
+															</span>
+														</div>
 														<?php
 														break;
 													
 													case 'select':
 														$registros = $db -> query($this->select_consulta);
 														?>
-														<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>" style='text-align:center;'>
-															<select name='<?=$this->select_name.$fila[$posicion]?>' form='<?=$this->form_id?>' onchange='this.form.submit()'>
-																<option value=''> <?=$this->select_texto_defecto?> </option>
+														<select name='<?=$this->select_name.$fila[$posicion]?>' form='<?=$this->form_id?>' onchange='this.form.submit()'>
+															<option value=''> <?=$this->select_texto_defecto?> </option>
+															<?php
+															while ($fila2 = mysqli_fetch_array($registros)) {
+																?>
+																<option value='<?=$fila2[$this -> select_option_value]?>'>
 																<?php
-																while ($fila2 = mysqli_fetch_array($registros)) {
-																	?>
-																	<option value='<?=$fila2[$this -> select_option_value]?>'>
-																	<?php
-																	foreach($this -> select_option_texto as $columna_mostrar) {
-																		echo "$fila2[$columna_mostrar] ";
-																		}
-																	?>
-																	</option>
-																	<?php
+																foreach($this -> select_option_texto as $columna_mostrar) {
+																	echo "$fila2[$columna_mostrar] ";
 																	}
-																	?>
-															</select>
-														</td>
+																?>
+																</option>
+																<?php
+																}
+																?>
+														</select>
 														<?php
 														break;
 												}
+												?>
+												</td>
+												<?php
 												break;
 											}
 										}
