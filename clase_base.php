@@ -511,10 +511,10 @@ public function tabla() {
 								
 								#Color de fila
 								if (($cnt%2)==0) {
-								  $fondo_color='#FFFFFF';
+								  $fondo_color = '#FFFFFF';
 								}
 								else {
-								  $fondo_color='#CBCBCB';
+								  $fondo_color = '#CBCBCB';
 								}
 								?> 
 								<tr>
