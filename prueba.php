@@ -49,6 +49,8 @@
 					
 					$base -> tabla_ruta = 'menu.php?action=admin-compras-listado';
 					
+					$base -> ordenar = array(0 => 'ASC', 1 => 'DESC', 2 => 'ASC');
+					
 					$base -> columna = array(3 => 'enlace', 4 => 'enlace');
 					
 					$base -> enlace_title = array(3 => "Ver compra", 4 => "Editar");

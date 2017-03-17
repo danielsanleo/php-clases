@@ -211,8 +211,19 @@ public function tabla() {
             $array = array_map('stripslashes', $array);
             return $array;
         }
+        
+        
        
         $db = $this -> db;
+        
+        # Recogemos el parametro 'ordenar' en caso de que exista con el que podremos ordenar la/s columnas
+		if (isset($_GET['ordenar'])) {
+			$ordenar_columna = $db -> real_escape_string($_GET['ordenar']);
+			$ordenado_columna = $db -> real_escape_string($_GET['ordenado']);
+			$ordenar_columna++;
+			$order = " ORDER BY $ordenar_columna $ordenado_columna";
+			$this -> consulta .= $order;
+			}
         
         # Si la paginacion esta habilitada:
         # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion 
@@ -306,6 +317,7 @@ public function tabla() {
         
         
         $url_formulario = $this->protocolo . $_SERVER['HTTP_HOST'] .':'. $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+        
         ?>
         <style>
             <?php
@@ -469,7 +481,7 @@ public function tabla() {
 					?>
 					<table id='tabla_listado' width="100%" class='bordeExterior'>
 						<tr id='tabla_listado_columna' bgcolor="#999999" class='textoBlanco'>
-						<?php       
+						<?php
 						
 						$quitar = array('_','-');
 						
@@ -477,8 +489,30 @@ public function tabla() {
 							
 							# Buscamos en el array 'columna' si existe el valor 'clave_primaria' -> en tal caso no mostraremos dicha columna, se utilizará para guardar la clave primaria de la fila
 							$posicion_clave_primaria = array_search('clave_primaria', $this -> columna);
+							
+							
 							## Generamos las columnas que contiene la consulta
 							$n_columnas = 0;
+							
+							
+							$copiaget=$_GET;
+							
+							# Eliminamos los anteriores parametros de ordenacion para no saturar la URL añadiendo los mismos parámetros
+							if (isset($_GET['ordenar']) && !empty($_GET['ordenado'])) {
+								$param_ordenar = $_GET['ordenar'];
+								$param_ordenado = $_GET['ordenado'];
+								
+								unset($_GET['ordenar']);
+								unset($_GET['ordenado']);
+								
+								if (count($_GET)==0) {
+									$forma = '?';
+									}
+								else {
+									$forma = '&';
+									}
+								}
+							
 							while ($finfo = $resultados->fetch_field()) {
 								
 								# Realizamos la conversión de caracteres
@@ -488,9 +522,38 @@ public function tabla() {
 								$casilla = str_replace($quitar,' ',$finfo->name);
 								$casilla[0] = substr_replace($casilla[0], strtoupper($casilla[0]),0, 1);
 								
+								# Abajo mostramos el nombre de la columna y además, mostramos un enlace para ordenar la columna, si procede
 								?>
-								<td class='columna'> <?=$casilla?> </td>
-								<?php 
+								<td class='columna'> 
+									<?=$casilla?>
+									<?php
+									if (!empty($this -> ordenar[$n_columnas])) {
+										# Parseamos la URL para crear el enlace para ordenar por columna
+										# Revertimos el orden para permitir ordenar de forma ASC y DESC
+										$ordenado = $this -> ordenar[$n_columnas];
+										
+										if (isset($param_ordenar)) {
+											if ($param_ordenar == $n_columnas) {
+												switch ($param_ordenado) {
+													case 'ASC':
+														$ordenado = 'DESC';
+														break;
+													
+													case 'DESC':
+														$ordenado = 'ASC';
+														break;
+													}
+												}
+											}
+										?>
+										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET):'').$forma.'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'>Ordenar</a>
+										<?php
+										}
+									?>
+								</td>
+								<?php
+								
+								# El array columnas no se utiliza (revisar) 
 								$columnas[] = $casilla;
 								
 								$n_columnas++;
@@ -534,7 +597,6 @@ public function tabla() {
 											if ($i == $posicion)  {
 												?>
 												<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
-												
 												<?php
 												
 												switch($valor) {
