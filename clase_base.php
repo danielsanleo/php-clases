@@ -501,15 +501,6 @@ public function tabla() {
 								
 								unset($_GET['ordenar']);
 								unset($_GET['ordenado']);
-								
-								}
-							
-							# Comprobamos cuantos parametros existen en la URL para determinar como añadir los parámetros
-							if (count($_GET)==0) {
-								$forma = '?';
-								}
-							else {
-								$forma = '&';
 								}
 							
 							while ($finfo = $resultados->fetch_field()) {
@@ -530,21 +521,24 @@ public function tabla() {
 										# Parseamos la URL para crear el enlace para ordenar por columna
 										# Revertimos el orden para permitir ordenar de forma ASC y DESC
 										$ordenado = $this -> ordenar[$n_columnas];
+										$ordenar_icono = 'images/icono-ordenar.png';
 										if (isset($param_ordenar)) {
 											if ($param_ordenar == $n_columnas) {
 												switch ($param_ordenado) {
 													case 'ASC':
 														$ordenado = 'DESC';
+														$ordenar_icono = 'images/icono-ordenar2.png';
 														break;
 													
 													case 'DESC':
 														$ordenado = 'ASC';
+														$ordenar_icono = 'images/icono-ordenar.png';
 														break;
 													}
 												}
 											}
 										?>
-										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET):'').$forma.'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'>Ordenar</a>
+										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><img src='<?=$ordenar_icono?>' alt='Ordenar'></a>
 										<?php
 										}
 									?>
