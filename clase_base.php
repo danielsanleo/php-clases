@@ -519,8 +519,10 @@ public function tabla() {
 									if (!empty($this -> ordenar[$n_columnas])) {
 										# Parseamos la URL para crear el enlace para ordenar por columna
 										# Revertimos el orden para permitir ordenar de forma ASC y DESC
+										
 										$ordenado = $this -> ordenar[$n_columnas];
 										$ordenar_icono = 'images/icono-ordenar.png';
+										
 										if (isset($param_ordenar)) {
 											if ($param_ordenar == $n_columnas) {
 												switch ($param_ordenado) {
@@ -537,7 +539,7 @@ public function tabla() {
 												}
 											}
 										?>
-										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><?=$casilla?><?=($param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
+										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><?=$casilla?><?=(!empty($param_ordenar) && $param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
 										<?php
 										}
 									    else {
