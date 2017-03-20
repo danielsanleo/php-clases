@@ -515,7 +515,6 @@ public function tabla() {
 								# Abajo mostramos el nombre de la columna y además, mostramos un enlace para ordenar la columna, si procede
 								?>
 								<td class='columna'> 
-									<?=$casilla?>
 									<?php
 									if (!empty($this -> ordenar[$n_columnas])) {
 										# Parseamos la URL para crear el enlace para ordenar por columna
@@ -538,9 +537,12 @@ public function tabla() {
 												}
 											}
 										?>
-										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><img src='<?=$ordenar_icono?>' alt='Ordenar'></a>
+										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><?=$casilla?><?=($param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
 										<?php
 										}
+									    else {
+											echo $casilla;
+											}
 									?>
 								</td>
 								<?php
