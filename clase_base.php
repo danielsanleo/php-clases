@@ -494,9 +494,6 @@ public function tabla() {
 							## Generamos las columnas que contiene la consulta
 							$n_columnas = 0;
 							
-							
-							$copiaget=$_GET;
-							
 							# Eliminamos los anteriores parametros de ordenacion para no saturar la URL añadiendo los mismos parámetros
 							if (isset($_GET['ordenar']) && !empty($_GET['ordenado'])) {
 								$param_ordenar = $_GET['ordenar'];
@@ -505,12 +502,14 @@ public function tabla() {
 								unset($_GET['ordenar']);
 								unset($_GET['ordenado']);
 								
-								if (count($_GET)==0) {
-									$forma = '?';
-									}
-								else {
-									$forma = '&';
-									}
+								}
+							
+							# Comprobamos cuantos parametros existen en la URL para determinar como añadir los parámetros
+							if (count($_GET)==0) {
+								$forma = '?';
+								}
+							else {
+								$forma = '&';
 								}
 							
 							while ($finfo = $resultados->fetch_field()) {
@@ -531,7 +530,6 @@ public function tabla() {
 										# Parseamos la URL para crear el enlace para ordenar por columna
 										# Revertimos el orden para permitir ordenar de forma ASC y DESC
 										$ordenado = $this -> ordenar[$n_columnas];
-										
 										if (isset($param_ordenar)) {
 											if ($param_ordenar == $n_columnas) {
 												switch ($param_ordenado) {
