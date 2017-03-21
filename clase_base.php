@@ -211,10 +211,20 @@ public function tabla() {
             $array = array_map('stripslashes', $array);
             return $array;
         }
-        
-        
        
         $db = $this -> db;
+       
+        // Módulo encargado de eliminar la fila
+        # Comprobamos si es una pagina en la que se deberian dar derechos 
+        # al usuario final para eliminar filas
+        if (in_array('eliminar',$this->columna)) {
+            if (isset($_GET['delid'])) {
+                    $ideliminar = $db -> real_escape_string($_GET['delid']);
+                    
+                    $query = "DELETE FROM $this->eliminar_tabla WHERE $this->eliminar_columna ='$ideliminar'";
+                    $db -> query($query);
+                }
+            }
         
         # Recogemos el parametro 'ordenar' en caso de que exista con el que podremos ordenar la/s columnas
 		if (isset($_GET['ordenar'])) {
@@ -228,7 +238,7 @@ public function tabla() {
         # Si la paginacion esta habilitada:
         # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion 
         # 	lo que nos permite determinar los resultados totales de la tabla a pesar del LIMIT
-        # - Comprobamos las variables POST para determinar en que página nos encontramos o si se ha seleccionado otra página
+        # - Comprobamos las variables POST para determinar en que página nos encontramos o si se ha seleccionado otra página (En versiones posteriores seria mejor utilizar metodo GET)
         if ($this -> paginacion == 1) {
 			
 			function str_replace_first($from, $to, $subject) {
@@ -269,19 +279,6 @@ public function tabla() {
         $total_registros = $db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
         
         $this -> paginas_total = ceil($total_registros/$this->pagesize);
-
-
-        // Módulo encargado de eliminar la fila
-        # Comprobamos si es una pagina en la que se deberian dar derechos 
-        # al usuario final para eliminar filas
-        if (in_array('eliminar',$this->columna)) {
-            if (isset($_GET['delid'])) {
-                    $ideliminar = $db -> real_escape_string($_GET['delid']);
-                    
-                    $query = "DELETE FROM $this->eliminar_tabla WHERE $this->eliminar_columna ='$ideliminar'";
-                    $db -> query($query);
-                }
-            }
             
         // POST
         if ($_POST) {
@@ -539,7 +536,7 @@ public function tabla() {
 												}
 											}
 										?>
-										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><?=$casilla?><?=(!empty($param_ordenar) && $param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
+										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><?=$casilla?><?=(isset($param_ordenar) && $param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
 										<?php
 										}
 									    else {
