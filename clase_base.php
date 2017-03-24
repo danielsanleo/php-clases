@@ -416,10 +416,10 @@ public function tabla() {
                              </tr>
                              <?php
                              }
-                         # Mensaje a mostrar en caso de que exista en la URL (Vulnerabilidad XSS)
+                         # Mensaje a mostrar en caso de que exista en la URL
                          # A los tres segundos se borra
                          if (!empty($_GET['mensaje'])) {
-                              $_GET = limpiarArray($_GET);
+                              $_GET['mensaje'] = htmlspecialchars($_GET['mensaje'], ENT_QUOTES, 'UTF-8');
                               ?>
                               <script>
                                 function myFunction() {
