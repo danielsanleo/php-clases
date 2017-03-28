@@ -213,7 +213,7 @@ public function tabla() {
         }
        
         $db = $this -> db;
-       
+
         // Módulo encargado de eliminar la fila
         # Comprobamos si es una pagina en la que se deberian dar derechos 
         # al usuario final para eliminar filas
@@ -795,6 +795,13 @@ public function tabla() {
 														}
 														?>
 												</select>
+												<?php
+												break;
+											case default:
+												?>
+												<td bgcolor="<?=$fondo_color;?>" class='tabla_listado_celda <?=$animacion?>'>
+													<?=$fila[$i]?> 
+												</td>
 												<?php
 												break;
 										}
