@@ -799,11 +799,7 @@ public function tabla() {
 												break;
 												
 											default:
-												?>
-												<td bgcolor="<?=$fondo_color;?>" class='tabla_listado_celda <?=$animacion?>'>
-													<?=$fila[$i]?> 
-												</td>
-												<?php
+												echo $fila[$i];
 												break;
 										}
 										?>
