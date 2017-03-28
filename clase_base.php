@@ -847,41 +847,40 @@ public function tabla() {
 				?>
 				<script type="text/javascript">
 					function removeParam(key, sourceURL) {
-						var rtn = sourceURL.split("?")[0],
-									param,
+							//~ Declaramos variables que vamos a emplear y les asignamos valores.
+							var rtn = sourceURL.split("?")[0],
 									params_arr = [],
-									queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
-						
-						var existe = sourceURL.split("?")[1];
-						if (typeof(existe) == 'undefined') {
-							var parametro = '?';
+									queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : ""; // If ternario. Busca en la cadena sourceURL un '?', si lo halla trocea la misma (split) por el '?'.
+
+							//~ Comprobamos si existen parámetros enviados mediante GET (si existe '?' en la url y si hay algo después).
+							if (typeof(queryString) == 'undefined') 
+									var parametro = '?'; // Si no hay '?' o no tiene nada después, el separador que usaremos será '?'.
+							else {
+									var parametro = '&'; // En caso de que sí exista algún GET, el separador será '&'.
+
+									if (queryString !== "") {
+											params_arr = queryString.split("&"); // Introduce en el array params_arr los valores resultado de separar por '&'.
+											// El bucle for recorre el array y comprueba si el valor del array en la posición actual es la clave (key) que pasamos a la función.
+											for (var i = params_arr.length - 1; i >= 0 && params_arr[i].split("=")[0] === key; i -= 1) {
+															params_arr.splice(i, 1); // Si existe la clave (key) en el array, la elimina.
+											}
+											// Reconstruye la url concatenando los valores del array params_arr separados por '&'.
+											rtn = rtn + "?" + params_arr.join("&");
+									}
 							}
-						else {
-							var parametro = '&';
-							}
-						
-						if (queryString !== "") {
-							params_arr = queryString.split("&");
-							
-							for (var i = params_arr.length - 1; i >= 0; i -= 1) {
-								param = params_arr[i].split("=")[0];
-								if (param === key) {
-									params_arr.splice(i, 1);
-								}
-							}
-							rtn = rtn + "?" + params_arr.join("&");
-						}
-						return {rtn:rtn,parametro:parametro}	
+							return {rtn:rtn,parametro:parametro}; // Devuelve un objeto que contiene rtn (la url) y parametro (el separador que se empleará).
 					}
-					
+
 					function eliminar(id) {
-						var url = window.location.href;
-						if (confirm('¿Seguro que quiere eliminarlo?')) {
-							url = removeParam('delid',url);
-							document.location.href = url.rtn + url.parametro + 'delid='+id;
-						}
+							var url = window.location.href; // Variable que contiene la url actual.
+							if (confirm('¿Seguro que quiere eliminarlo?')) {
+									url = removeParam('delid',url); // Una vez confirmado, se elimina el GET 'delid' de la url
+									url = removeParam('mensaje',url.rtn) // Del resultado de la línea anterior eliminamos el 'mensaje'.
+									// Redirigimos la página hacia la url reconstruida.
+									document.location.href = url.rtn + url.parametro + 'delid='+id+'&mensaje=Elemento borrado con éxito.';
+							}
 					}
-				</script>
+                </script>
 				
 				<?php
 				if ($this -> paginacion == 1) {
