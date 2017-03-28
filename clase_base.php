@@ -799,7 +799,7 @@ public function tabla() {
 												break;
 												
 											default:
-												echo $fila[$i];
+												echo 'El módulo '.$this->columna[$i].' no existe';
 												break;
 										}
 										?>
