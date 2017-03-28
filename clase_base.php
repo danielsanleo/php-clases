@@ -797,7 +797,8 @@ public function tabla() {
 												</select>
 												<?php
 												break;
-											case default:
+												
+											default:
 												?>
 												<td bgcolor="<?=$fondo_color;?>" class='tabla_listado_celda <?=$animacion?>'>
 													<?=$fila[$i]?> 
