@@ -4,6 +4,13 @@ class base
     # CONSULTA GENERAL
     # ----------------
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
+    
+    // ORDENACIÓN
+    # Orden predeterminado que mostrará la tabla.
+    # Array en el que pasamos los parámetros en la forma nº de columna a ordenar => tipo de ordenación.
+    # Ejemplo→ array(2 => 'ASC', 3 => 'DESC', 1 => 'DESC');
+    public $orden_predeterminado = array();
+    
     # Variables Globales
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
@@ -234,6 +241,15 @@ public function tabla() {
 			$order = " ORDER BY $ordenar_columna $ordenado_columna";
 			$this -> consulta .= $order;
 			}
+		else if (!empty($this -> orden_predeterminado)) {
+				$this -> consulta .= ' ORDER BY ';
+				end($this -> orden_predeterminado);
+				$ultima_clave = key($this -> orden_predeterminado);
+				reset($this -> orden_predeterminado);
+				foreach ($this -> orden_predeterminado as $clave => $valor) {
+						$this -> consulta .= "$clave $valor".(($clave != $ultima_clave)?', ':'');
+				}
+            }
         
         # Si la paginacion esta habilitada:
         # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion 
