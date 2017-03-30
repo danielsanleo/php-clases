@@ -291,15 +291,15 @@ public function tabla() {
 				}
 			
 			// Página en la que nos encontramos
-			if (!empty($_GET['paginacion_accion'])) {
-				$pagina = $_GET['paginacion_accion'];
+			if (!empty($_GET['pagina'])) {
+				$pagina = $_GET['pagina'];
 				}
 			else {
 				$pagina = 1;
 				}
 				
 			// Tupla de inicio
-			if (!empty($_GET['paginacion_accion']) && $pagina > 0) {
+			if (!empty($_GET['pagina']) && $pagina > 0) {
 				$comienzo = (($pagina-1)*$this -> pagesize);
 				}
 			else {
@@ -334,16 +334,6 @@ public function tabla() {
                         if (!empty($_POST[$tmp])) {
                             $_SESSION['valor'] = $_POST[$tmp];
                             $_SESSION['i'] = $i;
-                    }
-                }
-            }
-                
-            # Valores devueltos por el modulo OPERACIONES
-            // Por ahora muestra los valores, pero no hace nada con ellos
-            elseif (!empty($_POST['operacion'])) {
-                foreach ($_POST['operacion'] as $identificador => $valor) {
-                    if (!empty($operacion) && !empty($valor)) {
-                        //~ echo " $operacion => $valor ";
                     }
                 }
             }
@@ -756,14 +746,6 @@ public function tabla() {
 													}
 													
 												break;
-											
-											case 'operacion':
-											
-												?>
-												<input name='<?=$this->name_operacion?>[<?=$fila[$i]?>]' type='<?=$this->type?>' min="0"> 
-												<?php
-												
-												break;
 												
 											case 'estado':
 											
@@ -954,7 +936,7 @@ public function tabla() {
 										</select>
 									</td>
 									<td style="text-align:left; padding-left:20px;" >
-										<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="cambiar(0,'paginacion_accion')">
+										<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="cambiar(0,'pagina')">
 											<div class="start" style="cursor:pointer">
 												<span>
 													<nobr>Iniciar</nobr>
@@ -963,13 +945,13 @@ public function tabla() {
 										</div>
 									</td>
 									<td style="text-align:left;">
-										<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="cambiar(<?=($pagina>0)?$pagina-1:'0'?>, 'paginacion_accion')">
+										<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="cambiar(<?=($pagina>0)?$pagina-1:'0'?>, 'pagina')">
 											<div class="prev"><span>Anterior</span></div>
 										</div>
 									</td>
 									<td class="search" style="padding:0px 10px 0px 10px; text-align:left;">
 										Página
-										<select name="pagina" id="pagina" style="width:75px;" onchange='cambiar(this.form.pagina.value, "paginacion_accion")'>
+										<select name="pagina" id="pagina" style="width:75px;" onchange='cambiar(this.form.pagina.value, "pagina")'>
 											<?php
 											for ($i=1; $i<=$this -> paginas_total ;$i++) {
 												?>
@@ -981,12 +963,12 @@ public function tabla() {
 										de <?=$this -> paginas_total;?>
 									</td>
 									<td style="text-align:right;">
-										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" <?php if ($this -> paginas_total != $pagina) { ?> onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>, 'paginacion_accion')" <?php } else { ?> <?php }?>>
+										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" <?php if ($this -> paginas_total != $pagina) { ?> onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>, 'pagina')" <?php } else { ?> <?php }?>>
 											<div class="next" style="cursor:pointer"><span>Siguiente</span></div>
 										</div>
 									</td>
 									<td style="padding-right:20px; text-align:right;">
-										<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="cambiar(<?=$this -> paginas_total?>, 'paginacion_accion')">
+										<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="cambiar(<?=$this -> paginas_total?>, 'pagina')">
 											<div class="end">
 												<span>
 													<nobr>Final</nobr>
