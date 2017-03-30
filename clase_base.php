@@ -222,8 +222,6 @@ public function tabla() {
        
         $db = $this -> db;
 
-
-
         // Módulo encargado de eliminar la fila
         # Comprobamos si es una pagina en la que se deberian dar derechos 
         # al usuario final para eliminar filas
@@ -257,6 +255,22 @@ public function tabla() {
 				$this -> consulta .= "$clave $valor".(($clave != $ultima_clave)?', ':'');	
 			}
 		}
+		
+		# Funcion encargada de seleccionar el icono para el orden
+		if (!empty($this -> orden_predeterminado)) {
+			function icono($orden_actual) {
+				switch ($orden_actual) {
+					case 'ASC':
+						return 'images/icono-ordenar2.png';
+						break;
+					
+					case 'DESC':
+						return 'images/icono-ordenar.png';
+						break;
+					}
+				}
+			}
+		
         
         # Si la paginacion esta habilitada:
         # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion 
@@ -272,20 +286,20 @@ public function tabla() {
 			}
 			
 			// Tamaño de la pagina
-			if (!empty($_POST['pagesize']) && is_numeric($_POST['pagesize'])) {
-				$this -> pagesize = $_POST['pagesize'];
+			if (!empty($_GET['pagesize']) && is_numeric($_GET['pagesize'])) {
+				$this -> pagesize = $_GET['pagesize'];
 				}
 			
 			// Página en la que nos encontramos
-			if (!empty($_POST['paginacion_accion'])) {
-				$pagina = $_POST['paginacion_accion'];
+			if (!empty($_GET['paginacion_accion'])) {
+				$pagina = $_GET['paginacion_accion'];
 				}
 			else {
 				$pagina = 1;
 				}
 				
 			// Tupla de inicio
-			if (!empty($_POST['paginacion_accion']) && $pagina > 0) {
+			if (!empty($_GET['paginacion_accion']) && $pagina > 0) {
 				$comienzo = (($pagina-1)*$this -> pagesize);
 				}
 			else {
@@ -507,10 +521,6 @@ public function tabla() {
 						
 						if ($total_registros > 0) {
 							
-							# Buscamos en el array 'columna' si existe el valor 'clave_primaria' -> en tal caso no mostraremos dicha columna, se utilizará para guardar la clave primaria de la fila
-							$posicion_clave_primaria = array_search('clave_primaria', $this -> columna);
-							
-							
 							## Generamos las columnas que contiene la consulta
 							$n_columnas = 0;
 							
@@ -533,51 +543,44 @@ public function tabla() {
 								?>
 								<td class='columna'> 
 									<?php
-
+									# La siguiente condicion permite saber si en esta columna debe ordenarse
 									if (!empty($this -> ordenar[$n_columnas])) {
 										if (!empty($ordenar)) {
-											$ordenar[$n_columnas] = (($ordenar[$n_columnas]=='DESC')?'ASC':'DESC');
-
-											if ($this -> orden_anidado){	
+											
+											# La siguiente condicion devuelve el icono a mostrar para el orden seleccionado
+											$ordenar_icono = (!empty($ordenar[$n_columnas])?icono($ordenar[$n_columnas]):0);
+											
+											# A continuacion intercambiamos los valores del array lo que permite revertir el orden del listado
+											$ordenar[$n_columnas] = (empty($ordenar[$n_columnas])?$this -> ordenar[$n_columnas]:(($ordenar[$n_columnas]=='DESC')?'ASC':'DESC'));
+											
+											if ($this -> orden_anidado) {	
 												foreach($array_ordenar as $c => $v) {
 													$tmp[$c] = $v;
 												}
 											}
 											
 											$tmp[$n_columnas] = $ordenar[$n_columnas];
-
+											
 											$ordenar0 = urlencode(serialize($tmp));
 											unset($tmp);
 										}
 										else {
+											# La siguiente condicion devuelve el icono para el orden predeterminado
+											$ordenar_icono = (!empty($this -> orden_predeterminado[$n_columnas])?icono($this -> orden_predeterminado[$n_columnas]):0);
 											$ordenar0 = urlencode(serialize(array($n_columnas => $this -> ordenar[$n_columnas])));
-											
 										}
 										# Parseamos la URL para crear el enlace para ordenar por columna
 										# Revertimos el orden para permitir ordenar de forma ASC y DESC
 										
-										$ordenar_icono = 'images/icono-ordenar.png';
+										//~ $ordenar_icono = 'images/icono-ordenar.png';
 										
-										//~ if (isset($param_ordenar) && $param_ordenar == $n_columnas) {
-												//~ switch ($param_ordenado) {
-													//~ case 'ASC':
-														//~ $ordenado = 'DESC';
-														//~ $ordenar_icono = 'images/icono-ordenar2.png';
-														//~ break;
-													//~ 
-													//~ case 'DESC':
-														//~ $ordenado = 'ASC';
-														//~ $ordenar_icono = 'images/icono-ordenar.png';
-														//~ break;
-													//~ }
-											//~ }
 										?>
-										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$ordenar0?>'><?=$casilla?><?=(isset($param_ordenar) && $param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
+										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$ordenar0?>'><?=$casilla?><?=(!empty($ordenar_icono))?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
 										<?php
+									}
+								    else {
+										echo $casilla;
 										}
-									    else {
-											echo $casilla;
-											}
 									?>
 								</td>
 								<?php
@@ -887,23 +890,28 @@ public function tabla() {
 						var rtn = sourceURL.split("?")[0],
 							params_arr = [],
 							queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : ""; // If ternario. Busca en la cadena sourceURL un '?', si lo halla trocea la misma (split) por el '?'.
-
+							
 						//~ Comprobamos si existen parámetros enviados mediante GET (si existe '?' en la url y si hay algo después).
-						if (typeof(queryString) == 'undefined') 
+						if (typeof(queryString) == 'undefined' || queryString == '') 
 							var parametro = '?'; // Si no hay '?' o no tiene nada después, el separador que usaremos será '?'.
 						else {
 							var parametro = '&'; // En caso de que sí exista algún GET, el separador será '&'.
-						
-							if (queryString !== "") {
-								params_arr = queryString.split("&"); // Introduce en el array params_arr los valores resultado de separar por '&'.
-								// El bucle for recorre el array y comprueba si el valor del array en la posición actual es la clave (key) que pasamos a la función.
-								for (var i = params_arr.length - 1; i >= 0 && params_arr[i].split("=")[0] === key; i -= 1) {
-										params_arr.splice(i, 1); // Si existe la clave (key) en el array, la elimina.
+
+							params_arr = queryString.split("&"); // Introduce en el array params_arr los valores resultado de separar por '&'.
+							
+							// El bucle for recorre el array y comprueba si el valor del array en la posición actual es la clave (key) que pasamos a la función.
+							for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+								param = params_arr[i].split("=")[0];
+								
+								if (params_arr[i].split("=")[0] === key) {
+									params_arr.splice(i, 1); // Si existe la clave (key) en el array, la elimina.
 								}
-								// Reconstruye la url concatenando los valores del array params_arr separados por '&'.
-								rtn = rtn + "?" + params_arr.join("&");
 							}
+							
+							// Reconstruye la url concatenando los valores del array params_arr separados por '&'.
+							rtn = rtn + '?' + params_arr.join("&");
 						}
+						
 						return {rtn:rtn,parametro:parametro}; // Devuelve un objeto que contiene rtn (la url) y parametro (el separador que se empleará).
 					}
 					
@@ -927,16 +935,16 @@ public function tabla() {
 							<table cellspacing="2" cellpadding="2" border="0" style="text-align:center; margin: 10px;">
 								<tr>
 									<td style="text-align:left; padding-left:20px;" class="search">
-										<input type='hidden' id='paginacion_accion' name='paginacion_accion' value='null'>
 										<script>
-											function cambiar(accion) {
-												document.getElementById('paginacion_accion').value=accion;
-												document.<?=$this -> form_name?>.submit();
+											function cambiar(accion, nombre_parametro) {
+												var url = window.location.href;
+												url = removeParam(nombre_parametro,url);
+												window.location.href = url.rtn + url.parametro +  nombre_parametro + '=' + accion;
 												}
 										</script>
 										Mostrar #
-										<select name="pagesize" id="pagesize" style="width:75px;" onchange='this.form.submit()'>
-											<?php 
+										<select name="pagesize" id="pagesize" style="width:75px;" onchange='cambiar(this.form.pagesize.value, "pagesize")'>
+											<?php
 											foreach ($this -> pagesize_opciones AS $size) {
 												?>
 												<option value="<?=$size?>" <?=($this->pagesize==$size)?'selected':'';?>><?=$size?></option>
@@ -946,7 +954,7 @@ public function tabla() {
 										</select>
 									</td>
 									<td style="text-align:left; padding-left:20px;" >
-										<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="cambiar(0)">
+										<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="cambiar(0,'paginacion_accion')">
 											<div class="start" style="cursor:pointer">
 												<span>
 													<nobr>Iniciar</nobr>
@@ -955,13 +963,13 @@ public function tabla() {
 										</div>
 									</td>
 									<td style="text-align:left;">
-										<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="cambiar(<?=($pagina>0)?$pagina-1:'0'?>)">
+										<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="cambiar(<?=($pagina>0)?$pagina-1:'0'?>, 'paginacion_accion')">
 											<div class="prev"><span>Anterior</span></div>
 										</div>
 									</td>
 									<td class="search" style="padding:0px 10px 0px 10px; text-align:left;">
 										Página
-										<select name="pagina" id="pagina" style="width:75px;" onchange='cambiar(this.form.pagina.value)'>
+										<select name="pagina" id="pagina" style="width:75px;" onchange='cambiar(this.form.pagina.value, "paginacion_accion")'>
 											<?php
 											for ($i=1; $i<=$this -> paginas_total ;$i++) {
 												?>
@@ -973,12 +981,12 @@ public function tabla() {
 										de <?=$this -> paginas_total;?>
 									</td>
 									<td style="text-align:right;">
-										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" <?php if ($this -> paginas_total != $pagina) { ?> onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>)" <?php } else { ?> <?php }?>>
+										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" <?php if ($this -> paginas_total != $pagina) { ?> onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>, 'paginacion_accion')" <?php } else { ?> <?php }?>>
 											<div class="next" style="cursor:pointer"><span>Siguiente</span></div>
 										</div>
 									</td>
 									<td style="padding-right:20px; text-align:right;">
-										<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="cambiar(<?=$this -> paginas_total?>)">
+										<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="cambiar(<?=$this -> paginas_total?>, 'paginacion_accion')">
 											<div class="end">
 												<span>
 													<nobr>Final</nobr>
