@@ -4,13 +4,14 @@ class base
     # CONSULTA GENERAL
     # ----------------
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
-    
+
     // ORDENACIÓN
     # Orden predeterminado que mostrará la tabla.
     # Array en el que pasamos los parámetros en la forma nº de columna a ordenar => tipo de ordenación.
     # Ejemplo→ array(2 => 'ASC', 3 => 'DESC', 1 => 'DESC');
     public $orden_predeterminado = array();
-    
+	public $orden_anidado = 1; # Existen dos tipos de orden: Por varias columnas conjuntamente o solo por una
+	
     # Variables Globales
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
@@ -221,6 +222,8 @@ public function tabla() {
        
         $db = $this -> db;
 
+
+
         // Módulo encargado de eliminar la fila
         # Comprobamos si es una pagina en la que se deberian dar derechos 
         # al usuario final para eliminar filas
@@ -235,21 +238,25 @@ public function tabla() {
         
         # Recogemos el parametro 'ordenar' en caso de que exista con el que podremos ordenar la/s columnas
 		if (isset($_GET['ordenar'])) {
-			$ordenar_columna = $db -> real_escape_string($_GET['ordenar']);
-			$ordenado_columna = $db -> real_escape_string($_GET['ordenado']);
-			$ordenar_columna++;
-			$order = " ORDER BY $ordenar_columna $ordenado_columna";
-			$this -> consulta .= $order;
+			$ordenar = unserialize(urldecode($_GET['ordenar']));
+			$this -> consulta .= ' ORDER BY ';
+			end($ordenar);
+			$ultima_clave = key($ordenar);
+			reset($ordenar);
+			foreach ($ordenar as $clave => $valor) {
+				$clave++;
+				$this -> consulta .= $db -> real_escape_string($clave).' '.$db -> real_escape_string($valor).(($clave-1 != $ultima_clave)?', ':'');	
 			}
+		}
 		else if (!empty($this -> orden_predeterminado)) {
-				$this -> consulta .= ' ORDER BY ';
-				end($this -> orden_predeterminado);
-				$ultima_clave = key($this -> orden_predeterminado);
-				reset($this -> orden_predeterminado);
-				foreach ($this -> orden_predeterminado as $clave => $valor) {
-						$this -> consulta .= "$clave $valor".(($clave != $ultima_clave)?', ':'');
-				}
-            }
+			$this -> consulta .= ' ORDER BY ';
+			end($this -> orden_predeterminado);
+			$ultima_clave = key($this -> orden_predeterminado);
+			reset($this -> orden_predeterminado);
+			foreach ($this -> orden_predeterminado as $clave => $valor) {
+				$this -> consulta .= "$clave $valor".(($clave != $ultima_clave)?', ':'');	
+			}
+		}
         
         # Si la paginacion esta habilitada:
         # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion 
@@ -508,12 +515,9 @@ public function tabla() {
 							$n_columnas = 0;
 							
 							# Eliminamos los anteriores parametros de ordenacion para no saturar la URL añadiendo los mismos parámetros
-							if (isset($_GET['ordenar']) && !empty($_GET['ordenado'])) {
-								$param_ordenar = $_GET['ordenar'];
-								$param_ordenado = $_GET['ordenado'];
-								
+							if (isset($_GET['ordenar'])) {
+								$array_ordenar = unserialize(urldecode($_GET['ordenar']));
 								unset($_GET['ordenar']);
-								unset($_GET['ordenado']);
 								}
 							
 							while ($finfo = $resultados->fetch_field()) {
@@ -529,30 +533,46 @@ public function tabla() {
 								?>
 								<td class='columna'> 
 									<?php
+
 									if (!empty($this -> ordenar[$n_columnas])) {
+										if (!empty($ordenar)) {
+											$ordenar[$n_columnas] = (($ordenar[$n_columnas]=='DESC')?'ASC':'DESC');
+
+											if ($this -> orden_anidado){	
+												foreach($array_ordenar as $c => $v) {
+													$tmp[$c] = $v;
+												}
+											}
+											
+											$tmp[$n_columnas] = $ordenar[$n_columnas];
+
+											$ordenar0 = urlencode(serialize($tmp));
+											unset($tmp);
+										}
+										else {
+											$ordenar0 = urlencode(serialize(array($n_columnas => $this -> ordenar[$n_columnas])));
+											
+										}
 										# Parseamos la URL para crear el enlace para ordenar por columna
 										# Revertimos el orden para permitir ordenar de forma ASC y DESC
 										
-										$ordenado = $this -> ordenar[$n_columnas];
 										$ordenar_icono = 'images/icono-ordenar.png';
 										
-										if (isset($param_ordenar)) {
-											if ($param_ordenar == $n_columnas) {
-												switch ($param_ordenado) {
-													case 'ASC':
-														$ordenado = 'DESC';
-														$ordenar_icono = 'images/icono-ordenar2.png';
-														break;
-													
-													case 'DESC':
-														$ordenado = 'ASC';
-														$ordenar_icono = 'images/icono-ordenar.png';
-														break;
-													}
-												}
-											}
+										//~ if (isset($param_ordenar) && $param_ordenar == $n_columnas) {
+												//~ switch ($param_ordenado) {
+													//~ case 'ASC':
+														//~ $ordenado = 'DESC';
+														//~ $ordenar_icono = 'images/icono-ordenar2.png';
+														//~ break;
+													//~ 
+													//~ case 'DESC':
+														//~ $ordenado = 'ASC';
+														//~ $ordenar_icono = 'images/icono-ordenar.png';
+														//~ break;
+													//~ }
+											//~ }
 										?>
-										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$n_columnas.'&ordenado='.$ordenado?>'><?=$casilla?><?=(isset($param_ordenar) && $param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
+										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$ordenar0?>'><?=$casilla?><?=(isset($param_ordenar) && $param_ordenar == $n_columnas)?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
 										<?php
 										}
 									    else {
@@ -863,40 +883,40 @@ public function tabla() {
 				?>
 				<script type="text/javascript">
 					function removeParam(key, sourceURL) {
-							//~ Declaramos variables que vamos a emplear y les asignamos valores.
-							var rtn = sourceURL.split("?")[0],
-									params_arr = [],
-									queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : ""; // If ternario. Busca en la cadena sourceURL un '?', si lo halla trocea la misma (split) por el '?'.
+						//~ Declaramos variables que vamos a emplear y les asignamos valores.
+						var rtn = sourceURL.split("?")[0],
+							params_arr = [],
+							queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : ""; // If ternario. Busca en la cadena sourceURL un '?', si lo halla trocea la misma (split) por el '?'.
 
-							//~ Comprobamos si existen parámetros enviados mediante GET (si existe '?' en la url y si hay algo después).
-							if (typeof(queryString) == 'undefined') 
-									var parametro = '?'; // Si no hay '?' o no tiene nada después, el separador que usaremos será '?'.
-							else {
-									var parametro = '&'; // En caso de que sí exista algún GET, el separador será '&'.
-
-									if (queryString !== "") {
-											params_arr = queryString.split("&"); // Introduce en el array params_arr los valores resultado de separar por '&'.
-											// El bucle for recorre el array y comprueba si el valor del array en la posición actual es la clave (key) que pasamos a la función.
-											for (var i = params_arr.length - 1; i >= 0 && params_arr[i].split("=")[0] === key; i -= 1) {
-															params_arr.splice(i, 1); // Si existe la clave (key) en el array, la elimina.
-											}
-											// Reconstruye la url concatenando los valores del array params_arr separados por '&'.
-											rtn = rtn + "?" + params_arr.join("&");
-									}
+						//~ Comprobamos si existen parámetros enviados mediante GET (si existe '?' en la url y si hay algo después).
+						if (typeof(queryString) == 'undefined') 
+							var parametro = '?'; // Si no hay '?' o no tiene nada después, el separador que usaremos será '?'.
+						else {
+							var parametro = '&'; // En caso de que sí exista algún GET, el separador será '&'.
+						
+							if (queryString !== "") {
+								params_arr = queryString.split("&"); // Introduce en el array params_arr los valores resultado de separar por '&'.
+								// El bucle for recorre el array y comprueba si el valor del array en la posición actual es la clave (key) que pasamos a la función.
+								for (var i = params_arr.length - 1; i >= 0 && params_arr[i].split("=")[0] === key; i -= 1) {
+										params_arr.splice(i, 1); // Si existe la clave (key) en el array, la elimina.
+								}
+								// Reconstruye la url concatenando los valores del array params_arr separados por '&'.
+								rtn = rtn + "?" + params_arr.join("&");
 							}
-							return {rtn:rtn,parametro:parametro}; // Devuelve un objeto que contiene rtn (la url) y parametro (el separador que se empleará).
+						}
+						return {rtn:rtn,parametro:parametro}; // Devuelve un objeto que contiene rtn (la url) y parametro (el separador que se empleará).
 					}
-
+					
 					function eliminar(id) {
-							var url = window.location.href; // Variable que contiene la url actual.
-							if (confirm('¿Seguro que quiere eliminarlo?')) {
-									url = removeParam('delid',url); // Una vez confirmado, se elimina el GET 'delid' de la url
-									url = removeParam('mensaje',url.rtn) // Del resultado de la línea anterior eliminamos el 'mensaje'.
-									// Redirigimos la página hacia la url reconstruida.
-									document.location.href = url.rtn + url.parametro + 'delid='+id+'&mensaje=Elemento borrado con éxito.';
-							}
+						var url = window.location.href; // Variable que contiene la url actual.
+						if (confirm('¿Seguro que quiere eliminarlo?')) {
+							url = removeParam('delid',url); // Una vez confirmado, se elimina el GET 'delid' de la url
+							url = removeParam('mensaje',url.rtn) // Del resultado de la línea anterior eliminamos el 'mensaje'.
+							// Redirigimos la página hacia la url reconstruida.
+							document.location.href = url.rtn + url.parametro + 'delid='+id+'&mensaje=Elemento borrado con éxito.';
+						}
 					}
-                </script>
+				</script>
 				
 				<?php
 				if ($this -> paginacion == 1) {
@@ -970,11 +990,11 @@ public function tabla() {
 							</table>
 						</td>
 					</tr>
-					
+
 					<br>
 				<?php
 				}
-				
+
 				if ($this -> footer == 1) {
 				    ?>
 					<tr>
@@ -1017,7 +1037,7 @@ public function tabla() {
 					</tr>
 				<?php
 				}
-                  
+
 				if ($this -> radio_inferior == 1) {
 					?>
 					<tr style='width:100%;' align='center'>
@@ -1028,7 +1048,7 @@ public function tabla() {
               ?>
             </table>
         </table>
-    </form> 
+    </form>
     <?php
     }
 }
