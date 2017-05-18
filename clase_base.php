@@ -203,8 +203,9 @@ class base
     private $paginas_total;
     
 # El constructor realiza la conexion con la BBDD
-public function __construct() {
-	require($this-> ruta_archivo_config);
+public function __construct($ruta) {
+	require($ruta);
+	unset($ruta);
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
 	$this -> db -> set_charset($this -> db_charset);
     }
