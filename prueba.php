@@ -34,9 +34,7 @@
 				<td bgcolor="#FFFFFF" class="bordeLateral">
 					<?php
 					require("./clase_base.php");
-					$base = new base;
-					
-					$base -> ruta_archivo_config = "./config.php"; 
+					$base = new base('config.php');
 					
 					$base -> tabla_imagen = "images/icono-compras.png"; 
 					
