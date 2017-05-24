@@ -30,6 +30,13 @@ class base
     # el link hacia los estilos: <link rel="stylesheet" href="clases/animate.css">
     public $animacion = array();
     
+    # Barra de filtros
+    public $buscar = 1; # 1 -> Habilitamos el input para buscar por uno o varias columnas
+    public $buscar_columnas = array('nombre', 'codigo_postal'); # Array de columnas a buscar
+    
+    public $abcedario = 1; # 1 -> Habilitamos el filtro por letra
+    public $abcedario_columnas = array('nombre', 'codigo_postal'); # Array de columnas donde debe buscar
+    
     # BARRA DE MENUS
     # --------------
     // Hace referencia a la barra de menus situada encima del listado y los filtros
@@ -44,7 +51,6 @@ class base
     // Si es igual a uno, muestra el total de registros encontrados
     public $mostrar_total_registros = 0;
     public $tipo_registro = ' registros';
-    
     
     # FORM
     # ----
@@ -235,7 +241,25 @@ public function tabla() {
                 }
             }
         
-        # Recogemos el parametro 'ordenar' en caso de que exista con el que podremos ordenar la/s columnas
+        
+        if (!empty($_POST['buscar'])) {
+			$buscar = $db -> real_escape_string($_POST['buscar']);
+			
+			$where = ' WHERE ';
+			$total = count($this -> buscar_columnas);
+			$cnt = 1;
+			foreach ($this -> buscar_columnas as $columna_buscar) {
+				$where .= " $columna_buscar LIKE '%{$buscar}%' ";
+				
+				if ($total > 1 && $cnt < $total) {
+					$where .= ' OR ';
+					}
+				$cnt++;
+				}
+			$this -> consulta .= $where;
+			}
+        
+        # Recogemos el parametro 'ordenar' en caso de que exista para ordenar la/s columnas
 		if (isset($_GET['ordenar'])) {
 			$ordenar = unserialize(urldecode($_GET['ordenar']));
 			$this -> consulta .= ' ORDER BY ';
@@ -311,6 +335,9 @@ public function tabla() {
 			$this -> consulta .= " LIMIT ".$this -> pagesize." OFFSET $comienzo";
 			}
 		
+		echo $this -> consulta;
+		
+		
         $resultados = $db -> query($this->consulta) or die (mysqli_error($db));
 
 		// Total de páginas y registros
@@ -341,7 +368,7 @@ public function tabla() {
         }
         
         
-        $url_formulario = $this->protocolo . $_SERVER['HTTP_HOST'] .':'. $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
+        $url_formulario = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
         
         ?>
         <style>
@@ -492,6 +519,69 @@ public function tabla() {
 							</tr>
 						  <?php
 						  }
+						
+						
+						?>
+						<tr>
+							<td>
+								<div style="border:1px solid #CCCCCC; margin:5px; padding:5px; background-color:#F3F3F3;">
+									<table width="100%" border="0" cellspacing="0" cellpadding="2">
+										<tr>
+											<?php
+											if (!empty($this -> buscar) && !empty($this -> buscar_columnas)) {
+												?>
+												<td>
+													<div align="right" class="texto"> 
+														<input name="buscar" type="text" id="buscar" size="20" class="textfield" value="<?=!empty($_POST['buscar'])?$_POST['buscar']:'';?>"> 
+														<input type="submit" name="button" id="button" value="Buscar" class="textfield">
+													</div>
+												</td>
+												<?php
+											}
+											
+											if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
+												?>
+												<td>&nbsp;</td>
+												<td class="enlacehome">
+													<a href="<?=$url_formulario;?>&letra=a" class="enlacehome">A</a> | 
+													<a href="<?=$url_formulario;?>&letra=b" class="enlacehome">B</a> | 
+													<a href="<?=$url_formulario;?>&letra=c" class="enlacehome">C</a> | 
+													<a href="<?=$url_formulario;?>&letra=d" class="enlacehome">D</a> | 
+													<a href="<?=$url_formulario;?>&letra=e" class="enlacehome">E</a> | 
+													<a href="<?=$url_formulario;?>&letra=f" class="enlacehome">F</a> | 
+													<a href="<?=$url_formulario;?>&letra=g" class="enlacehome">G</a> | 
+													<a href="<?=$url_formulario;?>&letra=h" class="enlacehome">H</a> | 
+													<a href="<?=$url_formulario;?>&letra=i" class="enlacehome">I</a> | 
+													<a href="<?=$url_formulario;?>&letra=j" class="enlacehome">J</a> | 
+													<a href="<?=$url_formulario;?>&letra=k" class="enlacehome">K</a> | 
+													<a href="<?=$url_formulario;?>&letra=l" class="enlacehome">L</a> | 
+													<a href="<?=$url_formulario;?>&letra=m" class="enlacehome">M</a> | 
+													<a href="<?=$url_formulario;?>&letra=n" class="enlacehome">N</a> | 
+													<a href="<?=$url_formulario;?>&letra=ñ" class="enlacehome">Ñ</a> | 
+													<a href="<?=$url_formulario;?>&letra=o" class="enlacehome">O</a> | 
+													<a href="<?=$url_formulario;?>&letra=p" class="enlacehome">P</a> | 
+													<a href="<?=$url_formulario;?>&letra=q" class="enlacehome">Q</a> | 
+													<a href="<?=$url_formulario;?>&letra=r" class="enlacehome">R</a> | 
+													<a href="<?=$url_formulario;?>&letra=s" class="enlacehome">S</a> |
+													<a href="<?=$url_formulario;?>&letra=t" class="enlacehome">T</a> | 
+													<a href="<?=$url_formulario;?>&letra=u" class="enlacehome">U</a> | 
+													<a href="<?=$url_formulario;?>&letra=v" class="enlacehome">V</a> | 
+													<a href="<?=$url_formulario;?>&letra=w" class="enlacehome">W</a> |
+													<a href="<?=$url_formulario;?>&letra=x" class="enlacehome">X</a> | 
+													<a href="<?=$url_formulario;?>&letra=y" class="enlacehome">Y</a> | 
+													<a href="<?=$url_formulario;?>&letra=z" class="enlacehome">Z</a>
+												</td>
+												<?php
+												}
+											?>
+										</tr>                     
+									</table>
+								</div>
+							</td>
+						</tr>
+						<?php
+						  
+						  
 						## Total de registros encontrados
 						if ($this -> mostrar_total_registros == true && $total_registros > 0) {
 							?>
