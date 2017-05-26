@@ -278,7 +278,7 @@ public function tabla() {
 			$ultima_clave = key($this -> orden_predeterminado);
 			reset($this -> orden_predeterminado);
 			foreach ($this -> orden_predeterminado as $clave => $valor) {
-				$this -> consulta .= "$clave $valor".(($clave != $ultima_clave)?', ':'');	
+				$this -> consulta .= ($clave+1)." $clave $valor".(($clave != $ultima_clave)?', ':'');	
 			}
 		}
 		
