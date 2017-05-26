@@ -710,7 +710,14 @@ public function tabla() {
 										<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
 										<?php
 										
-										switch($this->columna[$i]) {
+										if (!empty($this->columna[$i])) {
+											$tmp = $this->columna[$i];
+										}
+										elseif (!empty($this->columna[$columnas[$i]])) {
+											$tmp = $this->columna[$columnas[$i]];
+											}
+										
+										switch($tmp) {
 											case 'imagen':
 												if (!empty($fila[$i])) {
 													?>
