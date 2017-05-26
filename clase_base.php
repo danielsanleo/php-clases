@@ -4,6 +4,7 @@ class base
     # CONSULTA GENERAL
     # ----------------
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
+    public $debug = False;
 
     // ORDENACIÓN
     # Orden predeterminado que mostrará la tabla.
@@ -20,7 +21,7 @@ class base
     public $protocolo = 'http://';
     public $db;
     
-    # MODULOS  EJ: array('2' => 'enlace'); 
+    # MODULOS  EJ: $columna = array('2' => 'enlace'); 
     # -----------------------------------
     # Array donde definir los modulos a utilizar
     public $columna = array();
@@ -335,8 +336,10 @@ public function tabla() {
 			$this -> consulta .= " LIMIT ".$this -> pagesize." OFFSET $comienzo";
 			}
 		
-		echo $this -> consulta;
 		
+		if ($this -> debug) {
+			echo $this -> consulta;
+			}
 		
         $resultados = $db -> query($this->consulta) or die (mysqli_error($db));
 
