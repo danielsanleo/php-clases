@@ -159,6 +159,9 @@ class base
     public $eliminar_imagen = 'images/boton-eliminar.png';
     public $eliminar_tabla = 'oficinas';
     public $eliminar_columna = 'id';
+
+    // LISTA
+	public $lista_consulta; # Consulta para cada una de las filas (devuelve un unico valor)
     
     // DESACTIVAR
     # Permite cambiar (UPDATE) un valor de una columna de una fila
@@ -465,7 +468,7 @@ public function tabla() {
                 <tr>
                   <td>
                     <?php
-                    if ($this->tabla_segunda_activar==1) {
+                    if ($this -> tabla_segunda_activar==1) {
                         # Segunda Tabla: 
                         #   - Imagen del listado
                         #   - Migas de Pan      
@@ -542,9 +545,7 @@ public function tabla() {
 								   <?php
 								   foreach ($this -> menu_url AS $clave => $url) {
 										?>
-										<a class='menu_enlace' href="<?=$url;?>" >
-											<img class='menu_imagenes' src="<?=$this->menu_imagen[$clave]?>" alt="">
-										</a>
+										<a class='menu_enlace' href="<?=$url;?>" > <img class='menu_imagenes' src="<?=$this->menu_imagen[$clave]?>" alt=""> </a>
 										<?php
 									   }
 								   ?>
@@ -868,6 +869,21 @@ public function tabla() {
 												<a href="javascript:desactivar('<?=$fila[$i];?>');">
 													<img src="<?=$this -> desactivar_imagen?>" alt="<?=$this -> desactivar_alt?>" title="<?=$this -> desactivar_alt?>" width="16" border="0">
 												</a>
+												<?php
+												break;
+											
+											case 'lista':
+												$listas = $db -> query($this -> lista_consulta.$fila[$i]) or die ($db -> error);
+												?>
+												<ul>
+												<?php
+												while ($lista = $listas -> fetch_array()) {
+													?>
+														<li><?=$lista[0]?></li>
+													<?php
+													}
+												?>
+												</ul>
 												<?php
 												break;
 												

@@ -35,48 +35,50 @@
 					<?php
 					require("./clase_base.php");
 					$base = new base('config.php');
-					
+
+					$base -> abcedario = False; 
+					$base -> buscar = False; 
+
 					$base -> tabla_imagen = "images/icono-compras.png"; 
-					
-					$base -> consulta = "SELECT id_operador AS ID, codigo_postal, nombre, direccion, activo, id AS Eliminar FROM llamadas WHERE activo=1";
-					
+
+					$base -> consulta = "SELECT nombre, 
+												id AS Subfamilias, 
+												id AS Editar, 
+												id AS Eliminar 
+										 FROM familias 
+										 WHERE activo=1";
+
 					$base -> migasdepan = 1;
-					$base -> migas = array('Menú' => 'menu.php', 'Listado Compras' => '');
-					
-					$base -> tabla_titulo = "<span class='departamento'>Compras &raquo Listado de compras</span>";
-					
-					$base -> tabla_ruta = 'menu.php?action=admin-compras-listado';
-					
-					$base -> orden_predeterminado = array(1 => 'ASC', 2 => 'ASC');
-					$base -> ordenar = array(1 => 'DESC', 2 => 'DESC');
+					$base -> migas = array('Menú' => 'menu.php', 'Listado Familias' => '');
+
+					$base -> tabla_titulo = "<span class='departamento'>Familias &raquo Listado de Familias</span>";
+					$base -> tabla_ruta = 'menu.php?action=admin-familias-listado';
+
+					$base -> orden_predeterminado = array(0 => 'ASC');
+					$base -> ordenar = array(0 => 'DESC');
 					$base -> orden_anidado = 0;
+
+					$editar = 'Editar';
+					$eliminar = 'Eliminar';
+					$base -> columna = array($eliminar => 'enlace', $editar => 'enlace', 'Subfamilias' => 'lista');
 					
-					$enlace = 'Direccion';
-					$base -> columna = array($enlace => 'enlace', 4 => 'enlace', 5 => 'desactivar');
 					
-					$base -> enlace_title = array($enlace => "Ver compra", 4 => "Editar");
-					$base -> enlace_img = array($enlace => "images/ver.png", 4 => "images/boton-modificar.png");
-					$base -> enlace_url = array($enlace => "menu.php?action=admin-compras-ver&id=", 4 => "menu.php?action=admin-compras-ficha&id=");
-					$base -> enlace_nueva_ventana = array($enlace => false,4 => false);
-					
+					$base -> lista_consulta = "SELECT nombre FROM subfamilias WHERE id_familia=";
+						
+					$base -> enlace_title = array($editar => "Editar", $eliminar => "Eliminar");
+					$base -> enlace_img = array($editar => "images/icono-add.png", $eliminar => "images/icono-eliminar.png");
+					$base -> enlace_url = array($editar => "menu.php?action=admin-familias-gestion&id=", $eliminar => "menu.php?action=admin-familias-listado&eliminar&id=");
+					$base -> enlace_nueva_ventana = array($editar => false, $eliminar => false);
+
 					$base -> eliminar_columna = 'id';
-					$base -> eliminar_tabla = 'llamadas';
-					
-					$base -> desactivar = True;
-					$base -> desactivar_tabla = 'llamadas';
-					$base -> desactivar_columna = 'activo';
-					$base -> desactivar_valor = 0;
-					$base -> desactivar_id = 'id';
-					$base -> desactivar_imagen = 'images/boton-eliminar.png';
-					$base -> desactivar_alt = 'Eliminar';
-					$base -> desactivar_texto_confirmar = '¿Seguro que quiere eliminarlo?';
-					
-					$base -> menu = false;
-					$base -> menu_url = array('1' => 'menu.php?action=admin-proveedores-gestion');
-					$base -> menu_imagen = array( 1 => "images/boton-nuevo-proveedor.png");
+					$base -> eliminar_tabla = 'familias';
+
+					$base -> menu = True;
+					$base -> menu_url = array(1 => 'menu.php?action=admin-familias-gestion', 2 => 'menu.php?action=admin-subfamilias-gestion');
+					$base -> menu_imagen = array(1 => "images/boton-nuevo-articulo.png", 2 => "images/boton-nuevo-articulo.png");
 
 					$base -> mostrar_total_registros = 1;
-					
+
 					$base -> pagesize = 15;
 
 					$base -> footer = 1;
