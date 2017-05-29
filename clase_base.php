@@ -1183,7 +1183,7 @@ public function tabla() {
 									<td>
 										<div style='text-align:right;'>
 											<a href="salir.php">
-												<img src="images/_active__exit.gif" alt="Cerrar" title="Salir" width="16" height="16" border="0">
+												<img src="images/active_exit.gif" alt="Cerrar" title="Salir" width="16" height="16" border="0">
 											</a>
 										</div>
 									</td>
