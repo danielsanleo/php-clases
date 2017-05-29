@@ -48,15 +48,16 @@
 					$base -> tabla_ruta = 'menu.php?action=admin-compras-listado';
 					
 					$base -> orden_predeterminado = array(1 => 'ASC', 2 => 'ASC');
-					$base -> ordenar = array(1 => 'DESC',2 => 'DESC');
-					$base -> orden_anidado = 1;
+					$base -> ordenar = array(1 => 'DESC', 2 => 'DESC');
+					$base -> orden_anidado = 0;
 					
-					$base -> columna = array(3 => 'enlace', 4 => 'enlace', 5 => 'eliminar');
+					$enlace = 'Direccion';
+					$base -> columna = array($enlace => 'enlace', 4 => 'enlace', 5 => 'eliminar');
 					
-					$base -> enlace_title = array(3 => "Ver compra", 4 => "Editar");
-					$base -> enlace_img = array(3 => "images/ver.png", 4 => "images/boton-modificar.png");
-					$base -> enlace_url = array(3 => "menu.php?action=admin-compras-ver&id=", 4 => "menu.php?action=admin-compras-ficha&id=");
-					$base -> enlace_nueva_ventana = array(3 => false,4 => false);
+					$base -> enlace_title = array($enlace => "Ver compra", 4 => "Editar");
+					$base -> enlace_img = array($enlace => "images/ver.png", 4 => "images/boton-modificar.png");
+					$base -> enlace_url = array($enlace => "menu.php?action=admin-compras-ver&id=", 4 => "menu.php?action=admin-compras-ficha&id=");
+					$base -> enlace_nueva_ventana = array($enlace => false,4 => false);
 					
 					$base -> eliminar_columna = '';
 					$base -> eliminar_tabla = '';

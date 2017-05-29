@@ -278,7 +278,7 @@ public function tabla() {
 			$ultima_clave = key($this -> orden_predeterminado);
 			reset($this -> orden_predeterminado);
 			foreach ($this -> orden_predeterminado as $clave => $valor) {
-				$this -> consulta .= ($clave+1)." $clave $valor".(($clave != $ultima_clave)?', ':'');	
+				$this -> consulta .= ($clave+1)." $valor".(($clave != $ultima_clave)?', ':'');	
 			}
 		}
 		
@@ -704,18 +704,19 @@ public function tabla() {
 									(!empty($this->animacion) && !empty($this->animacion[$i]))?$animacion = 'animated ' . $this -> animacion[$i]:$animacion='';
 									
 									# En caso de estar vacío el array de las columnas mostramos solo el contenido de la columna
-									if (!empty($this->columna[$i])) {
-
+									if (!empty($this->columna[$i]) || !empty($this->columna[$columnas[$i]]) ) {
+										
 										?>
 										<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
 										<?php
-										
 										if (!empty($this->columna[$i])) {
 											$tmp = $this->columna[$i];
+											$indice = $i;
 										}
 										elseif (!empty($this->columna[$columnas[$i]])) {
 											$tmp = $this->columna[$columnas[$i]];
-											}
+											$indice = $columnas[$i];
+										}
 										
 										switch($tmp) {
 											case 'imagen':
@@ -729,8 +730,8 @@ public function tabla() {
 											case 'enlace':
 												?>
 												<div style='text-align:center;' >
-													<a href="<?=$this->enlace_url[$i].$fila[$i]?>" <?=(!empty($this->enlace_nueva_ventana[$i]) && $this->enlace_nueva_ventana[$i]==1)?'target="_blank"':'';?>>
-														<img src="<?=$this->enlace_img[$i]?>" alt="<?=$this->enlace_title[$i]?>" title="<?=$this->enlace_title[$i]?>" style='width: 16px;'>
+													<a href="<?=$this->enlace_url[$indice].$fila[$i]?>" <?=(!empty($this->enlace_nueva_ventana[$indice]) && $this->enlace_nueva_ventana[$indice]==1)?'target="_blank"':'';?>>
+														<img src="<?=$this->enlace_img[$indice]?>" alt="<?=$this->enlace_title[$indice]?>" title="<?=$this->enlace_title[$indice]?>" style='width: 16px;'>
 													</a>
 												</div>
 												<?php
@@ -941,7 +942,6 @@ public function tabla() {
 								</tr>
 								<?php
 								$cnt++;
-							
 							}
 						}
 						else {
