@@ -1163,7 +1163,7 @@ public function tabla() {
 									<td style='width: 2px;'>
 										<div style='text-align:right;'>
 											<a href="javascript:window.history.back();">
-												<img src="images/_active__undo.gif" alt="Volver" title="Volver" width="16" height="16" border="0">
+												<img src="images/active_undo.gif" alt="Volver" title="Volver" width="16" height="16" border="0">
 											</a>
 										</div>
 									</td>
