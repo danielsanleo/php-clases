@@ -88,7 +88,6 @@ class base
     # \ 
     #   -Tabla Listado
         //Vacio
-        
     
     public $tabla_titulo;
     public $tabla_ruta;
@@ -160,6 +159,18 @@ class base
     public $eliminar_imagen = 'images/boton-eliminar.png';
     public $eliminar_tabla = 'oficinas';
     public $eliminar_columna = 'id';
+    
+    // DESACTIVAR
+    # Permite cambiar (UPDATE) un valor de una columna de una fila
+    # 
+    public $desactivar = 1;
+    public $desactivar_tabla = 'familias';
+	public $desactivar_columna = 'activo';
+	public $desactivar_valor = 0;
+	public $desactivar_id = 'id';
+	public $desactivar_imagen = 'images/boton-eliminar.png';
+	public $desactivar_alt = 'Eliminar';
+	public $desactivar_texto_confirmar = '¿Seguro que quiere eliminarlo?';
     
     // OPERACION
     // Realiza operaciones con los valores indicados de la fila
@@ -233,14 +244,35 @@ public function tabla() {
         // Módulo encargado de eliminar la fila
         # Comprobamos si es una pagina en la que se deberian dar derechos 
         # al usuario final para eliminar filas
-        if (in_array('eliminar',$this->columna)) {
+        if (in_array('eliminar', $this->columna)) {
             if (isset($_GET['delid'])) {
                     $ideliminar = $db -> real_escape_string($_GET['delid']);
                     
                     $query = "DELETE FROM $this->eliminar_tabla WHERE $this->eliminar_columna ='$ideliminar'";
+                    
+                 
+					if ($this -> debug) {
+						echo 'Consula eliminar: <br>';
+						echo $query;
+					}
                     $db -> query($query);
                 }
             }
+
+		# Desactivar fina (activo=0)
+		if ($this -> desactivar && !empty($_GET['did'])) {
+			$did = $db -> real_escape_string($_GET['did']);
+			$columna = $this -> desactivar_columna;
+			
+			$query = 'UPDATE '.$this -> desactivar_tabla.' SET '.$this ->desactivar_columna.'="'.$this->desactivar_valor.'" WHERE '.$this -> desactivar_id.'="'.$did.'"';
+			
+			if ($this -> debug) {
+				echo 'Consula desactivar: <br>';
+				echo $query;
+				}
+			
+			$db -> query($query) or die('Error consulta desactivar:'.$db -> error);
+			}
         
         
         if (!empty($_POST['buscar'])) {
@@ -350,6 +382,7 @@ public function tabla() {
             
         // POST
         if ($_POST) {
+						
             # Valores devueltos por el modulo SELECT
             if (!empty($_POST[$this->select_name])) {
                     $_POST = limpiarArray($_POST);
@@ -825,10 +858,19 @@ public function tabla() {
 											case 'eliminar':
 												?>
 												<a href="javascript:eliminar('<?=$fila[$i];?>');">
-													<img src="<?=$this->eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0" />
+													<img src="<?=$this->eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0">
 												</a>
 												<?php
 												break;
+											
+											case 'desactivar':
+												?>
+												<a href="javascript:desactivar('<?=$fila[$i];?>');">
+													<img src="<?=$this -> desactivar_imagen?>" alt="<?=$this -> desactivar_alt?>" title="<?=$this -> desactivar_alt?>" width="16" border="0">
+												</a>
+												<?php
+												break;
+												
 											case 'moneda':
 												?>
 												<?=$fila[$i]?> <?=$this -> moneda_divisa?>
@@ -1003,9 +1045,18 @@ public function tabla() {
 						var url = window.location.href; // Variable que contiene la url actual.
 						if (confirm('¿Seguro que quiere eliminarlo?')) {
 							url = removeParam('delid',url); // Una vez confirmado, se elimina el GET 'delid' de la url
-							url = removeParam('mensaje',url.rtn) // Del resultado de la línea anterior eliminamos el 'mensaje'.
+							url = removeParam('mensaje',url.rtn) // Del resultado de la línea anterior eliminamos el parametro 'mensaje'.
 							// Redirigimos la página hacia la url reconstruida.
 							document.location.href = url.rtn + url.parametro + 'delid='+id+'&mensaje=Elemento borrado con éxito.';
+						}
+					}
+					
+					function desactivar(id) {
+						var url = window.location.href; 
+						if (confirm('<?=$this -> desactivar_texto_confirmar?>')) {
+							url = removeParam('did',url);
+							url = removeParam('mensaje',url.rtn);
+							document.location.href = url.rtn + url.parametro + 'did='+id+'&mensaje=Elemento borrado con éxito.';
 						}
 					}
 				</script>

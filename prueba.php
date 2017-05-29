@@ -38,7 +38,7 @@
 					
 					$base -> tabla_imagen = "images/icono-compras.png"; 
 					
-					$base -> consulta = "SELECT id_operador AS ID, codigo_postal, nombre, direccion, activo, id AS Eliminar FROM llamadas";
+					$base -> consulta = "SELECT id_operador AS ID, codigo_postal, nombre, direccion, activo, id AS Eliminar FROM llamadas WHERE activo=1";
 					
 					$base -> migasdepan = 1;
 					$base -> migas = array('Menú' => 'menu.php', 'Listado Compras' => '');
@@ -52,15 +52,24 @@
 					$base -> orden_anidado = 0;
 					
 					$enlace = 'Direccion';
-					$base -> columna = array($enlace => 'enlace', 4 => 'enlace', 5 => 'eliminar');
+					$base -> columna = array($enlace => 'enlace', 4 => 'enlace', 5 => 'desactivar');
 					
 					$base -> enlace_title = array($enlace => "Ver compra", 4 => "Editar");
 					$base -> enlace_img = array($enlace => "images/ver.png", 4 => "images/boton-modificar.png");
 					$base -> enlace_url = array($enlace => "menu.php?action=admin-compras-ver&id=", 4 => "menu.php?action=admin-compras-ficha&id=");
 					$base -> enlace_nueva_ventana = array($enlace => false,4 => false);
 					
-					$base -> eliminar_columna = '';
-					$base -> eliminar_tabla = '';
+					$base -> eliminar_columna = 'id';
+					$base -> eliminar_tabla = 'llamadas';
+					
+					$base -> desactivar = True;
+					$base -> desactivar_tabla = 'llamadas';
+					$base -> desactivar_columna = 'activo';
+					$base -> desactivar_valor = 0;
+					$base -> desactivar_id = 'id';
+					$base -> desactivar_imagen = 'images/boton-eliminar.png';
+					$base -> desactivar_alt = 'Eliminar';
+					$base -> desactivar_texto_confirmar = '¿Seguro que quiere eliminarlo?';
 					
 					$base -> menu = false;
 					$base -> menu_url = array('1' => 'menu.php?action=admin-proveedores-gestion');
