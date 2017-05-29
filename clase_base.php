@@ -1082,7 +1082,7 @@ public function tabla() {
 					?>
 					<br>
 					<tr>
-						<td align='center' class="bordeLateral">
+						<td align='center' class="">
 							<table cellspacing="2" cellpadding="2" border="0" style="text-align:center; margin: 10px;">
 								<tr>
 									<td style="text-align:left; padding-left:20px;" class="search">
@@ -1157,7 +1157,7 @@ public function tabla() {
 				if ($this -> footer == 1) {
 				    ?>
 					<tr>
-						<td align='center' bgcolor="#FFFFFF" class="bordeLateral">
+						<td align='center' bgcolor="#FFFFFF" class="">
 							<table class="bordeExterior" style='width: 910px; margin-bottom: 20px;text-align:center; background-color:#FFFFFF;' cellpadding="4" cellspacing="0">
 								<tr>
 									<td style='width: 2px;'>
