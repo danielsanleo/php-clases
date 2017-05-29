@@ -545,7 +545,7 @@ public function tabla() {
 								   <?php
 								   foreach ($this -> menu_url AS $clave => $url) {
 										?>
-										<a class='menu_enlace' href="<?=$url;?>" > <img class='menu_imagenes' src="<?=$this->menu_imagen[$clave]?>" alt=""> </a>
+										<a class='menu_enlace' href="<?=$url;?>" ><img class='menu_imagenes' src="<?=$this->menu_imagen[$clave]?>" alt="Menu"></a>
 										<?php
 									   }
 								   ?>
