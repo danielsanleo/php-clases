@@ -41,22 +41,27 @@
 
 					$base -> tabla_imagen = "images/icono-compras.png"; 
 
-					$base -> consulta = "SELECT id, 
-												nombre, 
-												id_fabricante, 
-												id_subfamilia, 
-												referencia, 
-												descripcion
-										 FROM articulos
-										 WHERE activo=0";
+					$base -> consulta = "SELECT referencia, 
+												articulos.nombre, 
+												fabricantes.nombre AS Fabricante, 
+												subfamilias.nombre, 
+												familias.nombre,  
+												descripcion, 
+												articulos.id as Ficha, 
+												articulos.id as Editar, 
+												articulos.id as Eliminar 
+												FROM articulos INNER JOIN fabricantes ON articulos.id_fabricante=fabricantes.id 
+															   INNER JOIN subfamilias ON articulos.id_subfamilia=subfamilias.id  
+															   INNER JOIN familias ON subfamilias.id_familia=familias.id 
+												WHERE articulos.activo=0";
 
 
-					$base -> filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select'); 
-					$base -> filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia');
-					$base -> filtros_nombre = array(1 => 'descripcion', 2 => 'categoria', 3 => 'subfamilia');
-					$base -> filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias');
-					$base -> filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
-					$base -> filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');								   
+					$base -> filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select', 4 => 'select'); 
+					$base -> filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia', 4 => 'Familia');
+					$base -> filtros_nombre = array(1 => 'descripcion', 2 => 'categoria', 3 => 'subfamilia', 4 => 'familia');
+					$base -> filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias', 4 => 'SELECT id, nombre FROM familias');
+					$base -> filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia', 4 => 'familias.id');
+					$base -> filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=', 4 => '=');
 					$base -> filtros_boton_buscar = True;
 					
 

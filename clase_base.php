@@ -683,67 +683,66 @@ public function tabla() {
 												</tr> 
 												<?php
 												}
-											?>
-										<?php
-										$cnt = 1;
-										foreach ($this -> filtros as $id => $filtro) {
-											$r = $cnt%3;
 											
-											if ($r == 0) {
-												echo '<tr>';
-												}
-											
-											switch ($filtro) {
-												case 'buscar':
-														?>
-														<td>
-															<div align="left" class="texto"> 
-																<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																<input name="<?=$this -> filtros_nombre[$id]?>" type="text" size="20" class="textfield" value="<?=!empty($_POST[$this -> filtros_nombre[$id]])?$_POST[$this -> filtros_nombre[$id]]:'';?>"> 
-															</div>
-														</td>
-														<?php
-													break;
-
-												case 'select':
-														?>
-														<td>
-															<div align="left" class="texto"> 
-																<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																<select class='textfield' name='<?=$this -> filtros_nombre[$id]?>' onchange='this.form.submit()'>
-																	<option value='0'>Selecione...</option>
-																	<?php
-																	$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
-																	
-																	while ($fila_filtro = $filas_filtros -> fetch_array()) {
-																		?>
-																		<option value='<?=$fila_filtro[0]?>' <?=(!empty($_POST[$this -> filtros_nombre[$id]]) && $_POST[$this -> filtros_nombre[$id]]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
-																		<?php
-																		}
-																	?>
-																</select>
-															</div>
-														</td>
-														<?php
-													break;
-												}
-											
-											if ($r == 0) {
-												echo '<tr>';
-												}
+											$cnt = 0;
+											foreach ($this -> filtros as $id => $filtro) {
+												$r = $cnt%2;
 												
-											$cnt++;
-											}
-											
-											if ($this -> filtros_boton_buscar) {
-												?>
-												<tr>
-													<td colspan='2' align='right'>
-														<input type="submit" name="button" id="button" value="Buscar" class="textfield">													
-													</td>
-												</tr>
-												<?php
+												if ( $r == 0 ) {
+													echo '<tr>';
+													}
+												
+												switch ($filtro) {
+													case 'buscar':
+															?>
+															<td>
+																<div align="left" class="texto"> 
+																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
+																	<input name="<?=$this -> filtros_nombre[$id]?>" type="text" size="20" class="textfield" value="<?=!empty($_POST[$this -> filtros_nombre[$id]])?$_POST[$this -> filtros_nombre[$id]]:'';?>"> 
+																</div>
+															</td>
+															<?php
+														break;
+
+													case 'select':
+															?>
+															<td>
+																<div align="left" class="texto"> 
+																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
+																	<select class='textfield' name='<?=$this -> filtros_nombre[$id]?>' onchange='this.form.submit()'>
+																		<option value='0'>Selecione...</option>
+																		<?php
+																		$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
+																		
+																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
+																			?>
+																			<option value='<?=$fila_filtro[0]?>' <?=(!empty($_POST[$this -> filtros_nombre[$id]]) && $_POST[$this -> filtros_nombre[$id]]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
+																			<?php
+																			}
+																		?>
+																	</select>
+																</div>
+															</td>
+															<?php
+														break;
+													}
+												
+												if ( $r == 1 ) {
+													echo '</tr>';
+													}
+													
+												$cnt = $cnt + 1;
 												}
+											
+												if ($this -> filtros_boton_buscar) {
+													?>
+													<tr>
+														<td colspan='2' align='right'>
+															<input type="submit" name="button" id="button" value="Buscar" class="textfield">													
+														</td>
+													</tr>
+													<?php
+													}
 											?>
 									</table>
 								</div>
