@@ -13,6 +13,34 @@ class base
     public $orden_predeterminado = array();
 	public $orden_anidado = 1; # Existen dos tipos de orden: Por varias columnas conjuntamente o solo por una
 	
+	# Filtros
+	# Funcionan de forma similar a los modulos del listado
+	public $filtros = array(1 => 'buscar', 
+							2 => 'select', 
+							3 => 'select'); # Array con los filtros a crear
+							
+	public $filtros_texto = array(1 => 'Descripcion', 
+								  2 => 'Fabricante', 
+								  3 => 'Subfamilia'); # Array con los nombres de los campos
+								  
+	public $filtros_nombre = array(1 => 'descripcion', 
+								   2 => 'categoria', 
+								   3 => 'subfamilia'); # Array con el nombre de cada input
+								   
+	public $filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 
+									  3 => 'SELECT id, nombre FROM subfamilias'); # Consultas para los filtros necesarios
+									  
+	public $filtros_where = array(1 => array('referencia', 'descripcion'), 
+								  2 => 'id_fabricante', 
+								  3 => 'id_subfamilia'); # Columnas de la BBDD a la que aplicar los filtros
+								  
+	public $filtros_where_tipo = array(1 => 'LIKE', 
+								       2 => '=', 
+								       3 => '='); # Array con los operadores correspondientes a cada filtro
+								       
+	public $filtros_boton_buscar = True;  # Muestra el boton de submit
+	
+	
     # Variables Globales
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
@@ -30,10 +58,6 @@ class base
     # Para habilitar el modulo hay que incluir en la cabecera HTML
     # el link hacia los estilos: <link rel="stylesheet" href="clases/animate.css">
     public $animacion = array();
-    
-    # Barra de filtros
-    public $buscar = 1; # 1 -> Habilitamos el input para buscar por uno o varias columnas
-    public $buscar_columnas = array('nombre', 'codigo_postal'); # Array de columnas a buscar
     
     public $abcedario = 1; # 1 -> Habilitamos el filtro por letra
     public $abcedario_columnas = array('nombre', 'codigo_postal'); # Array de columnas donde debe buscar
@@ -241,6 +265,18 @@ public function tabla() {
             $array = array_map('stripslashes', $array);
             return $array;
         }
+        
+        function tipo($tipo, $valor) {
+			switch ($tipo) {
+				case 'LIKE':
+					return '"%'.$valor.'%"';
+					break;
+				
+				case '=':
+					return '"'.$valor.'"';
+					break;
+				}
+			}
        
         $db = $this -> db;
 
@@ -253,7 +289,6 @@ public function tabla() {
                     
                     $query = "DELETE FROM $this->eliminar_tabla WHERE $this->eliminar_columna ='$ideliminar'";
                     
-                 
 					if ($this -> debug) {
 						echo 'Consula eliminar: <br>';
 						echo $query;
@@ -278,23 +313,88 @@ public function tabla() {
 			}
         
         
-        if (!empty($_POST['buscar'])) {
-			$buscar = $db -> real_escape_string($_POST['buscar']);
+        # Aplicamos los filtros en caso de que se envie el formulario
+        if ($_POST && !empty($this -> filtros)) {
 			
 			$where = ' WHERE ';
-			$total = count($this -> buscar_columnas);
-			$cnt = 1;
-			foreach ($this -> buscar_columnas as $columna_buscar) {
-				$where .= " $columna_buscar LIKE '%{$buscar}%' ";
+			
+			# Comprobamos si existen WHERE y GROUP 
+			$pos_where = stripos($this -> consulta, 'WHERE');
+			$pos_group = stripos($this -> consulta, 'GROUP BY');
+			
+			if ($pos_where) {
+				# Ponemos unos parentesis para que la nueva condicion no filtre mal
+				$this -> consulta = str_ireplace('WHERE ', 'WHERE ( ', $this -> consulta);
 				
-				if ($total > 1 && $cnt < $total) {
-					$where .= ' OR ';
+				# Si existe el group lo separamos de la consulta principal temporalmente
+				if ($pos_group) {
+					$group = substr($this -> consulta, $pos_group);
+					$this -> consulta = substr($this -> consulta, 0, $pos_group - 1);
 					}
-				$cnt++;
+					
+				$this -> consulta .= ')';
+				
+				$where = ' AND ';
 				}
+				
+			
+			end($this -> filtros_nombre);
+			$final = key($this -> filtros_nombre);
+			reset($this -> filtros_nombre);
+			
+			# Recorremos los nombres de los filtros para comprobar si contienen algo
+			$where .= '(';
+			foreach ($this -> filtros_nombre AS $id => $nombre) {
+				
+				if (!empty($_POST[$nombre])) {
+					$flag = 1;
+					
+					# El array filtros_where puede contener un valor o varios (array) en sus valores
+					if (is_array($this -> filtros_where[$id])) {
+						
+						end($this -> filtros_where[$id]);
+						$finalito = key($this -> filtros_where[$id]);
+						reset($this -> filtros_where[$id]);
+						
+						$where .= '(';
+						foreach ($this -> filtros_where[$id] AS $clave => $busqueda) {
+							
+							$where .= ' '.$busqueda.' '.$this -> filtros_where_tipo[$id].' '.tipo($this -> filtros_where_tipo[$id], $db -> real_escape_string($_POST[$nombre]));
+							
+							if ($clave != $finalito)
+								$where .= ' OR';
+								}
+								
+						$where .= ')';
+						}
+					else {
+						$where .= ' '.$this -> filtros_where[$id].' '.$this -> filtros_where_tipo[$id].' '.tipo($this -> filtros_where_tipo[$id], $db -> real_escape_string($_POST[$nombre]));
+						
+						}
+					
+					if ($id != $final && !empty($_POST[$this -> filtros_nombre[$id+1]])) {
+						$where .= ' AND ';
+						}
+					}
+				}
+				$where .= ')';
+			}
+		
+		# Concatenamos el WHERE
+		if (!empty($flag)) {
 			$this -> consulta .= $where;
 			}
+			
+		# Concatenamos el GROUP
+		if (isset($group)) {
+			$this -> consulta .= $group;
+			}
         
+		//~ echo $this -> consulta; 
+		
+		//~ exit;
+		
+		
         # Recogemos el parametro 'ordenar' en caso de que exista para ordenar la/s columnas
 		if (isset($_GET['ordenar'])) {
 			$ordenar = unserialize(urldecode($_GET['ordenar']));
@@ -461,7 +561,6 @@ public function tabla() {
         </style>    
         
         
-    
     <form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>">
         <!-- Primera Tabla: Contiene todo el listado -->
             <table id='tabla_primera' width="100%" class='<?=$this->tabla_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
@@ -559,60 +658,93 @@ public function tabla() {
 						
 						
 						if ($this -> buscar || $this -> abcedario) {
+							
 							?>
 							<tr>
 								<td>
 									<div style="border:1px solid #CCCCCC; margin:5px; padding:5px; background-color:#F3F3F3;">
-										<table width="100%" border="0" cellspacing="0" cellpadding="2">
+										<table width="100%" border="0" cellspacing="0" cellpadding="5">
 											<tr>
 												<?php
-												if (!empty($this -> buscar) && !empty($this -> buscar_columnas)) {
-													?>
-													<td>
-														<div align="right" class="texto"> 
-															<input name="buscar" type="text" id="buscar" size="20" class="textfield" value="<?=!empty($_POST['buscar'])?$_POST['buscar']:'';?>"> 
-															<input type="submit" name="button" id="button" value="Buscar" class="textfield">
-														</div>
-													</td>
-													<?php
-												}
-												
 												if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
 													?>
-													<td>&nbsp;</td>
-													<td class="enlacehome">
-														<a href="<?=$url_formulario;?>&letra=a" class="enlacehome">A</a> | 
-														<a href="<?=$url_formulario;?>&letra=b" class="enlacehome">B</a> | 
-														<a href="<?=$url_formulario;?>&letra=c" class="enlacehome">C</a> | 
-														<a href="<?=$url_formulario;?>&letra=d" class="enlacehome">D</a> | 
-														<a href="<?=$url_formulario;?>&letra=e" class="enlacehome">E</a> | 
-														<a href="<?=$url_formulario;?>&letra=f" class="enlacehome">F</a> | 
-														<a href="<?=$url_formulario;?>&letra=g" class="enlacehome">G</a> | 
-														<a href="<?=$url_formulario;?>&letra=h" class="enlacehome">H</a> | 
-														<a href="<?=$url_formulario;?>&letra=i" class="enlacehome">I</a> | 
-														<a href="<?=$url_formulario;?>&letra=j" class="enlacehome">J</a> | 
-														<a href="<?=$url_formulario;?>&letra=k" class="enlacehome">K</a> | 
-														<a href="<?=$url_formulario;?>&letra=l" class="enlacehome">L</a> | 
-														<a href="<?=$url_formulario;?>&letra=m" class="enlacehome">M</a> | 
-														<a href="<?=$url_formulario;?>&letra=n" class="enlacehome">N</a> | 
-														<a href="<?=$url_formulario;?>&letra=ñ" class="enlacehome">Ñ</a> | 
-														<a href="<?=$url_formulario;?>&letra=o" class="enlacehome">O</a> | 
-														<a href="<?=$url_formulario;?>&letra=p" class="enlacehome">P</a> | 
-														<a href="<?=$url_formulario;?>&letra=q" class="enlacehome">Q</a> | 
-														<a href="<?=$url_formulario;?>&letra=r" class="enlacehome">R</a> | 
-														<a href="<?=$url_formulario;?>&letra=s" class="enlacehome">S</a> |
-														<a href="<?=$url_formulario;?>&letra=t" class="enlacehome">T</a> | 
-														<a href="<?=$url_formulario;?>&letra=u" class="enlacehome">U</a> | 
-														<a href="<?=$url_formulario;?>&letra=v" class="enlacehome">V</a> | 
-														<a href="<?=$url_formulario;?>&letra=w" class="enlacehome">W</a> |
-														<a href="<?=$url_formulario;?>&letra=x" class="enlacehome">X</a> | 
-														<a href="<?=$url_formulario;?>&letra=y" class="enlacehome">Y</a> | 
-														<a href="<?=$url_formulario;?>&letra=z" class="enlacehome">Z</a>
+													<td class="enlacehome" align='left' cellspacing='2'>
+													<?php
+													
+													$letras = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','v','w','x','y','z');
+													
+													foreach ($letras as $letra) {
+														?>
+														<a href="<?=$url_formulario;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> | 	
+														<?php
+														}
+													?>
 													</td>
 													<?php
 													}
 												?>
-											</tr>                     
+											</tr> 
+											<?php
+											$cnt = 1;
+											foreach ($this -> filtros as $id => $filtro) {
+												$r = $cnt%3;
+												
+												if ($r == 0) {
+													echo '<tr>';
+													}
+												
+												switch ($filtro) {
+													case 'buscar':
+															?>
+															<td>
+																<div align="left" class="texto"> 
+																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
+																	<input name="<?=$this -> filtros_nombre[$id]?>" type="text" size="20" class="textfield" value="<?=!empty($_POST[$this -> filtros_nombre[$id]])?$_POST[$this -> filtros_nombre[$id]]:'';?>"> 
+																</div>
+															</td>
+															<?php
+														break;
+
+													case 'select':
+															?>
+															<td>
+																<div align="left" class="texto"> 
+																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
+																	<select class='textfield' name='<?=$this -> filtros_nombre[$id]?>' onchange='this.form.submit()'>
+																		<option value='0'>Selecione...</option>
+																		<?php
+																		$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
+																		
+																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
+																			?>
+																			<option value='<?=$fila_filtro[0]?>' <?=(!empty($_POST[$this -> filtros_nombre[$id]]) && $_POST[$this -> filtros_nombre[$id]]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
+																			<?php
+																			}
+																		?>
+																	</select>
+																</div>
+															</td>
+															<?php
+														break;
+													}
+												
+												if ($r == 0) {
+													echo '<tr>';
+													}
+													
+												$cnt++;
+												}
+												
+												if ($this -> filtros_boton_buscar) {
+													?>
+													<tr>
+														<td colspan='2' align='right'>
+															<input type="submit" name="button" id="button" value="Buscar" class="textfield">													
+														</td>
+													</tr>
+													<?php
+													}
+												?>
 										</table>
 									</div>
 								</td>

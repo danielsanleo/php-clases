@@ -36,17 +36,29 @@
 					require("./clase_base.php");
 					$base = new base('config.php');
 
-					$base -> abcedario = False; 
+					$base -> abcedario = True; 
 					$base -> buscar = False; 
 
 					$base -> tabla_imagen = "images/icono-compras.png"; 
 
-					$base -> consulta = "SELECT nombre, 
-												id AS Subfamilias, 
-												id AS Editar, 
-												id AS Eliminar 
-										 FROM familias 
-										 WHERE activo=1";
+					$base -> consulta = "SELECT id, 
+												nombre, 
+												id_fabricante, 
+												id_subfamilia, 
+												referencia, 
+												descripcion
+										 FROM articulos
+										 WHERE activo=0";
+
+
+					$this -> filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select'); 
+					$this -> filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia');
+					$this -> filtros_nombre = array(1 => 'descripcion', 2 => 'categoria', 3 => 'subfamilia');
+					$this -> filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias');
+					$this -> filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
+					$this -> filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');								   
+					$this -> filtros_boton_buscar = True;
+					
 
 					$base -> migasdepan = 1;
 					$base -> migas = array('Menú' => 'menu.php', 'Listado Familias' => '');
@@ -61,7 +73,6 @@
 					$editar = 'Editar';
 					$eliminar = 'Eliminar';
 					$base -> columna = array($eliminar => 'enlace', $editar => 'enlace', 'Subfamilias' => 'lista');
-					
 					
 					$base -> lista_consulta = "SELECT nombre FROM subfamilias WHERE id_familia=";
 						
