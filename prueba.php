@@ -51,13 +51,13 @@
 										 WHERE activo=0";
 
 
-					$this -> filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select'); 
-					$this -> filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia');
-					$this -> filtros_nombre = array(1 => 'descripcion', 2 => 'categoria', 3 => 'subfamilia');
-					$this -> filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias');
-					$this -> filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
-					$this -> filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');								   
-					$this -> filtros_boton_buscar = True;
+					$base -> filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select'); 
+					$base -> filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia');
+					$base -> filtros_nombre = array(1 => 'descripcion', 2 => 'categoria', 3 => 'subfamilia');
+					$base -> filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias');
+					$base -> filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
+					$base -> filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');								   
+					$base -> filtros_boton_buscar = True;
 					
 
 					$base -> migasdepan = 1;
