@@ -312,6 +312,9 @@ public function tabla() {
 			$db -> query($query) or die('Error consulta desactivar:'.$db -> error);
 			}
         
+        # Eliminamos ; al final de la consulta en caso de que exista
+        $this -> consulta = str_ireplace(';', '', $this -> consulta);
+        
         
         # Aplicamos los filtros en caso de que se envie el formulario
         if ($_POST && !empty($this -> filtros)) {
@@ -476,7 +479,7 @@ public function tabla() {
 			echo $this -> consulta;
 			}
 		
-        $resultados = $db -> query($this->consulta) or die (mysqli_error($db));
+        $resultados = $db -> query($this->consulta) or die ('<br>'.mysqli_error($db).'<br>');
 
 		// Total de páginas y registros
         $total_registros = $db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
