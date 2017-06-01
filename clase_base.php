@@ -341,15 +341,19 @@ public function tabla() {
 				}
 				
 			
-			end($this -> filtros_nombre);
-			$final = key($this -> filtros_nombre);
-			reset($this -> filtros_nombre);
+			
+			$primera = key($this -> filtros_nombre);
 			
 			# Recorremos los nombres de los filtros para comprobar si contienen algo
 			$where .= '(';
 			foreach ($this -> filtros_nombre AS $id => $nombre) {
 				
 				if (!empty($_POST[$nombre])) {
+					
+					if ($id != $primera) {
+						$where .= ' AND ';
+						}
+
 					$flag = 1;
 					
 					# El array filtros_where puede contener un valor o varios (array) en sus valores
@@ -373,10 +377,6 @@ public function tabla() {
 					else {
 						$where .= ' '.$this -> filtros_where[$id].' '.$this -> filtros_where_tipo[$id].' '.tipo($this -> filtros_where_tipo[$id], $db -> real_escape_string($_POST[$nombre]));
 						
-						}
-					
-					if ($id != $final && !empty($_POST[$this -> filtros_nombre[$id+1]])) {
-						$where .= ' AND ';
 						}
 					}
 				}

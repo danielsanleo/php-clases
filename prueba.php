@@ -36,6 +36,7 @@
 					require("./clase_base.php");
 					$base = new base('config.php');
 
+					$base -> debug = True; 
 					$base -> abcedario = True; 
 					$base -> buscar = False; 
 
@@ -56,12 +57,46 @@
 												WHERE articulos.activo=0";
 
 
-					$base -> filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select', 4 => 'select'); 
-					$base -> filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia', 4 => 'Familia');
-					$base -> filtros_nombre = array(1 => 'descripcion', 2 => 'categoria', 3 => 'subfamilia', 4 => 'familia');
-					$base -> filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias', 4 => 'SELECT id, nombre FROM familias');
-					$base -> filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia', 4 => 'familias.id');
-					$base -> filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=', 4 => '=');
+					$buscar_ref = 1;
+					$buscar_nombre = 2;
+					$select_fab = 3;
+					$select_sub = 4;
+					$select_fam = 5;
+					
+					$base -> filtros = array($buscar_ref => 'buscar', 
+											 $buscar_nombre => 'buscar',
+											 $select_fab => 'select', 
+											 $select_sub => 'select', 
+											 $select_fam => 'select'); 
+											 
+					$base -> filtros_texto = array($buscar_ref => 'Descripcion', 
+												   $buscar_nombre => 'Nombre',
+												   $select_fab => 'Fabricante', 
+												   $select_sub => 'Subfamilia', 
+												   $select_fam => 'Familia');
+												   
+					$base -> filtros_nombre = array($buscar_ref => 'descripcion', 
+													$buscar_nombre => 'nombre',
+													$select_fab => 'categoria', 
+													$select_sub => 'subfamilia', 
+													$select_fam => 'familia');
+													
+					$base -> filtros_consultas = array($select_fab => 'SELECT id, nombre FROM fabricantes', 
+													   $select_sub => 'SELECT id, nombre FROM subfamilias', 
+													   $select_fam => 'SELECT id, nombre FROM familias');
+													   
+					$base -> filtros_where = array($buscar_ref => array('referencia', 'descripcion'), 
+												   $buscar_nombre => 'articulos.nombre',
+												   $select_fab => 'id_fabricante', 
+												   $select_sub => 'id_subfamilia', 
+												   $select_fam => 'familias.id');
+												   
+					$base -> filtros_where_tipo = array($buscar_ref => 'LIKE', 
+														$buscar_nombre => 'LIKE', 
+														$select_fab => '=', 
+														$select_sub => '=', 
+														$select_fam => '=');
+														
 					$base -> filtros_boton_buscar = True;
 					
 
