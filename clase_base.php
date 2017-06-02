@@ -114,7 +114,6 @@ class base
         //Vacio
     
     public $tabla_titulo;
-    public $tabla_ruta;
     public $tabla_imagen = 'images/icono-zonas.png';
     
     # Migas de Pan
@@ -581,11 +580,11 @@ public function tabla() {
                                     <table id='sub_tabla_segunda'>
                                     <tr>
                                         <td id='sub_tabla_segunda_td'> 
-											<a href="<?=$this->tabla_ruta?>"> 
+											<a href="<?=$_GET['action']?>"> 
 												<img id='sub_tabla_segunda_img' src="<?=$this->tabla_imagen?>" alt="<?=$this->sub_tabla_segunda_img_alt?>" >
 											</a>
 										</td>
-                                        <td id='sub_tabla_segunda_td_titulo'><?=$this->tabla_titulo?></td>
+                                        <td id='sub_tabla_segunda_td_titulo'><span class='departamento'><?=$this->tabla_titulo?></span></td>
                                     </tr>
                                 </td>
                             </tr>

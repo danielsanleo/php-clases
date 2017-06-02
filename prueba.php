@@ -103,7 +103,7 @@
 					$base -> migasdepan = 1;
 					$base -> migas = array('Menú' => 'menu.php', 'Listado Familias' => '');
 
-					$base -> tabla_titulo = "<span class='departamento'>Familias &raquo Listado de Familias</span>";
+					$base -> tabla_titulo = "Familias &raquo Listado de Familias";
 					$base -> tabla_ruta = 'menu.php?action=admin-familias-listado';
 
 					$base -> orden_predeterminado = array(0 => 'ASC');
