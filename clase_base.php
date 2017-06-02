@@ -9,36 +9,40 @@ class base
     // ORDENACIÓN
     # Orden predeterminado que mostrará la tabla.
     # Array en el que pasamos los parámetros en la forma nº de columna a ordenar => tipo de ordenación.
-    # Ejemplo→ array(2 => 'ASC', 3 => 'DESC', 1 => 'DESC');
+    # Ejemplo → array(2 => 'ASC', 3 => 'DESC', 1 => 'DESC');
     public $orden_predeterminado = array();
 	public $orden_anidado = 1; # Existen dos tipos de orden: Por varias columnas conjuntamente o solo por una
 	
 	# Filtros
+	# --------
 	# Funcionan de forma similar a los modulos del listado
-	public $filtros = array(1 => 'buscar', 
-							2 => 'select', 
-							3 => 'select'); # Array con los filtros a crear
+	# Existen dos tipos:
+	# buscar: input de tipo texto
+	# select: input select
+	# Los de tipo select necesitan una consulta que devolverá dos campos (id, valor)
+	# Ademas podemos especificar mas de una columna en la que relicen la busqueda
+	public $filtros = array(1 => 'buscar',
+							2 => 'select',
+							3 => 'select'); # Array con los filtros a crear, contiene el total de filtros
 							
-	public $filtros_texto = array(1 => 'Descripcion', 
-								  2 => 'Fabricante', 
-								  3 => 'Subfamilia'); # Array con los nombres de los campos
-								  
-	public $filtros_nombre = array(1 => 'descripcion', 
-								   2 => 'categoria', 
-								   3 => 'subfamilia'); # Array con el nombre de cada input
+	public $filtros_texto = array(1 => 'Descripcion',
+								  2 => 'Fabricante',
+								  3 => 'Subfamilia'); # Array con los nombres visibles de los campos
 								   
-	public $filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 
-									  3 => 'SELECT id, nombre FROM subfamilias'); # Consultas para los filtros necesarios
+	public $filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes',
+									  3 => 'SELECT id, nombre FROM subfamilias'); # Consultas para los filtros de tipo select
 									  
-	public $filtros_where = array(1 => array('referencia', 'descripcion'), 
-								  2 => 'id_fabricante', 
-								  3 => 'id_subfamilia'); # Columnas de la BBDD a la que aplicar los filtros
+	# Columnas de la BBDD a la que aplicar los filtros, podemos especificar un solo valor o un array con varios
+	public $filtros_where = array(1 => array('referencia', 'descripcion'),
+								  2 => 'id_fabricante',
+								  3 => 'id_subfamilia');
 								  
+	# Array con los operadores correspondientes a cada filtro, son los mismos que podemos utilizar en las sentencias SQL
 	public $filtros_where_tipo = array(1 => 'LIKE', 
 								       2 => '=', 
-								       3 => '='); # Array con los operadores correspondientes a cada filtro
+								       3 => '=');
 								       
-	public $filtros_boton_buscar = True;  # Muestra el boton de submit
+	public $filtros_boton_buscar = True;  # Muestra el boton submit
 	
 	
     # Variables Globales
@@ -264,18 +268,6 @@ public function tabla() {
             $array = array_map('stripslashes', $array);
             return $array;
         }
-        
-        function tipo($tipo, $valor) {
-			switch ($tipo) {
-				case 'LIKE':
-					return '"%'.$valor.'%"';
-					break;
-				
-				case '=':
-					return '"'.$valor.'"';
-					break;
-				}
-			}
        
         $db = $this -> db;
 
@@ -318,6 +310,26 @@ public function tabla() {
         # Aplicamos los filtros en caso de que se envie el formulario
         if ($_POST && !empty($this -> filtros)) {
 			
+			function tipo($tipo, $valor) {
+				switch ($tipo) {
+					case 'LIKE':
+						return '"%'.$valor.'%"';
+						break;
+					
+					case '=':
+						return '"'.$valor.'"';
+						break;
+
+					case '!=':
+						return '"'.$valor.'"';
+						break;
+					
+					default:
+						return '"'.$valor.'"';
+						break;
+					}
+				}
+			
 			$where = ' WHERE ';
 			
 			# Comprobamos si existen WHERE y GROUP 
@@ -339,33 +351,34 @@ public function tabla() {
 				$where = ' AND ';
 				}
 				
-			
-			
-			$primera = key($this -> filtros_nombre);
-			
+
 			# Recorremos los nombres de los filtros para comprobar si contienen algo
+			# Iniciamos el FOR en 2 ya que depende del contador ($cnt) que establece el nombre a los inputs y comienza en 2 para poner los TRs
 			$where .= '(';
-			foreach ($this -> filtros_nombre AS $id => $nombre) {
+			for ($f = 2; $f <= count($this -> filtros)+1; $f++) {
+				
+				$nombre = 'filtro'.$f;
+				$index = $f - 1;
 				
 				if (!empty($_POST[$nombre])) {
 					
-					if ($id != $primera) {
+					if (!empty($flag)) {
 						$where .= ' AND ';
 						}
 
 					$flag = 1;
 					
 					# El array filtros_where puede contener un valor o varios (array) en sus valores
-					if (is_array($this -> filtros_where[$id])) {
+					if (is_array($this -> filtros_where[$index])) {
 						
-						end($this -> filtros_where[$id]);
-						$finalito = key($this -> filtros_where[$id]);
-						reset($this -> filtros_where[$id]);
+						end($this -> filtros_where[$index]);
+						$finalito = key($this -> filtros_where[$index]);
+						reset($this -> filtros_where[$index]);
 						
 						$where .= '(';
-						foreach ($this -> filtros_where[$id] AS $clave => $busqueda) {
+						foreach ($this -> filtros_where[$index] AS $clave => $busqueda) {
 							
-							$where .= ' '.$busqueda.' '.$this -> filtros_where_tipo[$id].' '.tipo($this -> filtros_where_tipo[$id], $db -> real_escape_string($_POST[$nombre]));
+							$where .= ' '.$busqueda.' '.$this -> filtros_where_tipo[$index].' '.tipo($this -> filtros_where_tipo[$index], $db -> real_escape_string($_POST[$nombre]));
 							
 							if ($clave != $finalito)
 								$where .= ' OR';
@@ -374,14 +387,13 @@ public function tabla() {
 						$where .= ')';
 						}
 					else {
-						$where .= ' '.$this -> filtros_where[$id].' '.$this -> filtros_where_tipo[$id].' '.tipo($this -> filtros_where_tipo[$id], $db -> real_escape_string($_POST[$nombre]));
-						
+						$where .= ' '.$this -> filtros_where[$index].' '.$this -> filtros_where_tipo[$index].' '.tipo($this -> filtros_where_tipo[$index], $db -> real_escape_string($_POST[$nombre]));
 						}
 					}
 				}
 				$where .= ')';
 			}
-		
+
 		# Concatenamos el WHERE
 		if (!empty($flag)) {
 			$this -> consulta .= $where;
@@ -563,11 +575,13 @@ public function tabla() {
         </style>    
         
         
-    <form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>">
-        <!-- Primera Tabla: Contiene todo el listado -->
-            <table id='tabla_primera' width="100%" class='<?=$this->tabla_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
-                <tr>
-                  <td>
+		<form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>">
+			<?php
+			# Primera Tabla: Contiene todo el listado
+			?>
+			<table id='tabla_primera' width="100%" class='<?=$this->tabla_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
+				<tr>
+					<td>
                     <?php
                     if ($this -> tabla_segunda_activar==1) {
                         # Segunda Tabla: 
@@ -588,12 +602,12 @@ public function tabla() {
                                     </tr>
                                 </td>
                             </tr>
-                         </table>
+                        </table>
                          
-                         <?php
-                         if ($this-> migasdepan==1) {
-                             ?>
-                             <tr>
+                        <?php
+                        if ($this-> migasdepan==1) {
+                            ?>
+                            <tr>
                                 <td bgcolor="#222222">
                                     <div class="migasoff">
                                         <?php
@@ -608,9 +622,10 @@ public function tabla() {
                                         ?>
                                     </div>
                                 </td>
-                             </tr>
-                             <?php
-                             }
+                            </tr>
+                            <?php
+                            }
+                            
                          # Mensaje a mostrar en caso de que exista en la URL
                          # A los tres segundos se borra
                          if (!empty($_GET['mensaje'])) {
@@ -664,10 +679,18 @@ public function tabla() {
 								<div style="border:1px solid #CCCCCC; margin:5px; padding:5px; background-color:#F3F3F3;">
 									<table width="100%" border="0" cellspacing="0" cellpadding="5">
 											<?php
+											if ($_POST && !empty($this -> filtros)) {
+												?>
+												<tr>
+													<td colspan='2' align='right'><a href='<?=$url_formulario?>'><img src='images/boton-elim-filtro.png'></a></td>
+												</tr>
+												<?php
+												}
+											
 											if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
 												?>
 												<tr>
-													<td class="enlacehome" align='left' cellspacing='2'>
+													<td class="enlacehome" align='center' cellspacing='2'>
 													<?php
 													
 													$letras = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','v','w','x','y','z');
@@ -683,7 +706,7 @@ public function tabla() {
 												<?php
 												}
 											
-											$cnt = 0;
+											$cnt = 2;
 											foreach ($this -> filtros as $id => $filtro) {
 												$r = $cnt%2;
 												
@@ -697,7 +720,7 @@ public function tabla() {
 															<td>
 																<div align="left" class="texto"> 
 																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																	<input name="<?=$this -> filtros_nombre[$id]?>" type="text" size="20" class="textfield" value="<?=!empty($_POST[$this -> filtros_nombre[$id]])?$_POST[$this -> filtros_nombre[$id]]:'';?>"> 
+																	<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>"> 
 																</div>
 															</td>
 															<?php
@@ -708,14 +731,14 @@ public function tabla() {
 															<td>
 																<div align="left" class="texto"> 
 																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																	<select class='textfield' name='<?=$this -> filtros_nombre[$id]?>' onchange='this.form.submit()'>
+																	<select class='textfield' name='filtro<?=$cnt?>' onchange='this.form.submit()'>
 																		<option value='0'>Selecione...</option>
 																		<?php
 																		$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
 																		
 																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
 																			?>
-																			<option value='<?=$fila_filtro[0]?>' <?=(!empty($_POST[$this -> filtros_nombre[$id]]) && $_POST[$this -> filtros_nombre[$id]]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
+																			<option value='<?=$fila_filtro[0]?>' <?=(!empty($_POST['filtro'.$cnt]) && $_POST['filtro'.$cnt]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
 																			<?php
 																			}
 																		?>
@@ -730,7 +753,7 @@ public function tabla() {
 													echo '</tr>';
 													}
 													
-												$cnt = $cnt + 1;
+												$cnt++;
 												}
 											
 												if ($this -> filtros_boton_buscar) {

@@ -75,12 +75,6 @@
 												   $select_sub => 'Subfamilia', 
 												   $select_fam => 'Familia');
 												   
-					$base -> filtros_nombre = array($buscar_ref => 'descripcion', 
-													$buscar_nombre => 'nombre',
-													$select_fab => 'categoria', 
-													$select_sub => 'subfamilia', 
-													$select_fam => 'familia');
-													
 					$base -> filtros_consultas = array($select_fab => 'SELECT id, nombre FROM fabricantes', 
 													   $select_sub => 'SELECT id, nombre FROM subfamilias', 
 													   $select_fam => 'SELECT id, nombre FROM familias');
