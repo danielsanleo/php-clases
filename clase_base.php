@@ -350,6 +350,12 @@ public function tabla() {
 				
 				$where = ' AND ';
 				}
+			else {
+				if ($pos_group) {
+					$group = substr($this -> consulta, $pos_group);
+					$this -> consulta = substr($this -> consulta, 0, $pos_group - 1);
+					}
+				}
 				
 
 			# Recorremos los nombres de los filtros para comprobar si contienen algo
