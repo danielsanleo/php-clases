@@ -1049,9 +1049,7 @@ public function tabla() {
 											
 											case 'fecha':
 												if (!empty($fila[$i])) {
-													?>
-													<?=DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);?>
-													<?php
+													echo DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);
 													}
 												else {
 													?>
