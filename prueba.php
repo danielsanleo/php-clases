@@ -62,11 +62,11 @@
 					$select_almacen = 4;
 
 					$base -> filtros = array($buscar_ref => 'periodo'); 
-											 
+
 					$base -> filtros_texto = array($buscar_ref => 'Fechas');
-													
+
 					//~ $base -> filtros_consultas = array($select_almacen => 'SELECT id, nombre FROM almacenes WHERE activo=0 ORDER BY id DESC');
-													
+
 					$base -> filtros_where = array($buscar_ref => 'movimientos.fecha');
 					$base -> filtros_where_tipo = array();
 					$base -> filtros_boton_buscar = True;
