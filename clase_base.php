@@ -442,11 +442,11 @@ public function tabla() {
 			function icono($orden_actual) {
 				switch ($orden_actual) {
 					case 'ASC':
-						return 'images/icono-ordenar2.png';
+						return 'images/icono-ordenar.png';
 						break;
 					
 					case 'DESC':
-						return 'images/icono-ordenar.png';
+						return 'images/icono-ordenar2.png';
 						break;
 					}
 				}
