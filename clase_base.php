@@ -281,6 +281,13 @@ public function icono($orden_actual) {
 		}
 	}
 
+public function str_replace_first($from, $to, $subject) {
+	# Función encargada de sustituir la sentencia 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS'
+	$from = '/'.preg_quote($from, '/').'/';
+
+	return preg_replace($from, $to, $subject, 1);
+	}
+
 public function tabla() {
        
         $db = $this -> db;
@@ -458,13 +465,6 @@ public function tabla() {
         # - Comprobamos las variables POST para determinar en que página nos encontramos o si se ha seleccionado otra página (En versiones posteriores seria mejor utilizar metodo GET)
         if ($this -> paginacion == 1) {
 			
-			function str_replace_first($from, $to, $subject) {
-				# Función encargada de sustituir la sentencia 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS'
-				$from = '/'.preg_quote($from, '/').'/';
-
-				return preg_replace($from, $to, $subject, 1);
-			}
-			
 			// Tamaño de la pagina
 			if (!empty($_GET['pagesize']) && is_numeric($_GET['pagesize'])) {
 				$this -> pagesize = $_GET['pagesize'];
@@ -486,7 +486,7 @@ public function tabla() {
 				$comienzo = 0;
 				}
 
-			$this -> consulta = str_replace_first('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $this->consulta);
+			$this -> consulta = $this -> str_replace_first('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $this->consulta);
 			$this -> consulta .= " LIMIT ".$this -> pagesize." OFFSET $comienzo";
 			}
 		
