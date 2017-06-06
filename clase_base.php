@@ -825,7 +825,7 @@ public function tabla() {
 										if (!empty($ordenar)) {
 											
 											# La siguiente condicion devuelve el icono a mostrar para el orden seleccionado
-											$ordenar_icono = (!empty($ordenar[$n_columnas])?icono($ordenar[$n_columnas]):0);
+											$ordenar_icono = (!empty($ordenar[$n_columnas])?$this -> icono($ordenar[$n_columnas]):0);
 											
 											# A continuacion intercambiamos los valores del array lo que permite revertir el orden del listado
 											$ordenar[$n_columnas] = (empty($ordenar[$n_columnas])?$this -> ordenar[$n_columnas]:(($ordenar[$n_columnas]=='DESC')?'ASC':'DESC'));
@@ -843,7 +843,7 @@ public function tabla() {
 										}
 										else {
 											# La siguiente condicion devuelve el icono para el orden predeterminado
-											$ordenar_icono = (!empty($this -> orden_predeterminado[$n_columnas])?icono($this -> orden_predeterminado[$n_columnas]):0);
+											$ordenar_icono = (!empty($this -> orden_predeterminado[$n_columnas])?$this -> icono($this -> orden_predeterminado[$n_columnas]):0);
 											$ordenar0 = urlencode(serialize(array($n_columnas => $this -> ordenar[$n_columnas])));
 										}
 										# Parseamos la URL para crear el enlace para ordenar por columna
