@@ -20,27 +20,27 @@ class base
 	# buscar: input de tipo texto
 	# select: input select
 	# Los de tipo select necesitan una consulta que devolverá dos campos (id, valor)
-	# Ademas podemos especificar mas de una columna en la que relicen la busqueda
-	public $filtros = array(1 => 'buscar',
-							2 => 'select',
-							3 => 'select'); # Array con los filtros a crear, contiene el total de filtros
+	# Ademas podemos especificar mas de una columna en la que realice la busqueda
+	
+	# Array con los filtros a crear, contiene el total de filtros
+	//~ public $filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select');
+	public $filtros = array();
 							
-	public $filtros_texto = array(1 => 'Descripcion',
-								  2 => 'Fabricante',
-								  3 => 'Subfamilia'); # Array con los nombres visibles de los campos
+	# Array con los nombres visibles de los campos
+	//~ public $filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia');
+	public $filtros_texto = array();
 								   
-	public $filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes',
-									  3 => 'SELECT id, nombre FROM subfamilias'); # Consultas para los filtros de tipo select
-									  
+	# Consultas para los filtros de tipo select
+	//~ public $filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias');
+	public $filtros_consultas = array(); 
+	
 	# Columnas de la BBDD a la que aplicar los filtros, podemos especificar un solo valor o un array con varios
-	public $filtros_where = array(1 => array('referencia', 'descripcion'),
-								  2 => 'id_fabricante',
-								  3 => 'id_subfamilia');
+	//~ public $filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
+	public $filtros_where = array();
 								  
 	# Array con los operadores correspondientes a cada filtro, son los mismos que podemos utilizar en las sentencias SQL
-	public $filtros_where_tipo = array(1 => 'LIKE', 
-								       2 => '=', 
-								       3 => '=');
+	//~ public $filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');
+	public $filtros_where_tipo = array();
 								       
 	public $filtros_boton_buscar = True;  # Muestra el boton submit
 	
@@ -309,7 +309,7 @@ public function tabla() {
                 }
             }
 
-		# Desactivar fina (activo=0)
+		# Desactivar fila (activo=0)
 		if ($this -> desactivar && !empty($_GET['did'])) {
 			$did = $db -> real_escape_string($_GET['did']);
 			$columna = $this -> desactivar_columna;
@@ -414,7 +414,19 @@ public function tabla() {
 						$where .= ')';
 						}
 					else {
-						$where .= ' '.$this -> filtros_where[$index].' '.$this -> filtros_where_tipo[$index].' '.tipo($this -> filtros_where_tipo[$index], $db -> real_escape_string($_POST[$nombre]));
+						# El switch de momento lo he puesto para los filtros 'periodo' los cuales, entiendo, que lo normal es que filtren por una sola columna de fechas. 
+						# HAY QUE REVISAR EL FUNCIONAMIENTO DE LOS FILTROS YA QUE AUNQUE FUNCIONAN, TAL VEZ SE PODRIAN SIMPLIFICAR MAS, CLASIFICANDOLOS POR DIGAMOS, MÓDULOS, MEDIANTE UN SWITCH Y EVITANDO PONER EL OPERADOR DE COMPARACION ENTRE LA COLUMNA Y EL VALOR A FILTRAR
+						
+						switch ($this -> filtros[$index]) {
+							case 'periodo':
+								if (!empty($_POST[$nombre][0]) && !empty($_POST[$nombre][1])) {
+									$where .= ' '.$this -> filtros_where[$index].' BETWEEN "'.DateTime::createFromFormat('d/m/Y',$_POST[$nombre][0]) -> format('Y-m-d').'" AND "'.DateTime::createFromFormat('d/m/Y', $_POST[$nombre][1]) -> format('Y-m-d').'"';
+									}
+								break;
+							
+							default:
+								$where .= ' '.$this -> filtros_where[$index].' '.$this -> filtros_where_tipo[$index].' '.tipo($this -> filtros_where_tipo[$index], $db -> real_escape_string($_POST[$nombre]));
+							}
 						}
 					}
 				}
@@ -431,11 +443,6 @@ public function tabla() {
 			$this -> consulta .= $group;
 			}
         
-		//~ echo $this -> consulta; 
-		
-		//~ exit;
-		
-		
         # Recogemos el parametro 'ordenar' en caso de que exista para ordenar la/s columnas
 		if (isset($_GET['ordenar'])) {
 			$ordenar = unserialize(urldecode($_GET['ordenar']));
@@ -720,6 +727,49 @@ public function tabla() {
 													}
 												
 												switch ($filtro) {
+													case 'periodo':
+															
+															# Para utilizar el filtro periodo es necesario incluir JQuery a la cabecera
+															# <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+															# <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+															# <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+															?>
+															<td>
+																<div align="left" class="texto"> 
+																	<span class='texto_filtro'> <?=$this -> filtros_texto[$id]?> </span>
+																	<input name="filtro<?=$cnt?>[]" type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][0])?$_POST['filtro'.$cnt][0]:'')?>">
+																	a
+																	<input name="filtro<?=$cnt?>[]" type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][1])?$_POST['filtro'.$cnt][1]:'')?>">
+																	
+																	<script>
+																		$.datepicker.regional['es'] = {
+																			  closeText: 'Cerrar',
+																			  prevText: '<Ant',
+																			  nextText: 'Sig>',
+																			  currentText: 'Hoy',
+																			  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+																			  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+																			  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+																			  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+																			  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+																			  weekHeader: 'Sm',
+																			  dateFormat: 'dd/mm/yy',
+																			  firstDay: 1,
+																			  isRTL: false,
+																			  showMonthAfterYear: false,
+																			  yearSuffix: ''
+																			  };
+																			  
+																		$.datepicker.setDefaults($.datepicker.regional['es']);
+																		$(function () {
+																		$(".datepicker").datepicker();
+																	  });
+																	</script>
+																</div>
+															</td>
+															<?php
+														break;
+														
 													case 'buscar':
 															?>
 															<td>
