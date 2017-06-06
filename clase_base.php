@@ -366,7 +366,7 @@ public function tabla() {
 				$nombre = 'filtro'.$f;
 				$index = $f - 1;
 				
-				if (!empty($_POST[$nombre])) {
+				if (isset($_POST[$nombre]) && $_POST[$nombre] !='') {
 					
 					if (!empty($flag)) {
 						$where .= ' AND ';
