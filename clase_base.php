@@ -366,7 +366,7 @@ public function tabla() {
 				$nombre = 'filtro'.$f;
 				$index = $f - 1;
 				
-				if (isset($_POST[$nombre]) && $_POST[$nombre] !='') {
+				if (isset($_POST[$nombre]) && $_POST[$nombre] !='-') {
 					
 					if (!empty($flag)) {
 						$where .= ' AND ';
@@ -738,7 +738,7 @@ public function tabla() {
 																<div align="left" class="texto"> 
 																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
 																	<select class='textfield' name='filtro<?=$cnt?>' onchange='this.form.submit()'>
-																		<option value='0'>Selecione...</option>
+																		<option value='-'>Selecione...</option>
 																		<?php
 																		$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
 																		
