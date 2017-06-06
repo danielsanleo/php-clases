@@ -267,6 +267,20 @@ public function limpiarArray($array) {
 	$array = array_map('stripslashes', $array);
 	return $array;
 }
+
+# Funcion encargada de seleccionar el icono para el orden
+public function icono($orden_actual) {
+	switch ($orden_actual) {
+		case 'ASC':
+			return 'images/icono-ordenar.png';
+			break;
+		
+		case 'DESC':
+			return 'images/icono-ordenar2.png';
+			break;
+		}
+	}
+
 public function tabla() {
        
         $db = $this -> db;
@@ -436,21 +450,6 @@ public function tabla() {
 				$this -> consulta .= ($clave+1)." $valor".(($clave != $ultima_clave)?', ':'');	
 			}
 		}
-		
-		# Funcion encargada de seleccionar el icono para el orden
-		if (!empty($this -> orden_predeterminado)) {
-			function icono($orden_actual) {
-				switch ($orden_actual) {
-					case 'ASC':
-						return 'images/icono-ordenar.png';
-						break;
-					
-					case 'DESC':
-						return 'images/icono-ordenar2.png';
-						break;
-					}
-				}
-			}
 		
         
         # Si la paginacion esta habilitada:
