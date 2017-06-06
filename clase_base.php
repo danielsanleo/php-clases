@@ -262,12 +262,12 @@ public function __destruct() {
     $this -> db -> close();
     }
     
+public function limpiarArray($array) {
+	$array = array_map('trim', $array);
+	$array = array_map('stripslashes', $array);
+	return $array;
+}
 public function tabla() {
-        function limpiarArray($array) {
-            $array = array_map('trim', $array);
-            $array = array_map('stripslashes', $array);
-            return $array;
-        }
        
         $db = $this -> db;
 
@@ -508,7 +508,7 @@ public function tabla() {
 						
             # Valores devueltos por el modulo SELECT
             if (!empty($_POST[$this->select_name])) {
-                    $_POST = limpiarArray($_POST);
+                    $_POST = $this -> limpiarArray($_POST);
                     
                     $maximo = $db -> query('select MAX(id) from '.$this->select_tabla);
                     $maximo = mysqli_fetch_array($maximo);
