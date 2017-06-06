@@ -744,7 +744,7 @@ public function tabla() {
 																		
 																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
 																			?>
-																			<option value='<?=$fila_filtro[0]?>' <?=(!empty($_POST['filtro'.$cnt]) && $_POST['filtro'.$cnt]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
+																			<option value='<?=$fila_filtro[0]?>' <?=(isset($_POST['filtro'.$cnt]) && $_POST['filtro'.$cnt]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
 																			<?php
 																			}
 																		?>
