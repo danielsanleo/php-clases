@@ -942,7 +942,7 @@ public function tabla() {
 																		
 																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
 																			?>
-																			<label for='filtro<?=$cnt?>[<?=$fila_filtro[0]?>]'><?=$fila_filtro[1]?></label>
+																			<label><?=$fila_filtro[1]?></label>
 																			<input class='checks' id="checkbox-<?=$cnt?>" name='filtro<?=$cnt?>[<?=$fila_filtro[0]?>]' type='checkbox' <?=(!empty($_POST['filtro'.$cnt][$fila_filtro[0]])?' checked':'')?>><br>
 																			<?php
 																			}
