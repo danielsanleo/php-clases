@@ -5,11 +5,10 @@
 		<title>Pruebas</title>
 		<link href="estilos.css" rel="stylesheet" type="text/css">
 		
-		<script src="js/jquery-3.1.1.min.js"></script>
-		
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
-		<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-		<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+		
+		<script src="js/jquery-3.1.1.min.js"> </script>
+		<script src="js/jquery-ui-1.12.1/jquery-ui.js"></script>
 		
 		<style type="text/css">
 			body {
@@ -38,6 +37,9 @@
 			<tr>
 				<td bgcolor="#FFFFFF" class="bordeLateral">
 					<?php
+					error_reporting(E_ALL);
+					ini_set("display_errors", 1); 
+					
 					require("clase_base.php");
 					
 					$base = new base('config.php');
@@ -57,18 +59,12 @@
 										 FROM movimientos INNER JOIN almacenes ON movimientos.id_almacen=almacenes.id 
 														  INNER JOIN articulos ON movimientos.id_articulo=articulos.id";
 					$buscar_ref = 1;
-					$buscar_cantidad = 2;
-					$select_entrada = 3;
-					$select_almacen = 4;
+					$dos = 2;
 
-					$base -> filtros = array($buscar_ref => 'periodo'); 
-
-					$base -> filtros_texto = array($buscar_ref => 'Fechas');
-
-					//~ $base -> filtros_consultas = array($select_almacen => 'SELECT id, nombre FROM almacenes WHERE activo=0 ORDER BY id DESC');
-
-					$base -> filtros_where = array($buscar_ref => 'movimientos.fecha');
-					$base -> filtros_where_tipo = array();
+					$base -> filtros = array($buscar_ref => 'periodo', $dos => 'checkboxes'); 
+					$base -> filtros_texto = array($buscar_ref => 'Fechas', $dos => 'Proveedores');
+					$base -> filtros_consultas = array($dos => 'SELECT id, nombre FROM proveedores LIMIT 10');
+					$base -> filtros_where = array($buscar_ref => 'movimientos.fecha', $dos => 'movimientos.id_proveedor');
 					$base -> filtros_boton_buscar = True;
 					
 					$base -> migasdepan = 1;

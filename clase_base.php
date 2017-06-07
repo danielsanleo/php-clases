@@ -262,14 +262,123 @@ public function __destruct() {
     $this -> db -> close();
     }
     
-public function limpiarArray($array) {
+private function limpiarArray($array) {
 	$array = array_map('trim', $array);
 	$array = array_map('stripslashes', $array);
 	return $array;
 }
 
-# Funcion encargada de seleccionar el icono para el orden
-public function icono($orden_actual) {
+# Método para obtener el thumnbnail a partir de la extension del nombre fichero
+private function getImageFile ($fichero) {
+	$extension = end(explode('.', $fichero));
+	
+	switch ($extension) {
+		case 'ai':
+			return 'ai.png';
+			break;
+		case 'mp3':
+		case 'wav':
+			return 'audio.png';
+			break;
+		case 'doc':
+		case 'odf':
+		case 'docx':
+			return 'doc.png';
+			break;
+		case 'htm':
+		case 'html':
+		case 'php':
+		case 'asp':
+			return 'html.png';
+			break;
+		case 'jpg':
+		case 'jpeg':
+		case 'gif':
+		case 'png':
+			return 'jpg.png';
+			break;
+		case 'pdf':
+			return 'pdf.png';
+			break;
+		case 'psd':
+			return 'psd.png';
+			break;
+		case 'rar':
+			return 'rar.png';
+			break;
+		case 'txt':
+			return 'txt.png';
+			break;
+		case 'avi':
+		case 'mpg':
+		case 'mpeg':
+		case 'mp4':
+			return 'video.png';
+			break;
+		case 'xls':
+		case 'xlsx':
+			return 'xls.png';
+			break;
+		case 'zip':
+			return 'zip.png';
+			break;
+		case 'ppt':
+		case 'pptx':
+		case 'pps':
+		case 'ppsx':
+			return 'ppt.png';
+			break;
+		default:
+			return 'txt.png';
+			break;
+		}
+}
+
+# Tipos de filtros que pueden existir
+# Cada uno va asociada de un tipo de condicion y valores
+private function createCondition ($tipo, $columna, $valor) {
+	if (!empty($tipo) && !empty($valor)) {
+		switch ($tipo) {
+			case 'periodo':
+				if (!empty($valor[0]) && !empty($valor[1])) {
+					return ' ('.$columna.' BETWEEN "'.DateTime::createFromFormat('d/m/Y',$valor[0]) -> format('Y-m-d').'" AND "'.DateTime::createFromFormat('d/m/Y', $valor[1]) -> format('Y-m-d').'")';
+					}
+				break;
+				
+			case 'buscar':
+				return ' '.$columna.' LIKE "%'.$db -> real_escape_string($valor).'%"';	
+				break;
+				
+			case 'select':
+				return ' '.$columna.' = "'.$db -> real_escape_string($valor).'"';
+				break;
+			case 'checkboxes':
+				$return = ' (';
+				
+				$cnt = 0;
+				foreach ($valor AS $id => $val) {
+					if (!empty($val)) {
+						if (!empty($cnt)) {
+							$return .= ' OR ';
+							}
+						
+						$return .= ' '.$columna.' = "'.$this -> db -> real_escape_string($id).'"';
+						}
+					$cnt++;
+					}
+				
+				return $return.')';
+				
+				break;
+				
+			default:
+				return '';
+		}
+	}
+}
+
+# Metodo encargado de seleccionar el icono para el orden
+private function icono($orden_actual) {
 	switch ($orden_actual) {
 		case 'ASC':
 			return 'images/icono-ordenar.png';
@@ -281,7 +390,7 @@ public function icono($orden_actual) {
 		}
 	}
 
-public function str_replace_first($from, $to, $subject) {
+private function str_replace_first($from, $to, $subject) {
 	# Función encargada de sustituir la sentencia 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS'
 	$from = '/'.preg_quote($from, '/').'/';
 
@@ -388,12 +497,23 @@ public function tabla() {
 				$index = $f - 1;
 				
 				if (isset($_POST[$nombre]) && $_POST[$nombre] !='-' && $_POST[$nombre] !='') {
-					
+				
+					# Flag es el encargado de determinar si poner el AND al principio o no.
 					if (!empty($flag)) {
 						$where .= ' AND ';
 						}
-
-					$flag = 1;
+						
+					if (is_array($_POST[$nombre])) {
+						foreach ($_POST[$nombre] AS $a => $b) {
+							if (!empty($b)) {
+								$flag = 1;
+								break;
+								}
+							}
+						}
+					else {
+						$flag = 1;
+						}
 					
 					# El array filtros_where puede contener un valor o varios (array) en sus valores
 					if (is_array($this -> filtros_where[$index])) {
@@ -405,28 +525,17 @@ public function tabla() {
 						$where .= '(';
 						foreach ($this -> filtros_where[$index] AS $clave => $busqueda) {
 							
-							$where .= ' '.$busqueda.' '.$this -> filtros_where_tipo[$index].' '.tipo($this -> filtros_where_tipo[$index], $db -> real_escape_string($_POST[$nombre]));
+							$where .= $this -> createCondition($this -> filtros[$index], $busqueda, $_POST[$nombre]);
 							
 							if ($clave != $finalito)
 								$where .= ' OR';
 								}
-								
+
 						$where .= ')';
 						}
 					else {
 						# El switch de momento lo he puesto para los filtros 'periodo' los cuales, entiendo, que lo normal es que filtren por una sola columna de fechas. 
-						# HAY QUE REVISAR EL FUNCIONAMIENTO DE LOS FILTROS YA QUE AUNQUE FUNCIONAN, TAL VEZ SE PODRIAN SIMPLIFICAR MAS, CLASIFICANDOLOS POR DIGAMOS, MÓDULOS, MEDIANTE UN SWITCH Y EVITANDO PONER EL OPERADOR DE COMPARACION ENTRE LA COLUMNA Y EL VALOR A FILTRAR
-						
-						switch ($this -> filtros[$index]) {
-							case 'periodo':
-								if (!empty($_POST[$nombre][0]) && !empty($_POST[$nombre][1])) {
-									$where .= ' '.$this -> filtros_where[$index].' BETWEEN "'.DateTime::createFromFormat('d/m/Y',$_POST[$nombre][0]) -> format('Y-m-d').'" AND "'.DateTime::createFromFormat('d/m/Y', $_POST[$nombre][1]) -> format('Y-m-d').'"';
-									}
-								break;
-							
-							default:
-								$where .= ' '.$this -> filtros_where[$index].' '.$this -> filtros_where_tipo[$index].' '.tipo($this -> filtros_where_tipo[$index], $db -> real_escape_string($_POST[$nombre]));
-							}
+						$where .= $this -> createCondition($this -> filtros[$index], $this -> filtros_where[$index], $_POST[$nombre]);
 						}
 					}
 				}
@@ -586,8 +695,27 @@ public function tabla() {
             ?>
         </style>    
         
-        
-		<form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>">
+        <script>
+			function validar() {
+					var fecha_ini = document.getElementById('fecha_ini').value;
+					var fecha_fin = document.getElementById('fecha_fin').value;
+
+					if (fecha_ini !== null && fecha_fin !== null) {
+						if (fecha_ini != '' && fecha_fin == '') {
+							alert('Introduzca la fecha de fin');
+							return false;
+						}
+						else if (fecha_ini == '' && fecha_fin != '') {
+							alert('Introduzca la fecha de inicio');
+							return false;
+							}
+						else {
+							return true;
+							}
+					}
+				}
+        </script>
+		<form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>" onsubmit='return validar()'>
 			<?php
 			# Primera Tabla: Contiene todo el listado
 			?>
@@ -737,9 +865,9 @@ public function tabla() {
 															<td>
 																<div align="left" class="texto"> 
 																	<span class='texto_filtro'> <?=$this -> filtros_texto[$id]?> </span>
-																	<input name="filtro<?=$cnt?>[]" type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][0])?$_POST['filtro'.$cnt][0]:'')?>">
+																	<input name="filtro<?=$cnt?>[]" id='fecha_ini' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][0])?$_POST['filtro'.$cnt][0]:'')?>">
 																	a
-																	<input name="filtro<?=$cnt?>[]" type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][1])?$_POST['filtro'.$cnt][1]:'')?>">
+																	<input name="filtro<?=$cnt?>[]" id='fecha_fin' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][1])?$_POST['filtro'.$cnt][1]:'')?>">
 																	
 																	<script>
 																		$.datepicker.regional['es'] = {
@@ -802,8 +930,30 @@ public function tabla() {
 															</td>
 															<?php
 														break;
+														
+													case 'checkboxes':
+															?>
+															<td>
+																<div align="left" class="texto widget"> 
+																	<fieldset>
+																	<legend class='texto_filtro'> <strong><?=$this -> filtros_texto[$id]?></strong> </legend>
+																		<?php
+																		$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
+																		
+																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
+																			?>
+																			<label for='filtro<?=$cnt?>[<?=$fila_filtro[0]?>]'><?=$fila_filtro[1]?></label>
+																			<input class='checks' id="checkbox-<?=$cnt?>" name='filtro<?=$cnt?>[<?=$fila_filtro[0]?>]' type='checkbox' <?=(!empty($_POST['filtro'.$cnt][$fila_filtro[0]])?' checked':'')?>><br>
+																			<?php
+																			}
+																		?>
+																	</fieldset>
+																</div>
+															</td>
+															<?php
+														break;
 													}
-												
+
 												if ( $r == 1 ) {
 													echo '</tr>';
 													}
@@ -981,78 +1131,15 @@ public function tabla() {
 
 											case 'tipo':
 												?>
-												<?=(!empty($this->tipo[$fila[$i]]))?$this->tipo[$fila[$i]]:"El tipo {$fila[$i]} no existe";?>
+												<?=(!empty($this->tipo[$fila[$indice]]))?$this->tipo[$fila[$indice]]:"El tipo {$fila[$i]} no existe";?>
 												<?php
 												break;
 
 											case 'descarga':
 												?>
 												<div style='text-align:center;' >
-													<a href="<?=$this->descarga_url .$fila[$i]?>" target="<?=$this->descarga_nueva_ventana == true?'target="_blank"':''?>">
-														<?php
-														# Obtenemos la extension y mostramos el icono correspondiente
-														switch (end(explode('.', $fila[$i]))) {
-															case 'ai':
-																$archivo_icono = 'ai.png';
-																break;
-															case 'mp3':
-															case 'wav':
-																$archivo_icono = 'audio.png';
-																break;
-															case 'doc':
-															case 'odf':
-															case 'docx':
-																$archivo_icono = 'doc.png';
-																break;
-															case 'htm':
-															case 'html':
-															case 'php':
-															case 'asp':
-																$archivo_icono = 'html.png';
-																break;
-															case 'jpg':
-															case 'jpeg':
-															case 'gif':
-															case 'png':
-																$archivo_icono = 'jpg.png';
-																break;
-															case 'pdf':
-																$archivo_icono = 'pdf.png';
-																break;
-															case 'psd':
-																$archivo_icono = 'psd.png';
-																break;
-															case 'rar':
-																$archivo_icono = 'rar.png';
-																break;
-															case 'txt':
-																$archivo_icono = 'txt.png';
-																break;
-															case 'avi':
-															case 'mpg':
-															case 'mpeg':
-															case 'mp4':
-																$archivo_icono = 'video.png';
-																break;
-															case 'xls':
-															case 'xlsx':
-																$archivo_icono = 'xls.png';
-																break;
-															case 'zip':
-																$archivo_icono = 'zip.png';
-																break;
-															case 'ppt':
-															case 'pptx':
-															case 'pps':
-															case 'ppsx':
-																$archivo_icono = 'ppt.png';
-																break;
-															default:
-																$archivo_icono = 'txt.png';
-																break;
-															}
-														?>
-														<img src="<?=$this -> descarga_ruta_iconos.$archivo_icono?>" alt="Descargar Archivo" title="Descargar Archivo" width="16">
+													<a href="<?=$this -> descarga_url.$fila[$i]?>" target="<?=$this -> descarga_nueva_ventana == true?'target="_blank"':''?>">
+														<img src="<?=$this -> descarga_ruta_iconos.getImageFile($fila[$i])?>" alt="Descargar Archivo" title="Descargar Archivo" width="16">
 													</a>
 												</div>
 												<?php
@@ -1060,14 +1147,14 @@ public function tabla() {
 												
 											case 'button':
 												?>
-												<button value="<?=$this->boton_value?>" name='<?=$this->boton_name?>' type="<?=$this->boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
+												<button value="<?=$this -> boton_value?>" name='<?=$this -> boton_name?>' type="<?=$this -> boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
 												<?php
 												break;
 												
 											case 'eliminar':
 												?>
 												<a href="javascript:eliminar('<?=$fila[$i];?>');">
-													<img src="<?=$this->eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0">
+													<img src="<?=$this -> eliminar_imagen?>" alt="Eliminar" title="Eliminar" width="16" border="0">
 												</a>
 												<?php
 												break;
@@ -1187,7 +1274,7 @@ public function tabla() {
 												break;
 												
 											default:
-												echo 'El módulo '.$this->columna[$i].' no existe';
+												echo 'El módulo '.$this->columna[$indice].' no existe';
 												break;
 										}
 										?>
