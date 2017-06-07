@@ -781,7 +781,7 @@ public function tabla() {
                                 myFunction();
                               </script>
                               <tr class='mensaje_fila'>
-                                <td>
+                                <td align='center'>
                                   <table id='tabla_mensaje_texto' width="45%" class="<?=$this->tabla_mensaje_class?>" border="0" style='text-align:center;' cellpadding="4" cellspacing="0" bgcolor="#BBBBBB" >
                                     <tr>
                                       <td><div style='text-align:center;'><img src="<?=$this->mensaje_imagen?>" alt="Informacion" border="0" align="absmiddle">&nbsp;<span class='textoBlanco'><?=$_GET['mensaje'];?></span></div></td>
