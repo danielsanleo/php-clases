@@ -727,16 +727,6 @@ public function tabla() {
 					}
 				}
         </script>
-        
-        <?php
-        
-        if (isset($_GET['eliminar_filtros'])) {
-			$flag_filtros = 1;
-			unset($_GET['eliminar_filtros']);
-			}
-        
-        ?>
-        
 		<form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>" onsubmit='return validar()'>
 			<?php
 			# Primera Tabla: Contiene todo el listado
@@ -841,15 +831,13 @@ public function tabla() {
 								<div style="border:1px solid #CCCCCC; margin:5px; padding:5px; background-color:#F3F3F3;">
 									<table width="100%" border="0" cellspacing="0" cellpadding="5">
 											<?php
-											if ($_POST && !empty($this -> filtros) && !isset($flag_filtros)) {
+											if ($_POST && !empty($this -> filtros)) {
 												?>
 												<tr>
-													<td colspan='2' align='right'><a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'eliminar_filtros'?>'><img src='images/boton-elim-filtro.png'></a></td>
+													<td colspan='2' align='right'><a href='<?=$url_formulario?>'><img src='images/boton-elim-filtro.png'></a></td>
 												</tr>
 												<?php
 												}
-											
-											
 											
 											if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
 												?>
