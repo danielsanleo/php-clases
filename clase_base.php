@@ -254,7 +254,7 @@ class base
 public function __construct($ruta) {
 	require($ruta);
 	unset($ruta);
-	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die("Falló la conexión con MySQL: " . mysqli_connect_error());
+	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
 	$this -> db -> set_charset($this -> db_charset);
     }
 # El destructor cierra la conexión con la BBDD
@@ -346,11 +346,11 @@ private function createCondition ($tipo, $columna, $valor) {
 				break;
 				
 			case 'buscar':
-				return ' '.$columna.' LIKE "%'.$db -> real_escape_string($valor).'%"';	
+				return ' '.$columna.' LIKE "%'.$this -> db -> real_escape_string($valor).'%"';	
 				break;
 				
 			case 'select':
-				return ' '.$columna.' = "'.$db -> real_escape_string($valor).'"';
+				return ' '.$columna.' = "'.$this -> db -> real_escape_string($valor).'"';
 				break;
 			case 'checkboxes':
 				$return = ' (';
@@ -398,46 +398,54 @@ private function str_replace_first($from, $to, $subject) {
 	}
 
 public function tabla() {
+        
+        if ($this -> debug) {
+			echo '<strong>Memoria Inicial:</strong> '.memory_get_usage().' Bytes <br>';
+			}
        
-        $db = $this -> db;
-
         // Módulo encargado de eliminar la fila
         # Comprobamos si es una pagina en la que se deberian dar derechos 
         # al usuario final para eliminar filas
-        if (in_array('eliminar', $this->columna)) {
+        if (in_array('eliminar', $this -> columna)) {
             if (isset($_GET['delid'])) {
-                    $ideliminar = $db -> real_escape_string($_GET['delid']);
+                    $ideliminar = $this -> db -> real_escape_string($_GET['delid']);
                     
                     $query = "DELETE FROM $this->eliminar_tabla WHERE $this->eliminar_columna ='$ideliminar'";
                     
 					if ($this -> debug) {
-						echo 'Consula eliminar: <br>';
+						echo '<strong>Consula eliminar: </strong> <br>';
 						echo $query;
 					}
-                    $db -> query($query);
+                    $this -> db -> query($query);
                 }
             }
 
 		# Desactivar fila (activo=0)
 		if ($this -> desactivar && !empty($_GET['did'])) {
-			$did = $db -> real_escape_string($_GET['did']);
+			$did = $this -> db -> real_escape_string($_GET['did']);
 			$columna = $this -> desactivar_columna;
 			
 			$query = 'UPDATE '.$this -> desactivar_tabla.' SET '.$this ->desactivar_columna.'="'.$this->desactivar_valor.'" WHERE '.$this -> desactivar_id.'="'.$did.'"';
 			
 			if ($this -> debug) {
-				echo 'Consula desactivar: <br>';
+				echo '<strong>Consula desactivar: </strong><br>';
 				echo $query;
 				}
 			
-			$db -> query($query) or die('Error consulta desactivar:'.$db -> error);
+			$this -> db -> query($query) or die('Error consulta desactivar:'.$this -> db -> error);
 			}
         
         # Eliminamos ; al final de la consulta en caso de que exista
         $this -> consulta = str_ireplace(';', '', $this -> consulta);
         
-        
         # Aplicamos los filtros en caso de que se envie el formulario
+        if ($this -> debug && $_POST) {
+			echo "<strong>POST:</strong>";
+			echo "<pre>";
+			print_r($_POST);
+			echo "</pre>";
+			}
+        
         if ($_POST && !empty($this -> filtros)) {
 			
 			function tipo($tipo, $valor) {
@@ -551,6 +559,9 @@ public function tabla() {
 		if (isset($group)) {
 			$this -> consulta .= $group;
 			}
+		
+		unset($where);
+		unset($group);
         
         # Recogemos el parametro 'ordenar' en caso de que exista para ordenar la/s columnas
 		if (isset($_GET['ordenar'])) {
@@ -561,7 +572,7 @@ public function tabla() {
 			reset($ordenar);
 			foreach ($ordenar as $clave => $valor) {
 				$clave++;
-				$this -> consulta .= $db -> real_escape_string($clave).' '.$db -> real_escape_string($valor).(($clave-1 != $ultima_clave)?', ':'');	
+				$this -> consulta .= $this -> db -> real_escape_string($clave).' '.$this -> db -> real_escape_string($valor).(($clave-1 != $ultima_clave)?', ':'');	
 			}
 		}
 		else if (!empty($this -> orden_predeterminado)) {
@@ -608,13 +619,14 @@ public function tabla() {
 		
 		
 		if ($this -> debug) {
-			echo $this -> consulta;
+			echo '<strong>Consulta:</strong><br>';
+			echo $this -> consulta.'<br>';
 			}
 		
-        $resultados = $db -> query($this->consulta) or die ('<br>'.mysqli_error($db).'<br>');
+        $resultados = $this -> db -> query($this->consulta) or die (mysqli_error($this -> db).'<br>');
 
 		// Total de páginas y registros
-        $total_registros = $db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
+        $total_registros = $this -> db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
         
         $this -> paginas_total = ceil($total_registros/$this->pagesize);
             
@@ -625,10 +637,10 @@ public function tabla() {
             if (!empty($_POST[$this->select_name])) {
                     $_POST = $this -> limpiarArray($_POST);
                     
-                    $maximo = $db -> query('select MAX(id) from '.$this->select_tabla);
+                    $maximo = $this -> db -> query('select MAX(id) from '.$this->select_tabla);
                     $maximo = mysqli_fetch_array($maximo);
                     
-                    $minimo = $db -> query('select MIN(id) from '.$this->select_tabla);
+                    $minimo = $this -> db -> query('select MIN(id) from '.$this->select_tabla);
                     $minimo = mysqli_fetch_array($minimo );
                     
                     for ($i = $minimo[0]; $i <= $maximo[0] ;$i++) {
@@ -917,13 +929,15 @@ public function tabla() {
 																	<select class='textfield' name='filtro<?=$cnt?>' onchange='this.form.submit()'>
 																		<option value='-'>Selecione...</option>
 																		<?php
-																		$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
+																		$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
 																		
 																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
 																			?>
 																			<option value='<?=$fila_filtro[0]?>' <?=(isset($_POST['filtro'.$cnt]) && $_POST['filtro'.$cnt]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
 																			<?php
 																			}
+																		
+																		$filas_filtros -> free();
 																		?>
 																	</select>
 																</div>
@@ -938,7 +952,7 @@ public function tabla() {
 																	<fieldset>
 																	<legend class='texto_filtro'> <strong><?=$this -> filtros_texto[$id]?></strong> </legend>
 																		<?php
-																		$filas_filtros = $db -> query($this -> filtros_consultas[$id]);
+																		$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
 																		
 																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
 																			?>
@@ -946,6 +960,7 @@ public function tabla() {
 																			<input class='checks' id="checkbox-<?=$cnt?>" name='filtro<?=$cnt?>[<?=$fila_filtro[0]?>]' type='checkbox' <?=(!empty($_POST['filtro'.$cnt][$fila_filtro[0]])?' checked':'')?>><br>
 																			<?php
 																			}
+																		$filas_filtros -> free();
 																		?>
 																	</fieldset>
 																</div>
@@ -1067,7 +1082,9 @@ public function tabla() {
 								
 								$n_columnas++;
 							}
-						}           
+						}
+						unset($quitar);
+						    
 						?> 
 						</tr>
 						<?php
@@ -1168,7 +1185,7 @@ public function tabla() {
 												break;
 											
 											case 'lista':
-												$listas = $db -> query($this -> lista_consulta.$fila[$i]) or die ($db -> error);
+												$listas = $this -> db -> query($this -> lista_consulta.$fila[$i]) or die ($this -> db -> error);
 												?>
 												<ul>
 												<?php
@@ -1177,6 +1194,8 @@ public function tabla() {
 														<li><?=$lista[0]?></li>
 													<?php
 													}
+												
+												$listas -> free();
 												?>
 												</ul>
 												<?php
@@ -1230,7 +1249,7 @@ public function tabla() {
 															  $this->mensaje_consulta_tmp = $this->mensaje_consulta;
 															  }
 														  
-														  $resultados_mensaje = $db -> query($this->mensaje_consulta_tmp);
+														  $resultados_mensaje = $this -> db -> query($this->mensaje_consulta_tmp);
 														  
 														  while ($resultado2 = mysqli_fetch_array($resultados_mensaje)) {
 																# El array campos permite elegir que columnas de la consulta del mensaje se muestran
@@ -1239,6 +1258,9 @@ public function tabla() {
 																	}
 															  echo $this->mensaje_codigo_posterior;
 															  }
+														   
+														   $resultados_mensaje -> free();
+														   
 														  // Reinicializamos la variable
 														  $this->mensaje_consulta_tmp='';
 														  }
@@ -1252,7 +1274,7 @@ public function tabla() {
 												break;
 											
 											case 'select':
-												$registros = $db -> query($this->select_consulta);
+												$registros = $this -> db -> query($this->select_consulta);
 												?>
 												<select name='<?=$this->select_name.$fila[$i]?>' form='<?=$this->form_id?>' onchange='this.form.submit()'>
 													<option value=''> <?=$this->select_texto_defecto?> </option>
@@ -1302,6 +1324,8 @@ public function tabla() {
 							</td>
 							<?php
 							}
+						
+						$resultados -> free();
 						?>
 						</table>
 						
@@ -1502,6 +1526,10 @@ public function tabla() {
         </table>
     </form>
     <?php
+    
+    if ($this -> debug) {
+		echo '<strong>Memoria Final:</strong> '.memory_get_usage().' Bytes <br>';
+		}
     }
 }
 ?>
