@@ -831,13 +831,15 @@ public function tabla() {
 								<div style="border:1px solid #CCCCCC; margin:5px; padding:5px; background-color:#F3F3F3;">
 									<table width="100%" border="0" cellspacing="0" cellpadding="5">
 											<?php
-											if ($_POST && !empty($this -> filtros)) {
+											if ($_POST && !empty($this -> filtros) && !isset($_GET['eliminar_filtros'])) {
 												?>
 												<tr>
-													<td colspan='2' align='right'><a href='<?=$url_formulario?>'><img src='images/boton-elim-filtro.png'></a></td>
+													<td colspan='2' align='right'><a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'eliminar_filtros'?>'><img src='images/boton-elim-filtro.png'></a></td>
 												</tr>
 												<?php
 												}
+											
+											unset($_GET['eliminar_filtros']);
 											
 											if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
 												?>
