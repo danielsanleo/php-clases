@@ -1203,7 +1203,7 @@ public function tabla() {
 												
 											case 'moneda':
 												?>
-												<?=$fila[$i]?> <?=$this -> moneda_divisa?>
+												<?=money_format('%+n', $fila[$i])?> <?=$this -> moneda_divisa?>
 												<?php
 												
 												break;
