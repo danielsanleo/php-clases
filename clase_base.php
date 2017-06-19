@@ -232,8 +232,6 @@ class base
     public $select_tabla;
     public $select_name = 'seleccionar';
     public $select_texto_defecto = 'Seleccione...';
-    public $select_option_value = 'id';
-    public $select_option_texto = array();
     
     // BOTON SUBMIT
     public $boton_submit=0;
@@ -352,6 +350,7 @@ private function createCondition ($tipo, $columna, $valor) {
 			case 'select':
 				return ' '.$columna.' = "'.$this -> db -> real_escape_string($valor).'"';
 				break;
+				
 			case 'checkboxes':
 				$return = ' (';
 				
@@ -560,6 +559,7 @@ public function tabla() {
 			$this -> consulta .= $group;
 			}
 		
+		# Liberamos memoria
 		unset($where);
 		unset($group);
         
@@ -567,9 +567,11 @@ public function tabla() {
 		if (isset($_GET['ordenar'])) {
 			$ordenar = unserialize(urldecode($_GET['ordenar']));
 			$this -> consulta .= ' ORDER BY ';
+			
 			end($ordenar);
 			$ultima_clave = key($ordenar);
 			reset($ordenar);
+			
 			foreach ($ordenar as $clave => $valor) {
 				$clave++;
 				$this -> consulta .= $this -> db -> real_escape_string($clave).' '.$this -> db -> real_escape_string($valor).(($clave-1 != $ultima_clave)?', ':'');	
@@ -577,9 +579,11 @@ public function tabla() {
 		}
 		else if (!empty($this -> orden_predeterminado)) {
 			$this -> consulta .= ' ORDER BY ';
+			
 			end($this -> orden_predeterminado);
 			$ultima_clave = key($this -> orden_predeterminado);
 			reset($this -> orden_predeterminado);
+			
 			foreach ($this -> orden_predeterminado as $clave => $valor) {
 				$this -> consulta .= ($clave+1)." $valor".(($clave != $ultima_clave)?', ':'');	
 			}
@@ -621,38 +625,41 @@ public function tabla() {
 		if ($this -> debug) {
 			echo '<strong>Consulta:</strong><br>';
 			echo $this -> consulta.'<br>';
+		
+			echo '<br>';
+			echo '<strong>Columnas:</strong><br>';
+			echo '<pre>';
+			print_r($this -> columna);
+			echo '</pre>';
 			}
+			
+		
 		
         $resultados = $this -> db -> query($this->consulta) or die (mysqli_error($this -> db).'<br>');
+
+		unset($this -> consulta);
 
 		// Total de páginas y registros
         $total_registros = $this -> db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
         
         $this -> paginas_total = ceil($total_registros/$this->pagesize);
-            
+
         // POST
-        if ($_POST) {
-						
+        //~ if ($_POST) {
+
             # Valores devueltos por el modulo SELECT
-            if (!empty($_POST[$this->select_name])) {
-                    $_POST = $this -> limpiarArray($_POST);
+            //~ if (!empty($_POST[$this->select_name])) {
+                    //~ $_POST = $this -> limpiarArray($_POST);
                     
-                    $maximo = $this -> db -> query('select MAX(id) from '.$this->select_tabla);
-                    $maximo = mysqli_fetch_array($maximo);
-                    
-                    $minimo = $this -> db -> query('select MIN(id) from '.$this->select_tabla);
-                    $minimo = mysqli_fetch_array($minimo );
-                    
-                    for ($i = $minimo[0]; $i <= $maximo[0] ;$i++) {
-                        $tmp = $this -> select_name . $i;
-                        if (!empty($_POST[$tmp])) {
-                            $_SESSION['valor'] = $_POST[$tmp];
-                            $_SESSION['i'] = $i;
-                    }
-                }
-            }
-        }
-        
+                    //~ for ($i = $minimo[0]; $i <= $maximo[0] ;$i++) {
+                        //~ $tmp = $this -> select_name . $i;
+                        //~ if (!empty($_POST[$tmp])) {
+                            //~ $_SESSION['valor'] = $_POST[$tmp];
+                            //~ $_SESSION['i'] = $i;
+                    //~ }
+                //~ }
+            //~ }
+		//~ }
         
         $url_formulario = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
         
@@ -727,7 +734,8 @@ public function tabla() {
 					}
 				}
         </script>
-		<form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>" onsubmit='return validar()'>
+        
+        <form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>" onsubmit='return validar()'>
 			<?php
 			# Primera Tabla: Contiene todo el listado
 			?>
@@ -1205,7 +1213,6 @@ public function tabla() {
 												?>
 												<?=money_format('%+n', $fila[$i])?> <?=$this -> moneda_divisa?>
 												<?php
-												
 												break;
 											
 											case 'fecha':
@@ -1274,20 +1281,14 @@ public function tabla() {
 												break;
 											
 											case 'select':
-												$registros = $this -> db -> query($this->select_consulta);
+												$registros = $this -> db -> query($this -> select_consulta);
 												?>
-												<select name='<?=$this->select_name.$fila[$i]?>' form='<?=$this->form_id?>' onchange='this.form.submit()'>
+												<select name='<?=$this->select_name?>[<?=$fila[$i]?>]' onchange='this.form.submit()'>
 													<option value=''> <?=$this->select_texto_defecto?> </option>
 													<?php
 													while ($fila2 = mysqli_fetch_array($registros)) {
 														?>
-														<option value='<?=$fila2[$this -> select_option_value]?>'>
-														<?php
-														foreach($this -> select_option_texto as $columna_mostrar) {
-															echo "$fila2[$columna_mostrar] ";
-															}
-														?>
-														</option>
+														<option value='<?=$fila2[0]?>'> <?=$fila2[1]?> </option>
 														<?php
 														}
 														?>

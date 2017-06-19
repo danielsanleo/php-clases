@@ -52,6 +52,7 @@
 
 					$base -> consulta = "SELECT almacenes.nombre, 
 												articulos.referencia, 
+												movimientos.id AS Seleccion, 
 												accion AS 'Entrada/Salida', 
 												cantidad AS Uds, 
 												movimientos.fecha,
@@ -79,9 +80,15 @@
 					$fecha = 'Fecha';
 					$eliminar = 'Eliminar';
 					$entrada = 'Entrada/Salida';
-					$base -> columna = array($fecha => 'fecha', $eliminar => 'eliminar', $entrada => 'estado');
+					$seleccion = 'Seleccion';
+					
+					$base -> columna = array($fecha => 'fecha', $eliminar => 'eliminar', $entrada => 'estado', $seleccion => 'select');
+
+					$base -> select_consulta = 'SELECT * FROM familias';
+					$base -> select_texto_defecto= 'Selecione..';
 
 					$base -> estados = array(0 => 'Entrada', 1 => 'Salida');
+					
 
 					$base -> eliminar = 1;
 					$base -> eliminar_columna = 'id';
