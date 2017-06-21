@@ -471,7 +471,7 @@ public function tabla() {
 			
 			# Comprobamos si existen WHERE y GROUP 
 			$pos_where = stripos($this -> consulta, 'WHERE');
-			$pos_group = stripos($this -> consulta, 'GROUP BY');
+			$pos_group = stripos($this -> consulta, 'GROUP BY') + 1;
 			
 			if ($pos_where) {
 				# Ponemos unos parentesis para que la nueva condicion no filtre mal
