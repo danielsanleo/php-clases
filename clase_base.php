@@ -469,13 +469,14 @@ public function tabla() {
 			
 			$where = ' WHERE ';
 			
-			# Comprobamos si existen WHERE y GROUP 
+			# Comprobamos si existe WHERE 
 			$pos_where = stripos($this -> consulta, 'WHERE');
 			
 			if ($pos_where) {
 				# Ponemos unos parentesis para que la nueva condicion no filtre mal
 				$this -> consulta = str_ireplace('WHERE ', 'WHERE ( ', $this -> consulta);
 				
+				# Comprobamos si existe el GROUP BY
 				$pos_group = stripos($this -> consulta, 'GROUP BY');
 				
 				# Si existe el group lo separamos de la consulta principal temporalmente
@@ -489,6 +490,7 @@ public function tabla() {
 				$where = ' AND ';
 				}
 			else {
+				# Comprobamos si existe el GROUP BY
 				$pos_group = stripos($this -> consulta, 'GROUP BY');
 				
 				if ($pos_group) {
