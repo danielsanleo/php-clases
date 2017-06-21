@@ -480,7 +480,7 @@ public function tabla() {
 				# Si existe el group lo separamos de la consulta principal temporalmente
 				if ($pos_group) {
 					$group = substr($this -> consulta, $pos_group);
-					$this -> consulta = substr($this -> consulta, 0, $pos_group - 1);
+					$this -> consulta = substr($this -> consulta, 0, $pos_group + 1);
 					}
 					
 				$this -> consulta .= ')';
