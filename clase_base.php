@@ -316,6 +316,7 @@ private function getImageFile ($fichero) {
 		case 'rar':
 			return 'rar.png';
 			break;
+		case 'sql':
 		case 'txt':
 			return 'txt.png';
 			break;
