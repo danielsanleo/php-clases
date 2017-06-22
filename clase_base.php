@@ -202,6 +202,18 @@ class base
 	public $desactivar_alt = 'Eliminar';
 	public $desactivar_texto_confirmar = '¿Seguro que quiere eliminarlo?';
     
+    // PETICIÓN AJAX
+	# Realiza una petición ajax a un fichero de nuestra elección, pasando los parámetros que deseemos
+	# Formato: array(<columna> => <parámetro>);
+	public $ajx_img; 	#imagen/icono 
+	public $ajx_img_dwn;#imagen para la pulsación del ratón sobre la imagen
+	public $ajx_title;	#texto alternativo para la imagen
+	public $ajx_url;	#url a la que se dirige la petición
+	public $ajx_method;	#método get/post
+	public $ajx_id;		#nombre para el valor de la columna que se envía por ajax
+	public $ajx_params;	#parámetros extra para añadirlos al json que se envía por ajax
+						#formato de array bidimensional: array(<columna> => array(<parámetro> => <valor>[, <parámetro> => <valor>...][, <columna> => array(<parámetro> => <valor>[, <parámetro> => <valor>...]])
+    
     // OPERACION
     // Realiza operaciones con los valores indicados de la fila
     public $type = 'number';
@@ -1300,10 +1312,22 @@ public function tabla() {
 												</select>
 												<?php
 												break;
+											
+											case 'ajax':
+												if (!empty($this->ajx_id[$indice]))
+													$this->ajx_params[$indice][$this->ajx_id[$indice]] = $fila[$indice];
+												$json_generado = json_encode($this->ajx_params[$indice]);
+												?>
+												<div style='text-align:center;' >
+													<img src="<?=$this->ajx_img[$indice]?>" alt="<?=$this->ajx_title[$indice]?>" title="<?=$this->ajx_title[$indice]?>" style='width: 16px; cursor: pointer' onClick='$.<?=$this->ajx_method[$indice]?>("<?=$this->ajx_url[$indice]?>", <?=$json_generado?>)<?=($this->debug)?'.done(function(data){alert(data)})':'';?>' <?=(!empty($this->ajx_img_dwn[$indice]))?'onmousedown=\'$(this).attr("src", "'.$this->ajx_img_dwn[$indice].'")\' onmouseup=\'$(this).attr("src", "'.$this->ajx_img[$indice].'")\'':'';?>>
+												</div>
+												<?php
+												break;
 												
 											default:
 												echo 'El módulo '.$this->columna[$indice].' no existe';
 												break;
+											
 										}
 										?>
 										</td>
