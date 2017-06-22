@@ -1182,7 +1182,7 @@ public function tabla() {
 												?>
 												<div style='text-align:center;' >
 													<a href="<?=$this -> descarga_url.$fila[$i]?>" target="<?=$this -> descarga_nueva_ventana == true?'target="_blank"':''?>">
-														<img src="<?=$this -> descarga_ruta_iconos.getImageFile($fila[$i])?>" alt="Descargar Archivo" title="Descargar Archivo" width="16">
+														<img src="<?=$this -> descarga_ruta_iconos.$this -> getImageFile($fila[$indice])?>" alt="Descargar Archivo" title="Descargar Archivo" width="16">
 													</a>
 												</div>
 												<?php
