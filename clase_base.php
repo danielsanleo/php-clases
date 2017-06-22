@@ -661,23 +661,6 @@ public function tabla() {
         $total_registros = $this -> db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
         
         $this -> paginas_total = ceil($total_registros/$this->pagesize);
-
-        // POST
-        //~ if ($_POST) {
-
-            # Valores devueltos por el modulo SELECT
-            //~ if (!empty($_POST[$this->select_name])) {
-                    //~ $_POST = $this -> limpiarArray($_POST);
-                    
-                    //~ for ($i = $minimo[0]; $i <= $maximo[0] ;$i++) {
-                        //~ $tmp = $this -> select_name . $i;
-                        //~ if (!empty($_POST[$tmp])) {
-                            //~ $_SESSION['valor'] = $_POST[$tmp];
-                            //~ $_SESSION['i'] = $i;
-                    //~ }
-                //~ }
-            //~ }
-		//~ }
         
         $url_formulario = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
         
