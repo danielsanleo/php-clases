@@ -145,7 +145,7 @@ class base
     // DESCARGA
     public $descarga_url; # Path donde se encuentran los archivos
     public $descarga_nueva_ventana; # ¿Descargar en una nueva ventana? True o False
-    public $descarga_ruta_iconos; # Path de los iconos
+    public $descarga_ruta_iconos = './images/iconos/'; # Path de los iconos
     
     // IMAGEN 
     public $img_ruta;
