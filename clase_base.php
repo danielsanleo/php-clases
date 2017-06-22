@@ -279,10 +279,10 @@ private function limpiarArray($array) {
 }
 
 # Método para obtener el thumnbnail a partir de la extension del nombre fichero
-//~ src="<br /><b>Strict Standards</b>:  Only variables should be passed by reference in <b>/var/www/vhosts/virtualcab.es/electronova.virtualcab.es/admin/clases/php-clases/clase_base.php</b> on line <b>283</b><br />images/iconos/txt.png"
 private function getImageFile ($fichero) {
+	$array_ext_file = explode('.', $fichero);
 	
-	switch (end(explode('.', $fichero))) {
+	switch (end($array_ext_file)) {
 		case 'ai':
 			return 'ai.png';
 			break;
@@ -1328,7 +1328,6 @@ public function tabla() {
 											default:
 												echo 'El módulo '.$this->columna[$indice].' no existe';
 												break;
-											
 										}
 										?>
 										</td>
