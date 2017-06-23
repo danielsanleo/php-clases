@@ -49,7 +49,6 @@ class base
 								       
 	public $filtros_boton_buscar = True;  # Muestra el boton submit
 	
-	
     # Variables Globales
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
@@ -353,6 +352,7 @@ private function getImageFile ($fichero) {
 # Tipos de filtros que pueden existir
 # Cada uno va asociada de un tipo de condicion y valores
 private function createCondition ($tipo, $columna, $valor) {
+	
 	if (!empty($tipo) && !empty($valor)) {
 		switch ($tipo) {
 			case 'periodo':
@@ -1059,11 +1059,11 @@ public function tabla() {
 											# A continuacion intercambiamos los valores del array lo que permite revertir el orden del listado
 											$ordenar[$n_columnas] = (empty($ordenar[$n_columnas])?$this -> ordenar[$n_columnas]:(($ordenar[$n_columnas]=='DESC')?'ASC':'DESC'));
 											
-											if ($this -> orden_anidado) {	
+											if ($this -> orden_anidado) {
 												foreach($array_ordenar as $c => $v) {
 													$tmp[$c] = $v;
+													}
 												}
-											}
 											
 											$tmp[$n_columnas] = $ordenar[$n_columnas];
 											
@@ -1484,7 +1484,6 @@ public function tabla() {
 							</table>
 						</td>
 					</tr>
-
 					<br>
 				<?php
 				}
@@ -1538,16 +1537,20 @@ public function tabla() {
 						<td> <div class="radioinferior"> </div> </td>
 					</tr>
 					<?php
-				}
-              ?>
+					}
+
+				if ($this -> debug) {
+					?>
+					<tr>
+						<td align='center'><strong>Memoria Final: <?=memory_get_usage()?></strong></td>
+					</tr>
+					<?php
+					}
+				?>
             </table>
         </table>
     </form>
     <?php
-    
-    if ($this -> debug) {
-		echo '<strong>Memoria Final:</strong> '.memory_get_usage().' Bytes <br>';
-		}
     }
 }
 ?>
