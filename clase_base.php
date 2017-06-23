@@ -16,9 +16,14 @@ class base
 	# Filtros
 	# --------
 	# Funcionan de forma similar a los modulos del listado
-	# Existen dos tipos:
+	# Existen varios tipos:
 	# buscar: input de tipo texto
 	# select: input select
+	# periodo: dos input select
+	## Para utilizar el filtro periodo es necesario incluir JQuery a la cabecera
+	# <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+	# <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	# <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 	# Los de tipo select necesitan una consulta que devolverá dos campos (id, valor)
 	# Ademas podemos especificar mas de una columna en la que realice la busqueda
 	
