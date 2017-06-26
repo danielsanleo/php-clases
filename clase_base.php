@@ -5,7 +5,7 @@ class base
     # ----------------
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
     public $debug = False;
-
+	
     // ORDENACIÓN
     # Orden predeterminado que mostrará la tabla.
     # Array en el que pasamos los parámetros en la forma nº de columna a ordenar => tipo de ordenación.
@@ -42,11 +42,10 @@ class base
 	# Columnas de la BBDD a la que aplicar los filtros, podemos especificar un solo valor o un array con varios
 	//~ public $filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
 	public $filtros_where = array();
-								  
+	
 	# Array con los operadores correspondientes a cada filtro, son los mismos que podemos utilizar en las sentencias SQL
 	//~ public $filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');
-	public $filtros_where_tipo = array();
-								       
+	public $filtros_where_tipo = array();					       
 	public $filtros_boton_buscar = True;  # Muestra el boton submit
 	
     # Variables Globales
@@ -75,6 +74,7 @@ class base
     // Hace referencia a la barra de menus situada encima del listado y los filtros
     // En la version anterior era el nuevo_registro
 	public $menu = 1; # Activar o desactivar
+	
     # Arrays con las urls y las imagenes, los que tengan las mismas claves se entiende que deben aparecer como IMAGEN => URL
     public $menu_url = array( 1 => 'http://www.google.com' );
     public $menu_imagen = array( 1 => 'images/boton-nuevo-operador.png' );
@@ -137,7 +137,7 @@ class base
     
     # --------- #
     #  MÓDULOS  #
-    # --------  #
+    # --------- #
     // ENLACE (En versiones anteriores se llamaba ficha)
     # Permite definir enlaces asociados a imagenes
     # Sintaxis de los arrays: (columna => valor)
@@ -572,6 +572,8 @@ public function tabla() {
 				$where .= ')';
 			}
 
+			
+		
 		# Concatenamos el WHERE
 		if (!empty($flag)) {
 			$this -> consulta .= $where;

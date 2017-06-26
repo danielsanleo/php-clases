@@ -59,6 +59,10 @@
 												movimientos.id AS Eliminar
 										 FROM movimientos INNER JOIN almacenes ON movimientos.id_almacen=almacenes.id 
 														  INNER JOIN articulos ON movimientos.id_articulo=articulos.id";
+					
+					
+					$base -> where_activo = array('articulos.activo' => 1);
+					
 					$buscar_ref = 1;
 					$dos = 2;
 
