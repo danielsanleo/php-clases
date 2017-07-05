@@ -66,7 +66,7 @@ class base
     # el link hacia los estilos: <link rel="stylesheet" href="clases/animate.css">
     public $animacion = array();
     
-    public $abcedario = 1; # 1 -> Habilitamos el filtro por letra
+    public $abcedario = False; # 1 -> Habilitamos el filtro por letra
     public $abcedario_columnas = array('nombre', 'codigo_postal'); # Array de columnas donde debe buscar
     
     # BARRA DE MENUS
