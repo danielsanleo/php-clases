@@ -66,11 +66,11 @@
 					$buscar_ref = 1;
 					$dos = 2;
 
-					$base -> filtros = array($buscar_ref => 'periodo', $dos => 'checkboxes'); 
-					$base -> filtros_texto = array($buscar_ref => 'Fechas', $dos => 'Proveedores');
-					$base -> filtros_consultas = array($dos => 'SELECT id, nombre FROM proveedores LIMIT 10');
-					$base -> filtros_where = array($buscar_ref => 'movimientos.fecha', $dos => 'movimientos.id_proveedor');
-					$base -> filtros_boton_buscar = True;
+					//~ $base -> filtros = array($buscar_ref => 'periodo', $dos => 'checkboxes'); 
+					//~ $base -> filtros_texto = array($buscar_ref => 'Fechas', $dos => 'Proveedores');
+					//~ $base -> filtros_consultas = array($dos => 'SELECT id, nombre FROM proveedores LIMIT 10');
+					//~ $base -> filtros_where = array($buscar_ref => 'movimientos.fecha', $dos => 'movimientos.id_proveedor');
+					//~ $base -> filtros_boton_buscar = True;
 					
 					$base -> migasdepan = 1;
 					$base -> migas = array('Menú' => 'menu.php', 'Listado Entradas/Salidas' => '');

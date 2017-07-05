@@ -841,172 +841,175 @@ public function tabla() {
 						  <?php
 						  }
 							
-						?>
-						<tr>
-							<td>
-								<div style="border:1px solid #CCCCCC; margin:5px; padding:5px; background-color:#F3F3F3;">
-									<table width="100%" border="0" cellspacing="0" cellpadding="5">
-											<?php
-											if ($_POST && !empty($this -> filtros)) {
-												?>
-												<tr>
-													<td colspan='2' align='right'><a href='<?=$url_formulario?>'><img src='images/boton-elim-filtro.png'></a></td>
-												</tr>
+						
+						if (!empty($this -> filtros) && !empty($this -> abcedario)) {
+							?>
+							<tr>
+								<td>
+									<div style="border:1px solid #CCCCCC; margin:5px; padding:5px; background-color:#F3F3F3;">
+										<table width="100%" border="0" cellspacing="0" cellpadding="5">
 												<?php
-												}
-											
-											if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
-												?>
-												<tr>
-													<td class="enlacehome" align='center' cellspacing='2'>
-													<?php
-													
-													$letras = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','v','w','x','y','z');
-													
-													foreach ($letras as $letra) {
-														?>
-														<a href="<?=$url_formulario;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> | 	
-														<?php
-														}
-													?>
-													</td>
-												</tr> 
-												<?php
-												}
-											
-											$cnt = 2;
-											foreach ($this -> filtros as $id => $filtro) {
-												$r = $cnt%2;
-												
-												if ( $r == 0 ) {
-													echo '<tr>';
-													}
-												
-												switch ($filtro) {
-													case 'periodo':
-															
-															# Para utilizar el filtro periodo es necesario incluir JQuery a la cabecera
-															# <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
-															# <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-															# <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
-															?>
-															<td>
-																<div align="left" class="texto"> 
-																	<span class='texto_filtro'> <?=$this -> filtros_texto[$id]?> </span>
-																	<input name="filtro<?=$cnt?>[]" id='fecha_ini' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][0])?$_POST['filtro'.$cnt][0]:'')?>">
-																	a
-																	<input name="filtro<?=$cnt?>[]" id='fecha_fin' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][1])?$_POST['filtro'.$cnt][1]:'')?>">
-																	
-																	<script>
-																		$.datepicker.regional['es'] = {
-																			  closeText: 'Cerrar',
-																			  prevText: '<Ant',
-																			  nextText: 'Sig>',
-																			  currentText: 'Hoy',
-																			  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-																			  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
-																			  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-																			  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
-																			  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
-																			  weekHeader: 'Sm',
-																			  dateFormat: 'dd/mm/yy',
-																			  firstDay: 1,
-																			  isRTL: false,
-																			  showMonthAfterYear: false,
-																			  yearSuffix: ''
-																			  };
-																			  
-																		$.datepicker.setDefaults($.datepicker.regional['es']);
-																		$(function () {
-																		$(".datepicker").datepicker();
-																	  });
-																	</script>
-																</div>
-															</td>
-															<?php
-														break;
-														
-													case 'buscar':
-															?>
-															<td>
-																<div align="left" class="texto"> 
-																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																	<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>"> 
-																</div>
-															</td>
-															<?php
-														break;
-
-													case 'select':
-															?>
-															<td>
-																<div align="left" class="texto"> 
-																	<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																	<select class='textfield' name='filtro<?=$cnt?>' onchange='this.form.submit()'>
-																		<option value='-'>Selecione...</option>
-																		<?php
-																		$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
-																		
-																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
-																			?>
-																			<option value='<?=$fila_filtro[0]?>' <?=(isset($_POST['filtro'.$cnt]) && $_POST['filtro'.$cnt]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
-																			<?php
-																			}
-																		
-																		$filas_filtros -> free();
-																		?>
-																	</select>
-																</div>
-															</td>
-															<?php
-														break;
-														
-													case 'checkboxes':
-															?>
-															<td>
-																<div align="left" class="texto widget"> 
-																	<fieldset>
-																	<legend class='texto_filtro'> <strong><?=$this -> filtros_texto[$id]?></strong> </legend>
-																		<?php
-																		$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
-																		
-																		while ($fila_filtro = $filas_filtros -> fetch_array()) {
-																			?>
-																			<label><?=$fila_filtro[1]?></label>
-																			<input class='checks' id="checkbox-<?=$cnt?>" name='filtro<?=$cnt?>[<?=$fila_filtro[0]?>]' type='checkbox' <?=(!empty($_POST['filtro'.$cnt][$fila_filtro[0]])?' checked':'')?>><br>
-																			<?php
-																			}
-																		$filas_filtros -> free();
-																		?>
-																	</fieldset>
-																</div>
-															</td>
-															<?php
-														break;
-													}
-
-												if ( $r == 1 ) {
-													echo '</tr>';
-													}
-													
-												$cnt++;
-												}
-											
-												if ($this -> filtros_boton_buscar) {
+												if ($_POST && !empty($this -> filtros)) {
 													?>
 													<tr>
-														<td colspan='2' align='right'>
-															<input type="submit" name="button" id="button" value="Buscar" class="textfield">													
-														</td>
+														<td colspan='2' align='right'><a href='<?=$url_formulario?>'><img src='images/boton-elim-filtro.png'></a></td>
 													</tr>
 													<?php
 													}
-											?>
-									</table>
-								</div>
-							</td>
-						</tr>
-						<?php
+												
+												if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
+													?>
+													<tr>
+														<td class="enlacehome" align='center' cellspacing='2'>
+														<?php
+														
+														$letras = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','v','w','x','y','z');
+														
+														foreach ($letras as $letra) {
+															?>
+															<a href="<?=$url_formulario;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> | 	
+															<?php
+															}
+														?>
+														</td>
+													</tr> 
+													<?php
+													}
+												
+												$cnt = 2;
+												foreach ($this -> filtros as $id => $filtro) {
+													$r = $cnt%2;
+													
+													if ( $r == 0 ) {
+														echo '<tr>';
+														}
+													
+													switch ($filtro) {
+														case 'periodo':
+																
+																# Para utilizar el filtro periodo es necesario incluir JQuery a la cabecera
+																# <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+																# <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+																# <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
+																?>
+																<td>
+																	<div align="left" class="texto"> 
+																		<span class='texto_filtro'> <?=$this -> filtros_texto[$id]?> </span>
+																		<input name="filtro<?=$cnt?>[]" id='fecha_ini' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][0])?$_POST['filtro'.$cnt][0]:'')?>">
+																		a
+																		<input name="filtro<?=$cnt?>[]" id='fecha_fin' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][1])?$_POST['filtro'.$cnt][1]:'')?>">
+																		
+																		<script>
+																			$.datepicker.regional['es'] = {
+																				  closeText: 'Cerrar',
+																				  prevText: '<Ant',
+																				  nextText: 'Sig>',
+																				  currentText: 'Hoy',
+																				  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+																				  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+																				  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+																				  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+																				  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+																				  weekHeader: 'Sm',
+																				  dateFormat: 'dd/mm/yy',
+																				  firstDay: 1,
+																				  isRTL: false,
+																				  showMonthAfterYear: false,
+																				  yearSuffix: ''
+																				  };
+																				  
+																			$.datepicker.setDefaults($.datepicker.regional['es']);
+																			$(function () {
+																			$(".datepicker").datepicker();
+																		  });
+																		</script>
+																	</div>
+																</td>
+																<?php
+															break;
+															
+														case 'buscar':
+																?>
+																<td>
+																	<div align="left" class="texto"> 
+																		<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
+																		<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>"> 
+																	</div>
+																</td>
+																<?php
+															break;
+
+														case 'select':
+																?>
+																<td>
+																	<div align="left" class="texto"> 
+																		<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
+																		<select class='textfield' name='filtro<?=$cnt?>' onchange='this.form.submit()'>
+																			<option value='-'>Selecione...</option>
+																			<?php
+																			$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
+																			
+																			while ($fila_filtro = $filas_filtros -> fetch_array()) {
+																				?>
+																				<option value='<?=$fila_filtro[0]?>' <?=(isset($_POST['filtro'.$cnt]) && $_POST['filtro'.$cnt]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
+																				<?php
+																				}
+																			
+																			$filas_filtros -> free();
+																			?>
+																		</select>
+																	</div>
+																</td>
+																<?php
+															break;
+															
+														case 'checkboxes':
+																?>
+																<td>
+																	<div align="left" class="texto widget"> 
+																		<fieldset>
+																		<legend class='texto_filtro'> <strong><?=$this -> filtros_texto[$id]?></strong> </legend>
+																			<?php
+																			$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
+																			
+																			while ($fila_filtro = $filas_filtros -> fetch_array()) {
+																				?>
+																				<label><?=$fila_filtro[1]?></label>
+																				<input class='checks' id="checkbox-<?=$cnt?>" name='filtro<?=$cnt?>[<?=$fila_filtro[0]?>]' type='checkbox' <?=(!empty($_POST['filtro'.$cnt][$fila_filtro[0]])?' checked':'')?>><br>
+																				<?php
+																				}
+																			$filas_filtros -> free();
+																			?>
+																		</fieldset>
+																	</div>
+																</td>
+																<?php
+															break;
+														}
+
+													if ( $r == 1 ) {
+														echo '</tr>';
+														}
+														
+													$cnt++;
+													}
+												
+													if ($this -> filtros_boton_buscar) {
+														?>
+														<tr>
+															<td colspan='2' align='right'>
+																<input type="submit" name="button" id="button" value="Buscar" class="textfield">													
+															</td>
+														</tr>
+														<?php
+														}
+												?>
+										</table>
+									</div>
+								</td>
+							</tr>
+							<?php
+						}
 							
 						  
 						## Total de registros encontrados
