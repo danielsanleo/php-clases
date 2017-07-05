@@ -842,7 +842,8 @@ public function tabla() {
 						  }
 							
 						
-						if (!empty($this -> filtros) && !empty($this -> abcedario)) {
+						# Filtros del listado
+						if (!empty($this -> filtros) || !empty($this -> abcedario)) {
 							?>
 							<tr>
 								<td>
