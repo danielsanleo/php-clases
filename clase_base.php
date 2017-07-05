@@ -360,6 +360,12 @@ private function createCondition ($tipo, $columna, $valor) {
 					return ' ('.$columna.' BETWEEN "'.DateTime::createFromFormat('d/m/Y',$valor[0]) -> format('Y-m-d').'" AND "'.DateTime::createFromFormat('d/m/Y', $valor[1]) -> format('Y-m-d').'")';
 					}
 				break;
+			
+			case 'fecha':
+				if (!empty($valor)) {
+					return ' ('.$columna.' = "'.DateTime::createFromFormat('d/m/Y',$valor) -> format('Y-m-d').'")';
+					}
+				break;
 				
 			case 'buscar':
 				return ' '.$columna.' LIKE "%'.$this -> db -> real_escape_string($valor).'%"';	
@@ -899,31 +905,6 @@ public function tabla() {
 																		<input name="filtro<?=$cnt?>[]" id='fecha_ini' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][0])?$_POST['filtro'.$cnt][0]:'')?>">
 																		a
 																		<input name="filtro<?=$cnt?>[]" id='fecha_fin' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][1])?$_POST['filtro'.$cnt][1]:'')?>">
-																		
-																		<script>
-																			$.datepicker.regional['es'] = {
-																				  closeText: 'Cerrar',
-																				  prevText: '<Ant',
-																				  nextText: 'Sig>',
-																				  currentText: 'Hoy',
-																				  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-																				  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
-																				  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-																				  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
-																				  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
-																				  weekHeader: 'Sm',
-																				  dateFormat: 'dd/mm/yy',
-																				  firstDay: 1,
-																				  isRTL: false,
-																				  showMonthAfterYear: false,
-																				  yearSuffix: ''
-																				  };
-																				  
-																			$.datepicker.setDefaults($.datepicker.regional['es']);
-																			$(function () {
-																			$(".datepicker").datepicker();
-																		  });
-																		</script>
 																	</div>
 																</td>
 																<?php
@@ -935,6 +916,17 @@ public function tabla() {
 																	<div align="left" class="texto"> 
 																		<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
 																		<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>"> 
+																	</div>
+																</td>
+																<?php
+															break;
+															
+														case 'fecha':
+																?>
+																<td>
+																	<div align="left" class="texto"> 
+																		<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
+																		<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield datepicker" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>"> 
 																	</div>
 																</td>
 																<?php
@@ -1007,12 +999,42 @@ public function tabla() {
 												?>
 										</table>
 									</div>
+									<?php
+									### Incluimos los scripts necesarios para los filtros
+									# Calendario
+									
+									if (in_array('fecha', $this -> filtros) || in_array('periodo', $this -> filtros)) {
+										?>
+										<script>
+											$.datepicker.regional['es'] = {
+												  closeText: 'Cerrar',
+												  prevText: '<Ant',
+												  nextText: 'Sig>',
+												  currentText: 'Hoy',
+												  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+												  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+												  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+												  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+												  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+												  weekHeader: 'Sm',
+												  dateFormat: 'dd/mm/yy',
+												  firstDay: 1,
+												  isRTL: false,
+												  showMonthAfterYear: false,
+												  yearSuffix: ''
+												  };
+												  
+											$.datepicker.setDefaults($.datepicker.regional['es']);
+											$(".datepicker").datepicker();
+										</script>
+										<?php
+										}
+									?>
 								</td>
 							</tr>
 							<?php
 						}
-							
-						  
+
 						## Total de registros encontrados
 						if ($this -> mostrar_total_registros == true && $total_registros > 0) {
 							?>

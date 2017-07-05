@@ -65,11 +65,12 @@
 					
 					$buscar_ref = 1;
 					$dos = 2;
+					$tres = 3;
 
-					$base -> filtros = array($buscar_ref => 'periodo', $dos => 'checkboxes'); 
-					$base -> filtros_texto = array($buscar_ref => 'Fechas', $dos => 'Proveedores');
+					$base -> filtros = array($buscar_ref => 'periodo', $dos => 'checkboxes', $tres => 'fecha'); 
+					$base -> filtros_texto = array($buscar_ref => 'Fechas', $dos => 'Proveedores', $tres => 'Fecha: ');
 					$base -> filtros_consultas = array($dos => 'SELECT id, nombre FROM proveedores LIMIT 10');
-					$base -> filtros_where = array($buscar_ref => 'movimientos.fecha', $dos => 'movimientos.id_proveedor');
+					$base -> filtros_where = array($buscar_ref => 'movimientos.fecha', $dos => 'movimientos.id_proveedor', $tres => 'movimientos.fecha');
 					$base -> filtros_boton_buscar = True;
 					
 					$base -> migasdepan = 1;
