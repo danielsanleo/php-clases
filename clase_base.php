@@ -495,8 +495,8 @@ public function tabla() {
 			
 			//~ $patron_where = '/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/';
 			//~ $patron_group = '/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/';
-			$patron_where = '/\(.*(\(.*\))*.*?\)(*SKIP)(*FAIL)|(WHERE)/';
-			$patron_group = '/\(.*(\(.*\))*.*?\)(*SKIP)(*FAIL)|(GROUP BY)/';
+			$patron_where = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(WHERE)/';
+			$patron_group = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(GROUP BY)/';
 
 			# Comprobamos si existe WHERE, comparamos la consulta 
 			preg_match($patron_where, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
