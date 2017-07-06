@@ -493,17 +493,22 @@ public function tabla() {
 			
 			$where = ' WHERE ';
 			
+			//~ $patron_where = '/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/';
+			//~ $patron_group = '/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/';
+			$patron_where = '/\(.*(\(.*\))*.*?\)(*SKIP)(*FAIL)|(WHERE)/';
+			$patron_group = '/\(.*(\(.*\))*.*?\)(*SKIP)(*FAIL)|(GROUP BY)/';
+
 			# Comprobamos si existe WHERE, comparamos la consulta 
-			preg_match('/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/', $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
+			preg_match($patron_where, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
 			$pos_where = $matches[0][1];
 			unset($matches);
 
 			if ($pos_where) {
 				# Ponemos unos parentesis para que la nueva condicion no filtre mal
-				$this -> consulta = preg_replace('/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/', 'WHERE ( ', $this -> consulta);
+				$this -> consulta = preg_replace($patron_where, 'WHERE ( ', $this -> consulta);
 				
 				# Comprobamos si existe el GROUP BY
-				preg_match('/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/', $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
+				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
 				
 				$pos_group = $matches[0][1];
 				
@@ -519,7 +524,7 @@ public function tabla() {
 				}
 			else {
 				# Comprobamos si existe el GROUP BY
-				preg_match('/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/', $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
+				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
 				
 				$pos_group = $matches[0][1];
 				unset($matches);
