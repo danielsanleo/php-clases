@@ -54,15 +54,16 @@
 												articulos.referencia, 
 												movimientos.id AS Seleccion, 
 												accion AS 'Entrada/Salida', 
+												(SELECT id FROM movimientos WHERE 1=1 GROUP BY 1 LIMIT 1) AS SUBcon,
 												cantidad AS Uds, 
 												movimientos.fecha,
 												movimientos.id AS Eliminar
 										 FROM movimientos INNER JOIN almacenes ON movimientos.id_almacen=almacenes.id 
-														  INNER JOIN articulos ON movimientos.id_articulo=articulos.id";
-					
+														  INNER JOIN articulos ON movimientos.id_articulo=articulos.id
+										 WHERE 1=1";
 					
 					$base -> where_activo = array('articulos.activo' => 1);
-					
+
 					$buscar_ref = 1;
 					$dos = 2;
 					$tres = 3;

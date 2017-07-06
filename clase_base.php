@@ -493,15 +493,19 @@ public function tabla() {
 			
 			$where = ' WHERE ';
 			
-			# Comprobamos si existe WHERE 
-			$pos_where = stripos($this -> consulta, 'WHERE');
-			
+			# Comprobamos si existe WHERE, comparamos la consulta 
+			preg_match('/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/', $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
+			$pos_where = $matches[0][1];
+			unset($matches);
+
 			if ($pos_where) {
 				# Ponemos unos parentesis para que la nueva condicion no filtre mal
-				$this -> consulta = str_ireplace('WHERE ', 'WHERE ( ', $this -> consulta);
+				$this -> consulta = preg_replace('/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/', 'WHERE ( ', $this -> consulta);
 				
 				# Comprobamos si existe el GROUP BY
-				$pos_group = stripos($this -> consulta, 'GROUP BY');
+				preg_match('/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/', $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
+				
+				$pos_group = $matches[0][1];
 				
 				# Si existe el group lo separamos de la consulta principal temporalmente
 				if ($pos_group) {
@@ -515,14 +519,16 @@ public function tabla() {
 				}
 			else {
 				# Comprobamos si existe el GROUP BY
-				$pos_group = stripos($this -> consulta, 'GROUP BY');
+				preg_match('/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/', $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
+				
+				$pos_group = $matches[0][1];
+				unset($matches);
 				
 				if ($pos_group) {
 					$group = substr($this -> consulta, $pos_group);
 					$this -> consulta = substr($this -> consulta, 0, $pos_group);
 					}
 				}
-				
 
 			# Recorremos los nombres de los filtros para comprobar si contienen algo
 			# Iniciamos el FOR en 2 ya que depende del contador ($cnt) que establece el nombre a los inputs y comienza en 2 para poner los TRs
