@@ -471,13 +471,6 @@ public function tabla() {
         $this -> consulta = str_ireplace(';', '', $this -> consulta);
 
         # Aplicamos los filtros en caso de que se envie el formulario
-        if ($this -> debug && $_POST) {
-			echo "<strong>POST:</strong>";
-			echo "<pre>";
-			print_r($_POST);
-			echo "</pre>";
-			}
-
         if ($_POST && !empty($this -> filtros)) {
 
 			function tipo($tipo, $valor) {
@@ -506,17 +499,13 @@ public function tabla() {
 			$patron_group = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(GROUP BY)/';
 
 			# Comprobamos si existe WHERE, comparamos la consulta
-			preg_match($patron_where, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-
-			if ($matches[0][1]) {
+			if (preg_match($patron_where, $this -> consulta, $matches, PREG_OFFSET_CAPTURE)) {
 				# Ponemos unos parentesis para que la nueva condicion no filtre mal
 				$this -> consulta = preg_replace($patron_where, 'WHERE ( ', $this -> consulta);
 
 				# Comprobamos si existe el GROUP BY
-				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-
 				# Si existe el group lo separamos de la consulta principal temporalmente
-				if ($matches[0][1]) {
+				if (preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE)) {
 					$group = ' '.substr($this -> consulta, $matches[0][1]);
 					$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
 					}
@@ -527,9 +516,7 @@ public function tabla() {
 				}
 			else {
 				# Comprobamos si existe el GROUP BY
-				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-				
-				if ($matches[0][1]) {
+				if (preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE)) {
 					$group = substr($this -> consulta, $matches[0][1]);
 					$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
 					}
@@ -748,6 +735,23 @@ public function tabla() {
 			<table id='tabla_primera' width="100%" class='<?=$this->tabla_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
                 <?php
                 if ($this -> debug) {
+					
+					if ($_POST) {
+						?>
+						<tr>
+							<td><strong>POST:</strong></td>
+						</tr>
+						<tr>
+							<td>
+								<?php
+								echo "<pre>";
+								print_r($_POST);
+								echo "</pre>";
+								?>
+							</td>
+						</tr>
+						<?php
+						}
 					?>
 					<tr>
 						<td><strong>Consulta:</strong></td>
