@@ -821,7 +821,7 @@ public function tabla() {
 						</td>
 					</tr>
 					<tr>
-						<td><strong>Columnas:</strong></td>
+						<td><strong>Módulos habilitados:</strong></td>
 					</tr>
 					<tr>
 						<td>
