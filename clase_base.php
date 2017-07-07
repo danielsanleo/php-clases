@@ -6,6 +6,15 @@ class base
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
     public $debug = False;
 	
+    # Variables Globales
+    # ------------------
+    //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
+    public $ruta_archivo_config = 'config.php';
+    public $db_charset = 'utf8';
+    public $protocolo = 'http://';
+    public $db;
+    private $url_listado;
+    
     // ORDENACIÓN
     # Orden predeterminado que mostrará la tabla.
     # Array en el que pasamos los parámetros en la forma nº de columna a ordenar => tipo de ordenación.
@@ -48,13 +57,6 @@ class base
 	public $filtros_where_tipo = array();					       
 	public $filtros_boton_buscar = True;  # Muestra el boton submit
 	
-    # Variables Globales
-    # ------------------
-    //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
-    public $ruta_archivo_config = 'config.php';
-    public $db_charset = 'utf8';
-    public $protocolo = 'http://';
-    public $db;
     
     # MODULOS  EJ: $columna = array('2' => 'enlace'); 
     # -----------------------------------
@@ -270,6 +272,8 @@ public function __construct($ruta) {
 	unset($ruta);
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
 	$this -> db -> set_charset($this -> db_charset);
+	
+	$this -> url_listado = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
     }
 # El destructor cierra la conexión con la BBDD
 public function __destruct() {
@@ -354,6 +358,13 @@ private function getImageFile ($fichero) {
 private function createCondition ($tipo, $columna, $valor) {
 	
 	if (!empty($tipo) && !empty($valor)) {
+		
+		# Limpiamos el valor como variable
+		# Valor de tipo array se limpia individualmente
+		if (!is_array($valor)) {
+			$valor = $this -> db -> real_escape_string($valor);
+			}
+		
 		switch ($tipo) {
 			case 'periodo':
 				if (!empty($valor[0]) && !empty($valor[1])) {
@@ -368,11 +379,11 @@ private function createCondition ($tipo, $columna, $valor) {
 				break;
 				
 			case 'buscar':
-				return ' '.$columna.' LIKE "%'.$this -> db -> real_escape_string($valor).'%"';	
+				return ' '.$columna.' LIKE "%'.$valor.'%"';	
 				break;
 				
 			case 'select':
-				return ' '.$columna.' = "'.$this -> db -> real_escape_string($valor).'"';
+				return ' '.$columna.' = "'.$valor.'"';
 				break;
 				
 			case 'checkboxes':
@@ -421,7 +432,7 @@ private function str_replace_first($from, $to, $subject) {
 	}
 
 public function tabla() {
-        
+        e
         if ($this -> debug) {
 			echo '<strong>Memoria Inicial:</strong> '.memory_get_usage().' Bytes <br>';
 			}
@@ -493,29 +504,23 @@ public function tabla() {
 			
 			$where = ' WHERE ';
 			
-			//~ $patron_where = '/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/';
-			//~ $patron_group = '/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/';
 			$patron_where = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(WHERE)/';
 			$patron_group = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(GROUP BY)/';
 
 			# Comprobamos si existe WHERE, comparamos la consulta 
 			preg_match($patron_where, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-			$pos_where = $matches[0][1];
-			unset($matches);
 
-			if ($pos_where) {
+			if ($matches[0][1]) {
 				# Ponemos unos parentesis para que la nueva condicion no filtre mal
 				$this -> consulta = preg_replace($patron_where, 'WHERE ( ', $this -> consulta);
 				
 				# Comprobamos si existe el GROUP BY
 				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
 				
-				$pos_group = $matches[0][1];
-				
 				# Si existe el group lo separamos de la consulta principal temporalmente
-				if ($pos_group) {
-					$group = ' '.substr($this -> consulta, $pos_group);
-					$this -> consulta = substr($this -> consulta, 0, $pos_group);
+				if ($matches[0][1]) {
+					$group = ' '.substr($this -> consulta, $matches[0][1]);
+					$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
 					}
 					
 				$this -> consulta .= ')';
@@ -526,12 +531,9 @@ public function tabla() {
 				# Comprobamos si existe el GROUP BY
 				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
 				
-				$pos_group = $matches[0][1];
-				unset($matches);
-				
-				if ($pos_group) {
-					$group = substr($this -> consulta, $pos_group);
-					$this -> consulta = substr($this -> consulta, 0, $pos_group);
+				if ($matches[0][1]) {
+					$group = substr($this -> consulta, $matches[0][1]);
+					$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
 					}
 				}
 
@@ -588,7 +590,6 @@ public function tabla() {
 				}
 				$where .= ')';
 			}
-
 			
 		
 		# Concatenamos el WHERE
@@ -660,7 +661,7 @@ public function tabla() {
 				}
 
 			$this -> consulta = $this -> str_replace_first('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $this->consulta);
-			$this -> consulta .= " LIMIT ".$this -> pagesize." OFFSET $comienzo";
+			$this -> consulta .= ' LIMIT '.$this -> pagesize.' OFFSET '.$comienzo;
 			}
 		
 		
@@ -682,11 +683,9 @@ public function tabla() {
 		unset($this -> consulta);
 
 		// Total de páginas y registros
-        $total_registros = $this -> db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
+        $total_registros = $this -> db -> query('SELECT FOUND_ROWS()') -> fetch_array()[0];
         
         $this -> paginas_total = ceil($total_registros/$this->pagesize);
-        
-        $url_formulario = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
         
         ?>
         <style>
@@ -870,7 +869,7 @@ public function tabla() {
 												if ($_POST && !empty($this -> filtros)) {
 													?>
 													<tr>
-														<td colspan='2' align='right'><a href='<?=$url_formulario?>'><img src='images/boton-elim-filtro.png'></a></td>
+														<td colspan='2' align='right'><a href='<?=$this -> url_listado?>'><img src='images/boton-elim-filtro.png'></a></td>
 													</tr>
 													<?php
 													}
@@ -885,7 +884,7 @@ public function tabla() {
 														
 														foreach ($letras as $letra) {
 															?>
-															<a href="<?=$url_formulario;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> | 	
+															<a href="<?=$this -> url_listado;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> | 	
 															<?php
 															}
 														?>
@@ -972,7 +971,7 @@ public function tabla() {
 																<td>
 																	<div align="left" class="texto widget"> 
 																		<fieldset>
-																		<legend class='texto_filtro'> <strong><?=$this -> filtros_texto[$id]?></strong> </legend>
+																			<legend class='texto_filtro'> <strong><?=$this -> filtros_texto[$id]?></strong> </legend>
 																			<?php
 																			$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
 																			
@@ -1010,37 +1009,6 @@ public function tabla() {
 												?>
 										</table>
 									</div>
-									<?php
-									### Incluimos los scripts necesarios para los filtros
-									# Calendario
-									
-									if (in_array('fecha', $this -> filtros) || in_array('periodo', $this -> filtros)) {
-										?>
-										<script>
-											$.datepicker.regional['es'] = {
-												  closeText: 'Cerrar',
-												  prevText: '<Ant',
-												  nextText: 'Sig>',
-												  currentText: 'Hoy',
-												  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-												  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
-												  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-												  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
-												  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
-												  weekHeader: 'Sm',
-												  dateFormat: 'dd/mm/yy',
-												  firstDay: 1,
-												  isRTL: false,
-												  showMonthAfterYear: false,
-												  yearSuffix: ''
-												  };
-												  
-											$.datepicker.setDefaults($.datepicker.regional['es']);
-											$(".datepicker").datepicker();
-										</script>
-										<?php
-										}
-									?>
 								</td>
 							</tr>
 							<?php
@@ -1401,6 +1369,36 @@ public function tabla() {
 				# Mostramos el javascript para el modulo eliminar
 				?>
 				<script type="text/javascript">
+					<?php
+					### Incluimos los scripts necesarios para los filtros
+					# Calendario
+					
+					if (in_array('fecha', $this -> filtros) || in_array('periodo', $this -> filtros)) {
+						?>
+						$.datepicker.regional['es'] = {
+							  closeText: 'Cerrar',
+							  prevText: '<Ant',
+							  nextText: 'Sig>',
+							  currentText: 'Hoy',
+							  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+							  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+							  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+							  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+							  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+							  weekHeader: 'Sm',
+							  dateFormat: 'dd/mm/yy',
+							  firstDay: 1,
+							  isRTL: false,
+							  showMonthAfterYear: false,
+							  yearSuffix: ''
+							  };
+							  
+						$.datepicker.setDefaults($.datepicker.regional['es']);
+						$(".datepicker").datepicker();
+						<?php
+						}
+					?>
+
 					function removeParam(key, sourceURL) {
 						//~ Declaramos variables que vamos a emplear y les asignamos valores.
 						var rtn = sourceURL.split("?")[0],
@@ -1581,7 +1579,7 @@ public function tabla() {
 				if ($this -> debug) {
 					?>
 					<tr>
-						<td align='center'><strong>Memoria Final: <?=memory_get_usage()?></strong></td>
+						<td align='center'><strong>Memoria Final:</strong> <?=memory_get_usage()?></td>
 					</tr>
 					<?php
 					}
