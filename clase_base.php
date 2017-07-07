@@ -776,7 +776,7 @@ public function tabla() {
                                     <table id='sub_tabla_segunda'>
                                     <tr>
                                         <td id='sub_tabla_segunda_td'>
-											<a href="<?=$_SERVER['REQUEST_URI'].'?'.http_build_query($_GET)?>">
+											<a href="<?=$_SERVER['REQUEST_URI']?>">
 												<img id='sub_tabla_segunda_img' src="<?=$this->tabla_imagen?>" alt="<?=$this->sub_tabla_segunda_img_alt?>" >
 											</a>
 										</td>
