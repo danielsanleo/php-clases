@@ -811,29 +811,29 @@ public function tabla() {
                             <?php
                             }
 
-                         # Mensaje a mostrar en caso de que exista en la URL
-                         # A los tres segundos se borra
-                         if (!empty($_GET['mensaje'])) {
-                              $_GET['mensaje'] = htmlspecialchars($_GET['mensaje'], ENT_QUOTES, 'UTF-8');
-                              ?>
-                              <script>
-                                function myFunction() {
-                                    setTimeout(function(){
-                                        var tabla = document.getElementById('tabla_mensaje_texto');
-                                        tabla.parentNode.removeChild(tabla);
-                                        }, <?=$this->mensaje_tiempo?>);
-                                }
-                                myFunction();
-                              </script>
-                              <tr class='mensaje_fila'>
-                                <td align='center'>
-                                  <table id='tabla_mensaje_texto' width="45%" class="<?=$this->tabla_mensaje_class?>" border="0" style='text-align:center;' cellpadding="4" cellspacing="0" bgcolor="#BBBBBB" >
-                                    <tr>
-                                      <td><div style='text-align:center;'><img src="<?=$this->mensaje_imagen?>" alt="Informacion" border="0" align="absmiddle">&nbsp;<span class='textoBlanco'><?=$_GET['mensaje'];?></span></div></td>
-                                    </tr>
-                                   </table>
-                                 </td>
-                              </tr>
+							# Mensaje a mostrar en caso de que exista en la URL
+							# A los tres segundos se borra
+							if (!empty($_GET['mensaje'])) {
+								$_GET['mensaje'] = htmlspecialchars($_GET['mensaje'], ENT_QUOTES, 'UTF-8');
+								?>
+								<script>
+									function myFunction() {
+										setTimeout(function(){
+										var tabla = document.getElementById('tabla_mensaje_texto');
+										tabla.parentNode.removeChild(tabla);
+										}, <?=$this->mensaje_tiempo?>);
+									}
+									myFunction();
+								</script>
+								<tr class='mensaje_fila'>
+									<td align='center'>
+										<table id='tabla_mensaje_texto' width="45%" class="<?=$this->tabla_mensaje_class?>" border="0" style='text-align:center;' cellpadding="4" cellspacing="0" bgcolor="#BBBBBB" >
+											<tr>
+												<td><div style='text-align:center;'><img src="<?=$this->mensaje_imagen?>" alt="Informacion" border="0" align="absmiddle">&nbsp;<span class='textoBlanco'><?=$_GET['mensaje'];?></span></div></td>
+											</tr>
+										</table>
+									</td>
+								</tr>
                             <?php
                           }
 
@@ -1347,7 +1347,7 @@ public function tabla() {
 							?>
 							<td style='text-align: center;' bgcolor="#BCBABA" class="tabla_listado_celda">
 								No se encontraron resultados
-							</td>
+							</td>							
 							<?php
 							}
 
@@ -1364,7 +1364,6 @@ public function tabla() {
 							<?php
 							}
 							?>
-					</table>
 				</tr>
 				<?php
 				# Mostramos el javascript para el modulo eliminar
@@ -1614,7 +1613,6 @@ public function tabla() {
 					<?php
 					}
 				?>
-            </table>
         </table>
     </form>
     <?php
