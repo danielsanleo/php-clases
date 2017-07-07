@@ -663,20 +663,6 @@ public function tabla() {
 			$this -> consulta .= ' LIMIT '.$this -> pagesize.' OFFSET '.$comienzo;
 			}
 
-
-		if ($this -> debug) {
-			echo '<strong>Consulta:</strong><br>';
-			echo $this -> consulta.'<br>';
-
-			echo '<br>';
-			echo '<strong>Columnas:</strong><br>';
-			echo '<pre>';
-			print_r($this -> columna);
-			echo '</pre>';
-			}
-
-
-
         $resultados = $this -> db -> query($this->consulta) or die (mysqli_error($this -> db).'<br>');
 
 		unset($this -> consulta);
@@ -765,6 +751,18 @@ public function tabla() {
                 <?php
                 if ($this -> debug) {
 					?>
+					<tr>
+						<td><strong>Consulta:</strong></td>
+					</tr>
+					<tr>
+						<td><?=$this -> consulta?></td>
+					</tr>
+					<tr>
+						<td><strong>Columnas:</strong></td>
+					</tr>
+					<tr>
+						<td><?=$this -> columna?></td>
+					</tr>
 					<tr>
 						<td>
 							<strong>Variables del servidor</strong>
