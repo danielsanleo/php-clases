@@ -793,7 +793,7 @@ public function tabla() {
                         if ($this-> migasdepan==1) {
                             ?>
                             <tr>
-                                <td style='padding: 10px;' bgcolor="#222222">
+                                <td style='padding: 8px;' bgcolor="#222222">
                                     <div class="migasoff">
                                         <?php
                                         $total_enlaces = count($this->migas);
