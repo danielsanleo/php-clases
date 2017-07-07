@@ -664,9 +664,7 @@ public function tabla() {
 			}
 
         $resultados = $this -> db -> query($this->consulta) or die (mysqli_error($this -> db).'<br>');
-
-		unset($this -> consulta);
-
+        
 		// Total de páginas y registros
         $total_registros = $this -> db -> query('SELECT FOUND_ROWS()') -> fetch_array()[0];
         
@@ -761,7 +759,11 @@ public function tabla() {
 						<td><strong>Columnas:</strong></td>
 					</tr>
 					<tr>
-						<td><?=$this -> columna?></td>
+						<td>
+							<?php
+							print_r($this -> columna);
+							?>
+						</td>
 					</tr>
 					<tr>
 						<td>
