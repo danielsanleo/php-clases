@@ -378,11 +378,7 @@ private function createCondition ($tipo, $columna, $valor) {
 				break;
 
 			case 'buscar':
-<<<<<<< HEAD
 				return ' '.$columna.' LIKE "%'.$valor.'%"';	
-=======
-				return ' '.$columna.' LIKE "%'.$this -> db -> real_escape_string($valor).'%"';
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
 				break;
 
 			case 'select':
@@ -435,11 +431,6 @@ private function str_replace_first($from, $to, $subject) {
 	}
 
 public function tabla() {
-<<<<<<< HEAD
-        e
-=======
-
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
         if ($this -> debug) {
 			echo '<strong>Memoria Inicial:</strong> '.memory_get_usage().' Bytes <br>';
 			}
