@@ -735,8 +735,24 @@ public function tabla() {
 			<table id='tabla_primera' width="100%" class='<?=$this->tabla_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
                 <?php
                 if ($this -> debug) {
+					?>
+					<tr>
+						<td>
+							<strong>Variables del servidor</strong>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<?php
+							echo "<pre>";
+							print_r($_SERVER);
+							echo "</pre>";
+							?>						
+						</td>
+					</tr>
 					
-					if ($_POST) {
+					<?php
+					if (!empty($_POST)) {
 						?>
 						<tr>
 							<td><strong>POST:</strong></td>
@@ -746,6 +762,23 @@ public function tabla() {
 								<?php
 								echo "<pre>";
 								print_r($_POST);
+								echo "</pre>";
+								?>
+							</td>
+						</tr>
+						<?php
+						}
+						
+					if (!empty($_GET)) {
+						?>
+						<tr>
+							<td><strong>GET:</strong></td>
+						</tr>
+						<tr>
+							<td>
+								<?php
+								echo "<pre>";
+								print_r($_GET);
 								echo "</pre>";
 								?>
 							</td>
@@ -769,20 +802,6 @@ public function tabla() {
 							print_r($this -> columna);
 							echo "</pre>";
 							?>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<strong>Variables del servidor</strong>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<?php
-							echo "<pre>";
-							print_r($_SERVER);
-							echo "</pre>";
-							?>						
 						</td>
 					</tr>
 					<?php
