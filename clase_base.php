@@ -464,11 +464,23 @@ public function tabla() {
 				echo $query;
 				}
 
-			$this -> db -> query($query) or die('Error consulta desactivar:'.$this -> db -> error);
+			$this -> db -> query($query) or die('Error consulta desactivar:'.$this -> db -> error.'<br>');
 			}
 
         # Eliminamos ; al final de la consulta en caso de que exista
         $this -> consulta = str_ireplace(';', '', $this -> consulta);
+
+		
+		# Comprobamos si existe un ORDER BY (para eliminarlo, ya que hay que definirlo mediante el PHP) e informamos de ello
+		$patron_order = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(ORDER BY)/';
+
+		$existe_order = preg_match($patron_order, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
+		if ($existe_order) {
+			$order = ' '.substr($this -> consulta, $matches[0][1]);
+			$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
+			}
+		
+		unset($patron_order);
 
         # Aplicamos los filtros en caso de que se envie el formulario
         if ($_POST && !empty($this -> filtros)) {
@@ -492,15 +504,16 @@ public function tabla() {
 						break;
 					}
 				}
-
-			$where = ' WHERE ';
-
+				
 			$patron_where = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(WHERE)/';
 			$patron_group = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(GROUP BY)/';
+			
+			$where = ' WHERE ';
 
 			# Comprobamos si existe WHERE, comparamos la consulta
 			if (preg_match($patron_where, $this -> consulta, $matches, PREG_OFFSET_CAPTURE)) {
-				# Ponemos unos parentesis para que la nueva condicion no filtre mal
+				
+				# Encerramos entre parentesis para que no filtre mal
 				$this -> consulta = preg_replace($patron_where, 'WHERE ( ', $this -> consulta);
 
 				# Comprobamos si existe el GROUP BY
@@ -521,6 +534,9 @@ public function tabla() {
 					$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
 					}
 				}
+			
+			unset($patron_where);
+			unset($patron_group);
 
 			# Recorremos los nombres de los filtros para comprobar si contienen algo
 			# Iniciamos el FOR en 2 ya que depende del contador ($cnt) que establece el nombre a los inputs y comienza en 2 para poner los TRs
@@ -575,8 +591,6 @@ public function tabla() {
 				}
 				$where .= ')';
 			}
-
-
 
 		# Concatenamos el WHERE
 		if (!empty($flag)) {
@@ -650,7 +664,7 @@ public function tabla() {
 			$this -> consulta .= ' LIMIT '.$this -> pagesize.' OFFSET '.$comienzo;
 			}
 
-        $resultados = $this -> db -> query($this->consulta) or die (mysqli_error($this -> db).'<br>');
+        $resultados = $this -> db -> query($this->consulta) or die ('<br><strong>Error en la consulta:</strong><br>'.mysqli_error($this -> db).'<br>');
         
 		// Total de páginas y registros
         $total_registros = $this -> db -> query('SELECT FOUND_ROWS()') -> fetch_array()[0];
@@ -734,11 +748,12 @@ public function tabla() {
 			?>
 			<table id='tabla_primera' width="100%" class='<?=$this->tabla_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
                 <?php
+                ### Información de depuracion
                 if ($this -> debug) {
 					?>
 					<tr>
 						<td>
-							<strong>Variables del servidor</strong>
+							<strong>Array SERVER:</strong>
 						</td>
 					</tr>
 					<tr>
@@ -755,7 +770,7 @@ public function tabla() {
 					if (!empty($_POST)) {
 						?>
 						<tr>
-							<td><strong>POST:</strong></td>
+							<td><strong>Array POST:</strong></td>
 						</tr>
 						<tr>
 							<td>
@@ -772,7 +787,7 @@ public function tabla() {
 					if (!empty($_GET)) {
 						?>
 						<tr>
-							<td><strong>GET:</strong></td>
+							<td><strong>Array GET:</strong></td>
 						</tr>
 						<tr>
 							<td>
@@ -790,7 +805,20 @@ public function tabla() {
 						<td><strong>Consulta:</strong></td>
 					</tr>
 					<tr>
-						<td><?=$this -> consulta?></td>
+						<td>
+							<?php
+							echo $this -> consulta;
+							
+							if ($existe_order) {
+								?>
+								<ul>
+									<li><strong>Info:</strong> Se encontró un ORDER BY directamente en la variable consulta, omitiendolo <br>(ORDER BY debe definirse mediante los arrays: orden_predeterminado y ordenar)</li>
+								</ul>
+								<?php
+								unset($existe_order);
+								}
+							?>
+						</td>
 					</tr>
 					<tr>
 						<td><strong>Columnas:</strong></td>
@@ -806,6 +834,8 @@ public function tabla() {
 					</tr>
 					<?php
 					}
+				# FIN Depuración
+                
                 ?>
 				<tr>
 					<td>
