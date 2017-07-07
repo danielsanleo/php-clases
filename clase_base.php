@@ -1,18 +1,18 @@
-<?php 
+<?php
 class base
 {
     # CONSULTA GENERAL
     # ----------------
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
     public $debug = False;
-	
+
     // ORDENACIÓN
     # Orden predeterminado que mostrará la tabla.
     # Array en el que pasamos los parámetros en la forma nº de columna a ordenar => tipo de ordenación.
     # Ejemplo → array(2 => 'ASC', 3 => 'DESC', 1 => 'DESC');
     public $orden_predeterminado = array();
 	public $orden_anidado = 1; # Existen dos tipos de orden: Por varias columnas conjuntamente o solo por una
-	
+
 	# Filtros
 	# --------
 	# Funcionan de forma similar a los modulos del listado
@@ -26,28 +26,28 @@ class base
 	# <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 	# Los de tipo select necesitan una consulta que devolverá dos campos (id, valor)
 	# Ademas podemos especificar mas de una columna en la que realice la busqueda
-	
+
 	# Array con los filtros a crear, contiene el total de filtros
 	//~ public $filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select');
 	public $filtros = array();
-							
+
 	# Array con los nombres visibles de los campos
 	//~ public $filtros_texto = array(1 => 'Descripcion', 2 => 'Fabricante', 3 => 'Subfamilia');
 	public $filtros_texto = array();
-								   
+
 	# Consultas para los filtros de tipo select
 	//~ public $filtros_consultas = array(2 => 'SELECT id, nombre FROM fabricantes', 3 => 'SELECT id, nombre FROM subfamilias');
-	public $filtros_consultas = array(); 
-	
+	public $filtros_consultas = array();
+
 	# Columnas de la BBDD a la que aplicar los filtros, podemos especificar un solo valor o un array con varios
 	//~ public $filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
 	public $filtros_where = array();
-	
+
 	# Array con los operadores correspondientes a cada filtro, son los mismos que podemos utilizar en las sentencias SQL
 	//~ public $filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');
-	public $filtros_where_tipo = array();					       
+	public $filtros_where_tipo = array();
 	public $filtros_boton_buscar = True;  # Muestra el boton submit
-	
+
     # Variables Globales
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
@@ -55,36 +55,36 @@ class base
     public $db_charset = 'utf8';
     public $protocolo = 'http://';
     public $db;
-    
-    # MODULOS  EJ: $columna = array('2' => 'enlace'); 
+
+    # MODULOS  EJ: $columna = array('2' => 'enlace');
     # -----------------------------------
     # Array donde definir los modulos a utilizar
     public $columna = array();
-    
+
     # Animaciones
     # Para habilitar el modulo hay que incluir en la cabecera HTML
     # el link hacia los estilos: <link rel="stylesheet" href="clases/animate.css">
     public $animacion = array();
-    
+
     public $abcedario = False; # 1 -> Habilitamos el filtro por letra
     public $abcedario_columnas = array('nombre', 'codigo_postal'); # Array de columnas donde debe buscar
-    
+
     # BARRA DE MENUS
     # --------------
     // Hace referencia a la barra de menus situada encima del listado y los filtros
     // En la version anterior era el nuevo_registro
 	public $menu = 1; # Activar o desactivar
-	
+
     # Arrays con las urls y las imagenes, los que tengan las mismas claves se entiende que deben aparecer como IMAGEN => URL
     public $menu_url = array( 1 => 'http://www.google.com' );
     public $menu_imagen = array( 1 => 'images/boton-nuevo-operador.png' );
-    
+
     # TOTAL REGISTROS
     # ---------------
     // Si es igual a uno, muestra el total de registros encontrados
     public $mostrar_total_registros = 0;
     public $tipo_registro = ' registros';
-    
+
     # FORM
     # ----
     public $form_name = 'formulario';
@@ -93,48 +93,48 @@ class base
     public $action = '#';
     public $enctype;
     public $form_charset = 'UTF-8';
-    
+
     # TABLAS
     # ------
-    # \ 
+    # \
 	#	-Tabla Primera
     public $tabla_primera_class;
-    
+
 	# |
     # \
     #   -Tabla Segunda
     public $tabla_segunda_activar = 1;
     public $tabla_segunda_class = 'bordeExterior';
-        
+
         # |
         # \
         #   -SubTabla Segunda
         public $sub_tabla_segunda_img_alt = 'Foto';
-        
+
     # |
     # \
     #   -Tabla Mensaje
         //Vacio
-    
+
     # |
-    # \ 
+    # \
     #   -Tabla Listado
         //Vacio
-    
+
     public $tabla_titulo;
     public $tabla_imagen = 'images/icono-zonas.png';
-    
+
     # Migas de Pan
     # ------------
     public $migasdepan = 1;
     public $migas; # Array que define el arbol hasta el ultimo nodo Ej: array('Menú' => 'menu.php', 'Listado Proveedores' => '');
-        
+
     # MENSAJE INFORMACION
     # -------
     public $tabla_mensaje_class = 'bordeExterior';
     public $mensaje_tiempo = 3000;
     public $mensaje_imagen = 'images/icoInfo.png';
-    
+
     # --------- #
     #  MÓDULOS  #
     # --------- #
@@ -145,13 +145,13 @@ class base
     public $enlace_url = array(1 => 'http://menu.php?action=admin-compras-gestion&id=');
     public $enlace_img = array(1 => 'images/imagen.jpg');
     public $enlace_nueva_ventana = array(1 => true);
-    
+
     // DESCARGA
     public $descarga_url; # Path donde se encuentran los archivos
     public $descarga_nueva_ventana; # ¿Descargar en una nueva ventana? True o False
     public $descarga_ruta_iconos = './images/iconos/'; # Path de los iconos
-    
-    // IMAGEN 
+
+    // IMAGEN
     public $img_ruta;
     public $img_alt = 'Imagen';
     public $img_height;
@@ -161,31 +161,31 @@ class base
     // TIPO
     // Sustituye el valor de la fila por el valor acorde en el array
     // Ej: Convertir los tipos de usuarios, tipos de productos, categorias, etc.
-    public $tipo = array(1 => 'Usuario Admin', 2 => 'Usuario Gestion', 3 => 'Usuario normal'); 
+    public $tipo = array(1 => 'Usuario Admin', 2 => 'Usuario Gestion', 3 => 'Usuario normal');
     public $tipo_class = 'texto';
 
     // FECHA
     // Muestra la fecha en formato español
     public $fecha_formato_entrada = 'Y-m-d';
     public $fecha_formato_salida = 'd/m/Y';
-    
+
     // MONEDA
     // Formatea la fila como si fuera una moneda
     public $moneda_divisa = '€';
-    
+
     // BUTTON
     public $boton_type = 'submit';
     public $boton_name = 'enlace';
     public $boton_value;
     public $boton_texto;
-    
+
     // ESTADO
-    // Con el primer array establecemos los estados que queramos. 
+    // Con el primer array establecemos los estados que queramos.
     //~ $listado -> estados = array( '0' => 'Apto','1' => 'No Apto' );
     //~ $listado -> estados_colores = array( '0' => '#ff0000','1' => '#00cc00' );
     public $estados = array();
     public $estados_colores = array();
-    
+
     // ELIMINAR
     public $eliminar_imagen = 'images/boton-eliminar.png';
     public $eliminar_tabla = 'oficinas';
@@ -193,10 +193,10 @@ class base
 
     // LISTA
 	public $lista_consulta; # Consulta para cada una de las filas (devuelve un unico valor)
-    
+
     // DESACTIVAR
     # Permite cambiar (UPDATE) un valor de una columna de una fila
-    # 
+    #
     public $desactivar = 1;
     public $desactivar_tabla = 'familias';
 	public $desactivar_columna = 'activo';
@@ -205,11 +205,11 @@ class base
 	public $desactivar_imagen = 'images/boton-eliminar.png';
 	public $desactivar_alt = 'Eliminar';
 	public $desactivar_texto_confirmar = '¿Seguro que quiere eliminarlo?';
-    
+
     // PETICIÓN AJAX
 	# Realiza una petición ajax a un fichero de nuestra elección, pasando los parámetros que deseemos
 	# Formato: array(<columna> => <parámetro>);
-	public $ajx_img; 	#imagen/icono 
+	public $ajx_img; 	#imagen/icono
 	public $ajx_img_dwn;#imagen para la pulsación del ratón sobre la imagen
 	public $ajx_title;	#texto alternativo para la imagen
 	public $ajx_url;	#url a la que se dirige la petición
@@ -217,12 +217,12 @@ class base
 	public $ajx_id;		#nombre para el valor de la columna que se envía por ajax
 	public $ajx_params;	#parámetros extra para añadirlos al json que se envía por ajax
 						#formato de array bidimensional: array(<columna> => array(<parámetro> => <valor>[, <parámetro> => <valor>...][, <columna> => array(<parámetro> => <valor>[, <parámetro> => <valor>...]])
-    
+
     // OPERACION
     // Realiza operaciones con los valores indicados de la fila
     public $type = 'number';
     public $name_operacion = 'operacion';
-    
+
     // MENSAJE
     // El sistema permite especificar una consulta en particular para cada una de las filas, es decir,
     // mostrando el mensaje correspodiente a la clave primaria de dicha fila.
@@ -234,48 +234,49 @@ class base
     public $campos = array(0,1);
     public $mensaje_codigo_previo='';
     public $mensaje_codigo_posterior='<br>';
-        
+
         // CSS para el tamaño de la imagen
         public $mensaje_img_width='25px';
         public $mensaje_img_height='25px';
-    
+
     // SELECT (input)
     ##### Es necesaria una revision para depurar y aplicar la filosofia KISS
     // Consulta para traer los campos
-    // La segunda Consulta es para saber el total de campos de la tabla 
+    // La segunda Consulta es para saber el total de campos de la tabla
     // y poder saber cual de ellos se ha elegido
     public $select_consulta;
     public $select_tabla;
     public $select_name = 'seleccionar';
     public $select_texto_defecto = 'Seleccione...';
-    
+
     // BOTON SUBMIT
     public $boton_submit=0;
     public $submit_texto='Enviar';
-    
+
     // PIE Y RADIO INFERIOR
     public $footer = 1;
     public $radio_inferior = 1;
-    
+
     // PAGINACIÓN
     # Permite la paginación de los resultados
     public $paginacion = 1;
     public $pagesize = 2;
     public $pagesize_opciones = array(10,15,20,25,50,100,150,200,250,300,350);
     private $paginas_total;
-    
+
 # El constructor realiza la conexion con la BBDD
 public function __construct($ruta) {
 	require($ruta);
 	unset($ruta);
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
 	$this -> db -> set_charset($this -> db_charset);
+	$this -> action = $_SERVER['PHP_SELF'].((!empty($_GET['action']))?'?action='.$_GET['action']:'');
     }
 # El destructor cierra la conexión con la BBDD
 public function __destruct() {
     $this -> db -> close();
     }
-    
+
 private function limpiarArray($array) {
 	$array = array_map('trim', $array);
 	$array = array_map('stripslashes', $array);
@@ -285,7 +286,7 @@ private function limpiarArray($array) {
 # Método para obtener el thumnbnail a partir de la extension del nombre fichero
 private function getImageFile ($fichero) {
 	$array_ext_file = explode('.', $fichero);
-	
+
 	switch (end($array_ext_file)) {
 		case 'ai':
 			return 'ai.png';
@@ -352,7 +353,7 @@ private function getImageFile ($fichero) {
 # Tipos de filtros que pueden existir
 # Cada uno va asociada de un tipo de condicion y valores
 private function createCondition ($tipo, $columna, $valor) {
-	
+
 	if (!empty($tipo) && !empty($valor)) {
 		switch ($tipo) {
 			case 'periodo':
@@ -360,40 +361,40 @@ private function createCondition ($tipo, $columna, $valor) {
 					return ' ('.$columna.' BETWEEN "'.DateTime::createFromFormat('d/m/Y',$valor[0]) -> format('Y-m-d').'" AND "'.DateTime::createFromFormat('d/m/Y', $valor[1]) -> format('Y-m-d').'")';
 					}
 				break;
-			
+
 			case 'fecha':
 				if (!empty($valor)) {
 					return ' ('.$columna.' = "'.DateTime::createFromFormat('d/m/Y',$valor) -> format('Y-m-d').'")';
 					}
 				break;
-				
+
 			case 'buscar':
-				return ' '.$columna.' LIKE "%'.$this -> db -> real_escape_string($valor).'%"';	
+				return ' '.$columna.' LIKE "%'.$this -> db -> real_escape_string($valor).'%"';
 				break;
-				
+
 			case 'select':
 				return ' '.$columna.' = "'.$this -> db -> real_escape_string($valor).'"';
 				break;
-				
+
 			case 'checkboxes':
 				$return = ' (';
-				
+
 				$cnt = 0;
 				foreach ($valor AS $id => $val) {
 					if (!empty($val)) {
 						if (!empty($cnt)) {
 							$return .= ' OR ';
 							}
-						
+
 						$return .= ' '.$columna.' = "'.$this -> db -> real_escape_string($id).'"';
 						}
 					$cnt++;
 					}
-				
+
 				return $return.')';
-				
+
 				break;
-				
+
 			default:
 				return '';
 		}
@@ -406,7 +407,7 @@ private function icono($orden_actual) {
 		case 'ASC':
 			return 'images/icono-ordenar.png';
 			break;
-		
+
 		case 'DESC':
 			return 'images/icono-ordenar2.png';
 			break;
@@ -421,20 +422,20 @@ private function str_replace_first($from, $to, $subject) {
 	}
 
 public function tabla() {
-        
+
         if ($this -> debug) {
 			echo '<strong>Memoria Inicial:</strong> '.memory_get_usage().' Bytes <br>';
 			}
-       
+
         // Módulo encargado de eliminar la fila
-        # Comprobamos si es una pagina en la que se deberian dar derechos 
+        # Comprobamos si es una pagina en la que se deberian dar derechos
         # al usuario final para eliminar filas
         if (in_array('eliminar', $this -> columna)) {
             if (isset($_GET['delid'])) {
                     $ideliminar = $this -> db -> real_escape_string($_GET['delid']);
-                    
+
                     $query = "DELETE FROM $this->eliminar_tabla WHERE $this->eliminar_columna ='$ideliminar'";
-                    
+
 					if ($this -> debug) {
 						echo '<strong>Consula eliminar: </strong> <br>';
 						echo $query;
@@ -447,20 +448,20 @@ public function tabla() {
 		if ($this -> desactivar && !empty($_GET['did'])) {
 			$did = $this -> db -> real_escape_string($_GET['did']);
 			$columna = $this -> desactivar_columna;
-			
+
 			$query = 'UPDATE '.$this -> desactivar_tabla.' SET '.$this ->desactivar_columna.'="'.$this->desactivar_valor.'" WHERE '.$this -> desactivar_id.'="'.$did.'"';
-			
+
 			if ($this -> debug) {
 				echo '<strong>Consula desactivar: </strong><br>';
 				echo $query;
 				}
-			
+
 			$this -> db -> query($query) or die('Error consulta desactivar:'.$this -> db -> error);
 			}
-        
+
         # Eliminamos ; al final de la consulta en caso de que exista
         $this -> consulta = str_ireplace(';', '', $this -> consulta);
-        
+
         # Aplicamos los filtros en caso de que se envie el formulario
         if ($this -> debug && $_POST) {
 			echo "<strong>POST:</strong>";
@@ -468,15 +469,15 @@ public function tabla() {
 			print_r($_POST);
 			echo "</pre>";
 			}
-        
+
         if ($_POST && !empty($this -> filtros)) {
-			
+
 			function tipo($tipo, $valor) {
 				switch ($tipo) {
 					case 'LIKE':
 						return '"%'.$valor.'%"';
 						break;
-					
+
 					case '=':
 						return '"'.$valor.'"';
 						break;
@@ -484,21 +485,21 @@ public function tabla() {
 					case '!=':
 						return '"'.$valor.'"';
 						break;
-					
+
 					default:
 						return '"'.$valor.'"';
 						break;
 					}
 				}
-			
+
 			$where = ' WHERE ';
-			
+
 			//~ $patron_where = '/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/';
 			//~ $patron_group = '/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/';
 			$patron_where = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(WHERE)/';
 			$patron_group = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(GROUP BY)/';
 
-			# Comprobamos si existe WHERE, comparamos la consulta 
+			# Comprobamos si existe WHERE, comparamos la consulta
 			preg_match($patron_where, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
 			$pos_where = $matches[0][1];
 			unset($matches);
@@ -506,29 +507,29 @@ public function tabla() {
 			if ($pos_where) {
 				# Ponemos unos parentesis para que la nueva condicion no filtre mal
 				$this -> consulta = preg_replace($patron_where, 'WHERE ( ', $this -> consulta);
-				
+
 				# Comprobamos si existe el GROUP BY
 				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-				
+
 				$pos_group = $matches[0][1];
-				
+
 				# Si existe el group lo separamos de la consulta principal temporalmente
 				if ($pos_group) {
 					$group = ' '.substr($this -> consulta, $pos_group);
 					$this -> consulta = substr($this -> consulta, 0, $pos_group);
 					}
-					
+
 				$this -> consulta .= ')';
-				
+
 				$where = ' AND ';
 				}
 			else {
 				# Comprobamos si existe el GROUP BY
 				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-				
+
 				$pos_group = $matches[0][1];
 				unset($matches);
-				
+
 				if ($pos_group) {
 					$group = substr($this -> consulta, $pos_group);
 					$this -> consulta = substr($this -> consulta, 0, $pos_group);
@@ -539,17 +540,17 @@ public function tabla() {
 			# Iniciamos el FOR en 2 ya que depende del contador ($cnt) que establece el nombre a los inputs y comienza en 2 para poner los TRs
 			$where .= '(';
 			for ($f = 2; $f <= count($this -> filtros)+1; $f++) {
-				
+
 				$nombre = 'filtro'.$f;
 				$index = $f - 1;
-				
+
 				if (isset($_POST[$nombre]) && $_POST[$nombre] !='-' && $_POST[$nombre] !='') {
-				
+
 					# Flag es el encargado de determinar si poner el AND al principio o no.
 					if (!empty($flag)) {
 						$where .= ' AND ';
 						}
-						
+
 					if (is_array($_POST[$nombre])) {
 						foreach ($_POST[$nombre] AS $a => $b) {
 							if (!empty($b)) {
@@ -561,19 +562,19 @@ public function tabla() {
 					else {
 						$flag = 1;
 						}
-					
+
 					# El array filtros_where puede contener un valor o varios (array) en sus valores
 					if (is_array($this -> filtros_where[$index])) {
-						
+
 						end($this -> filtros_where[$index]);
 						$finalito = key($this -> filtros_where[$index]);
 						reset($this -> filtros_where[$index]);
-						
+
 						$where .= '(';
 						foreach ($this -> filtros_where[$index] AS $clave => $busqueda) {
-							
+
 							$where .= $this -> createCondition($this -> filtros[$index], $busqueda, $_POST[$nombre]);
-							
+
 							if ($clave != $finalito)
 								$where .= ' OR';
 								}
@@ -581,7 +582,7 @@ public function tabla() {
 						$where .= ')';
 						}
 					else {
-						# El switch de momento lo he puesto para los filtros 'periodo' los cuales, entiendo, que lo normal es que filtren por una sola columna de fechas. 
+						# El switch de momento lo he puesto para los filtros 'periodo' los cuales, entiendo, que lo normal es que filtren por una sola columna de fechas.
 						$where .= $this -> createCondition($this -> filtros[$index], $this -> filtros_where[$index], $_POST[$nombre]);
 						}
 					}
@@ -589,70 +590,70 @@ public function tabla() {
 				$where .= ')';
 			}
 
-			
-		
+
+
 		# Concatenamos el WHERE
 		if (!empty($flag)) {
 			$this -> consulta .= $where;
 			}
-			
+
 		# Concatenamos el GROUP
 		if (isset($group)) {
 			$this -> consulta .= $group;
 			}
-		
+
 		# Liberamos memoria
 		unset($where);
 		unset($group);
-        
+
         # Recogemos el parametro 'ordenar' en caso de que exista para ordenar la/s columnas
 		if (isset($_GET['ordenar'])) {
 			$ordenar = unserialize(urldecode($_GET['ordenar']));
 			$this -> consulta .= ' ORDER BY ';
-			
+
 			end($ordenar);
 			$ultima_clave = key($ordenar);
 			reset($ordenar);
-			
+
 			foreach ($ordenar as $clave => $valor) {
 				$clave++;
-				$this -> consulta .= $this -> db -> real_escape_string($clave).' '.$this -> db -> real_escape_string($valor).(($clave-1 != $ultima_clave)?', ':'');	
+				$this -> consulta .= $this -> db -> real_escape_string($clave).' '.$this -> db -> real_escape_string($valor).(($clave-1 != $ultima_clave)?', ':'');
 			}
 		}
 		else if (!empty($this -> orden_predeterminado)) {
 			$this -> consulta .= ' ORDER BY ';
-			
+
 			end($this -> orden_predeterminado);
 			$ultima_clave = key($this -> orden_predeterminado);
 			reset($this -> orden_predeterminado);
-			
+
 			foreach ($this -> orden_predeterminado as $clave => $valor) {
-				$this -> consulta .= ($clave+1)." $valor".(($clave != $ultima_clave)?', ':'');	
+				$this -> consulta .= ($clave+1)." $valor".(($clave != $ultima_clave)?', ':'');
 			}
 		}
-		
-        
+
+
         # Si la paginacion esta habilitada:
-        # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion 
+        # - Reemplazamos en la consulta 'SELECT' por 'SELECT SQL_CALC_FOUND_ROWS' en la primera aparicion
         # 	lo que nos permite determinar los resultados totales de la tabla a pesar del LIMIT
         # - Comprobamos las variables POST para determinar en que página nos encontramos o si se ha seleccionado otra página (En versiones posteriores seria mejor utilizar metodo GET)
         if ($this -> paginacion == 1) {
-			
+
 			// Tamaño de la pagina
-			if (!empty($_GET['pagesize']) && is_numeric($_GET['pagesize'])) {
-				$this -> pagesize = $_GET['pagesize'];
+			if (!empty($_POST['pagesize']) && is_numeric($_POST['pagesize'])) {
+				$this -> pagesize = $_POST['pagesize'];
 				}
-			
+
 			// Página en la que nos encontramos
-			if (!empty($_GET['pagina'])) {
-				$pagina = $_GET['pagina'];
+			if (!empty($_POST['pagina']) && is_numeric($_POST['pagesize'])) {
+				$pagina = $_POST['pagina'];
 				}
 			else {
 				$pagina = 1;
 				}
-				
+
 			// Tupla de inicio
-			if (!empty($_GET['pagina']) && $pagina > 0) {
+			if (!empty($_POST['pagina']) && $pagina > 0) {
 				$comienzo = (($pagina-1)*$this -> pagesize);
 				}
 			else {
@@ -662,32 +663,32 @@ public function tabla() {
 			$this -> consulta = $this -> str_replace_first('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $this->consulta);
 			$this -> consulta .= " LIMIT ".$this -> pagesize." OFFSET $comienzo";
 			}
-		
-		
+
+
 		if ($this -> debug) {
 			echo '<strong>Consulta:</strong><br>';
 			echo $this -> consulta.'<br>';
-		
+
 			echo '<br>';
 			echo '<strong>Columnas:</strong><br>';
 			echo '<pre>';
 			print_r($this -> columna);
 			echo '</pre>';
 			}
-			
-		
-		
+
+
+
         $resultados = $this -> db -> query($this->consulta) or die (mysqli_error($this -> db).'<br>');
 
 		unset($this -> consulta);
 
 		// Total de páginas y registros
         $total_registros = $this -> db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
-        
+
         $this -> paginas_total = ceil($total_registros/$this->pagesize);
-        
+
         $url_formulario = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-        
+
         ?>
         <style>
             <?php
@@ -699,7 +700,7 @@ public function tabla() {
                     width: <?=$this->mensaje_img_width?>;
                     height: <?=$this->mensaje_img_height?>;
                     }
-                
+
                 .tooltip {
                     position: relative;
                     display: inline-block;
@@ -737,8 +738,8 @@ public function tabla() {
             <?php
             }
             ?>
-        </style>    
-        
+        </style>
+
         <script>
 			function validar() {
 					var fecha_ini = document.getElementById('fecha_ini').value;
@@ -759,7 +760,7 @@ public function tabla() {
 					}
 				}
         </script>
-        
+
         <form accept-charset="<?=$this->form_charset;?>" name="<?=$this->form_name;?>" id="<?=$this->form_id;?>" action="<?=$this->action;?>" method="<?=$this->method;?>" enctype="<?=$this->enctype;?>" onsubmit='return validar()'>
 			<?php
 			# Primera Tabla: Contiene todo el listado
@@ -769,17 +770,17 @@ public function tabla() {
 					<td>
                     <?php
                     if ($this -> tabla_segunda_activar==1) {
-                        # Segunda Tabla: 
+                        # Segunda Tabla:
                         #   - Imagen del listado
-                        #   - Migas de Pan      
+                        #   - Migas de Pan
                         ?>
                         <table id='tabla_segunda' class='<?=$this->tabla_segunda_class;?>' width="100%" bgcolor="#F2F2F2">
                             <tr>
                                 <td id='tabla_segunda_td'>
                                     <table id='sub_tabla_segunda'>
                                     <tr>
-                                        <td id='sub_tabla_segunda_td'> 
-											<a href="<?=$_GET['action']?>"> 
+                                        <td id='sub_tabla_segunda_td'>
+											<a href="<?=$_GET['action']?>">
 												<img id='sub_tabla_segunda_img' src="<?=$this->tabla_imagen?>" alt="<?=$this->sub_tabla_segunda_img_alt?>" >
 											</a>
 										</td>
@@ -788,7 +789,7 @@ public function tabla() {
                                 </td>
                             </tr>
                         </table>
-                         
+
                         <?php
                         if ($this-> migasdepan==1) {
                             ?>
@@ -810,7 +811,7 @@ public function tabla() {
                             </tr>
                             <?php
                             }
-                            
+
                          # Mensaje a mostrar en caso de que exista en la URL
                          # A los tres segundos se borra
                          if (!empty($_GET['mensaje'])) {
@@ -836,7 +837,7 @@ public function tabla() {
                               </tr>
                             <?php
                           }
-                       
+
                         # Antiguo nuevo_registro
                         # Ahora es el menu de la tabla
 						if ($this -> menu == true) {
@@ -857,8 +858,8 @@ public function tabla() {
 							</tr>
 						  <?php
 						  }
-							
-						
+
+
 						# Filtros del listado
 						if (!empty($this -> filtros) || !empty($this -> abcedario)) {
 							?>
@@ -874,44 +875,44 @@ public function tabla() {
 													</tr>
 													<?php
 													}
-												
+
 												if (!empty($this -> abcedario) && !empty($this -> abcedario_columnas)) {
 													?>
 													<tr>
 														<td class="enlacehome" align='center' cellspacing='2'>
 														<?php
-														
+
 														$letras = array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','ñ','o','p','q','r','s','t','u','v','w','x','y','z');
-														
+
 														foreach ($letras as $letra) {
 															?>
-															<a href="<?=$url_formulario;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> | 	
+															<a href="<?=$url_formulario;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> |
 															<?php
 															}
 														?>
 														</td>
-													</tr> 
+													</tr>
 													<?php
 													}
-												
+
 												$cnt = 2;
 												foreach ($this -> filtros as $id => $filtro) {
 													$r = $cnt%2;
-													
+
 													if ( $r == 0 ) {
 														echo '<tr>';
 														}
-													
+
 													switch ($filtro) {
 														case 'periodo':
-																
+
 																# Para utilizar el filtro periodo es necesario incluir JQuery a la cabecera
 																# <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
 																# <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 																# <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 																?>
 																<td>
-																	<div align="left" class="texto"> 
+																	<div align="left" class="texto">
 																		<span class='texto_filtro'> <?=$this -> filtros_texto[$id]?> </span>
 																		<input name="filtro<?=$cnt?>[]" id='fecha_ini' type="text" size="20" class="textfield datepicker" value="<?=(!empty($_POST['filtro'.$cnt][0])?$_POST['filtro'.$cnt][0]:'')?>">
 																		a
@@ -920,24 +921,24 @@ public function tabla() {
 																</td>
 																<?php
 															break;
-															
+
 														case 'buscar':
 																?>
 																<td>
-																	<div align="left" class="texto"> 
+																	<div align="left" class="texto">
 																		<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																		<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>"> 
+																		<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>">
 																	</div>
 																</td>
 																<?php
 															break;
-															
+
 														case 'fecha':
 																?>
 																<td>
-																	<div align="left" class="texto"> 
+																	<div align="left" class="texto">
 																		<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
-																		<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield datepicker" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>"> 
+																		<input name="filtro<?=$cnt?>" type="text" size="20" class="textfield datepicker" value="<?=!empty($_POST['filtro'.$cnt])?$_POST['filtro'.$cnt]:'';?>">
 																	</div>
 																</td>
 																<?php
@@ -946,19 +947,19 @@ public function tabla() {
 														case 'select':
 																?>
 																<td>
-																	<div align="left" class="texto"> 
+																	<div align="left" class="texto">
 																		<span class='texto_filtro'><?=$this -> filtros_texto[$id]?></span>
 																		<select class='textfield' name='filtro<?=$cnt?>' onchange='this.form.submit()'>
 																			<option value='-'>Selecione...</option>
 																			<?php
 																			$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
-																			
+
 																			while ($fila_filtro = $filas_filtros -> fetch_array()) {
 																				?>
 																				<option value='<?=$fila_filtro[0]?>' <?=(isset($_POST['filtro'.$cnt]) && $_POST['filtro'.$cnt]==$fila_filtro[0])?' selected':''?>> <?=$fila_filtro[1]?> </option>
 																				<?php
 																				}
-																			
+
 																			$filas_filtros -> free();
 																			?>
 																		</select>
@@ -966,16 +967,16 @@ public function tabla() {
 																</td>
 																<?php
 															break;
-															
+
 														case 'checkboxes':
 																?>
 																<td>
-																	<div align="left" class="texto widget"> 
+																	<div align="left" class="texto widget">
 																		<fieldset>
 																		<legend class='texto_filtro'> <strong><?=$this -> filtros_texto[$id]?></strong> </legend>
 																			<?php
 																			$filas_filtros = $this -> db -> query($this -> filtros_consultas[$id]);
-																			
+
 																			while ($fila_filtro = $filas_filtros -> fetch_array()) {
 																				?>
 																				<label><?=$fila_filtro[1]?></label>
@@ -994,15 +995,15 @@ public function tabla() {
 													if ( $r == 1 ) {
 														echo '</tr>';
 														}
-														
+
 													$cnt++;
 													}
-												
+
 													if ($this -> filtros_boton_buscar) {
 														?>
 														<tr>
 															<td colspan='2' align='right'>
-																<input type="submit" name="button" id="button" value="Buscar" class="textfield">													
+																<input type="submit" name="button" id="button" value="Buscar" class="textfield">
 															</td>
 														</tr>
 														<?php
@@ -1013,7 +1014,7 @@ public function tabla() {
 									<?php
 									### Incluimos los scripts necesarios para los filtros
 									# Calendario
-									
+
 									if (in_array('fecha', $this -> filtros) || in_array('periodo', $this -> filtros)) {
 										?>
 										<script>
@@ -1034,7 +1035,7 @@ public function tabla() {
 												  showMonthAfterYear: false,
 												  yearSuffix: ''
 												  };
-												  
+
 											$.datepicker.setDefaults($.datepicker.regional['es']);
 											$(".datepicker").datepicker();
 										</script>
@@ -1061,51 +1062,51 @@ public function tabla() {
 					<table id='tabla_listado' width="100%" class='bordeExterior'>
 						<tr id='tabla_listado_columna' bgcolor="#999999" class='textoBlanco'>
 						<?php
-						
+
 						$quitar = array('_','-');
-						
+
 						if ($total_registros > 0) {
-							
+
 							## Generamos las columnas que contiene la consulta
 							$n_columnas = 0;
-							
+
 							# Eliminamos los anteriores parametros de ordenacion para no saturar la URL añadiendo los mismos parámetros
 							if (isset($_GET['ordenar'])) {
 								$array_ordenar = unserialize(urldecode($_GET['ordenar']));
 								unset($_GET['ordenar']);
 								}
-							
+
 							while ($finfo = $resultados->fetch_field()) {
-								
+
 								# Realizamos la conversión de caracteres
 								// - Quitamos guiones, barra baja
 								// - Ponemos la primera con mayuscula
-						
+
 								$casilla = str_replace($quitar,' ',$finfo->name);
 								$casilla[0] = substr_replace($casilla[0], strtoupper($casilla[0]),0, 1);
-								
+
 								# Abajo mostramos el nombre de la columna y además, mostramos un enlace para ordenar la columna, si procede
 								?>
-								<td class='columna'> 
+								<td class='columna'>
 									<?php
 									# La siguiente condicion permite saber si en esta columna debe ordenarse
 									if (!empty($this -> ordenar[$n_columnas])) {
 										if (!empty($ordenar)) {
-											
+
 											# La siguiente condicion devuelve el icono a mostrar para el orden seleccionado
 											$ordenar_icono = (!empty($ordenar[$n_columnas])?$this -> icono($ordenar[$n_columnas]):0);
-											
+
 											# A continuacion intercambiamos los valores del array lo que permite revertir el orden del listado
 											$ordenar[$n_columnas] = (empty($ordenar[$n_columnas])?$this -> ordenar[$n_columnas]:(($ordenar[$n_columnas]=='DESC')?'ASC':'DESC'));
-											
+
 											if ($this -> orden_anidado) {
 												foreach($array_ordenar as $c => $v) {
 													$tmp[$c] = $v;
 													}
 												}
-											
+
 											$tmp[$n_columnas] = $ordenar[$n_columnas];
-											
+
 											$ordenar0 = urlencode(serialize($tmp));
 											unset($tmp);
 										}
@@ -1116,9 +1117,9 @@ public function tabla() {
 										}
 										# Parseamos la URL para crear el enlace para ordenar por columna
 										# Revertimos el orden para permitir ordenar de forma ASC y DESC
-										
+
 										//~ $ordenar_icono = 'images/icono-ordenar.png';
-										
+
 										?>
 										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$ordenar0?>'><?=$casilla?><?=(!empty($ordenar_icono))?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
 										<?php
@@ -1129,28 +1130,28 @@ public function tabla() {
 									?>
 								</td>
 								<?php
-								
-								# El array columnas no se utiliza (revisar) 
+
+								# El array columnas no se utiliza (revisar)
 								$columnas[] = $casilla;
-								
+
 								$n_columnas++;
 							}
 						}
 						unset($quitar);
-						    
-						?> 
+
+						?>
 						</tr>
 						<?php
-						
+
 						$resultados -> data_seek(0);
-						
+
 						# En caso de no existir resultados -> decimos que no se han encontrado
 						if ($total_registros > 0) {
-							
+
 							## Generamos cada fila de cada columna
 							$cnt = 0;
 							while ($fila = mysqli_fetch_array($resultados)) {
-								
+
 								#Color de fila
 								if (($cnt%2)==0) {
 								  $fondo_color = '#FFFFFF';
@@ -1158,18 +1159,18 @@ public function tabla() {
 								else {
 								  $fondo_color = '#CBCBCB';
 								}
-								?> 
+								?>
 								<tr>
 								<?php
 								for ($i = 0; $i < $n_columnas; $i++) {
 									# Animaciones
 									(!empty($this->animacion) && !empty($this->animacion[$i]))?$animacion = 'animated ' . $this -> animacion[$i]:$animacion='';
-									
+
 									# En caso de estar vacío el array de las columnas mostramos solo el contenido de la columna
 									if (!empty($this->columna[$i]) || !empty($this->columna[$columnas[$i]]) ) {
-										
+
 										?>
-										<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>"> 
+										<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
 										<?php
 										if (!empty($this->columna[$i])) {
 											$tmp = $this->columna[$i];
@@ -1179,7 +1180,7 @@ public function tabla() {
 											$tmp = $this->columna[$columnas[$i]];
 											$indice = $columnas[$i];
 										}
-										
+
 										switch($tmp) {
 											case 'imagen':
 												if (!empty($fila[$i])) {
@@ -1214,13 +1215,13 @@ public function tabla() {
 												</div>
 												<?php
 												break;
-												
+
 											case 'button':
 												?>
 												<button value="<?=$this -> boton_value?>" name='<?=$this -> boton_name?>' type="<?=$this -> boton_type?>" value='<?=$fila[$i]?>'><?=$this->boton_texto?></button>
 												<?php
 												break;
-												
+
 											case 'eliminar':
 												?>
 												<a href="javascript:eliminar('<?=$fila[$i];?>');">
@@ -1228,7 +1229,7 @@ public function tabla() {
 												</a>
 												<?php
 												break;
-											
+
 											case 'desactivar':
 												?>
 												<a href="javascript:desactivar('<?=$fila[$i];?>');">
@@ -1236,7 +1237,7 @@ public function tabla() {
 												</a>
 												<?php
 												break;
-											
+
 											case 'lista':
 												$listas = $this -> db -> query($this -> lista_consulta.$fila[$i]) or die ($this -> db -> error);
 												?>
@@ -1247,19 +1248,19 @@ public function tabla() {
 														<li><?=$lista[0]?></li>
 													<?php
 													}
-												
+
 												$listas -> free();
 												?>
 												</ul>
 												<?php
 												break;
-												
+
 											case 'moneda':
 												?>
 												<?=money_format('%+n', $fila[$i])?> <?=$this -> moneda_divisa?>
 												<?php
 												break;
-											
+
 											case 'fecha':
 												if (!empty($fila[$i])) {
 													echo DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);
@@ -1269,11 +1270,11 @@ public function tabla() {
 													<?=$fila[$i]?>
 													<?php
 													}
-													
+
 												break;
-												
+
 											case 'estado':
-											
+
 												if ( array_key_exists($fila[$i],$this -> estados)) {
 													?>
 													<?=$this -> estados[$fila[$i]]?>
@@ -1285,14 +1286,14 @@ public function tabla() {
 													<?php
 													}
 												break;
-											
+
 											case 'mensaje':
 												?>
 												<div class="tooltip"> <img class="mensaje_imagen" src="<?=$this->mensaje_img_ruta?>">
 												  <span class="tooltiptext">
 													  <?php
 													  if (!empty($this->mensaje_consulta)) {
-														  # Si la variable clave_primaria existe filtramos la consulta del mensaje por el id correspondiente 
+														  # Si la variable clave_primaria existe filtramos la consulta del mensaje por el id correspondiente
 														  # para mostrar el mensaje en funcion de la fila. Para ello concatenamos Con la sintaxis: Temporal = Consulta + clave_primaria
 														  if (!empty($fila[$i])) {
 															  $this->mensaje_consulta_tmp = $this->mensaje_consulta.$fila[$i];
@@ -1300,9 +1301,9 @@ public function tabla() {
 														  else {
 															  $this->mensaje_consulta_tmp = $this->mensaje_consulta;
 															  }
-														  
+
 														  $resultados_mensaje = $this -> db -> query($this->mensaje_consulta_tmp);
-														  
+
 														  while ($resultado2 = mysqli_fetch_array($resultados_mensaje)) {
 																# El array campos permite elegir que columnas de la consulta del mensaje se muestran
 																foreach ($this->campos as $row) {
@@ -1310,9 +1311,9 @@ public function tabla() {
 																	}
 															  echo $this->mensaje_codigo_posterior;
 															  }
-														   
+
 														   $resultados_mensaje -> free();
-														   
+
 														  // Reinicializamos la variable
 														  $this->mensaje_consulta_tmp='';
 														  }
@@ -1324,7 +1325,7 @@ public function tabla() {
 												</div>
 												<?php
 												break;
-											
+
 											case 'select':
 												$registros = $this -> db -> query($this -> select_consulta);
 												?>
@@ -1340,7 +1341,7 @@ public function tabla() {
 												</select>
 												<?php
 												break;
-											
+
 											case 'ajax':
 												if (!empty($this->ajx_id[$indice]))
 													$this->ajx_params[$indice][$this->ajx_id[$indice]] = $fila[$indice];
@@ -1351,7 +1352,7 @@ public function tabla() {
 												</div>
 												<?php
 												break;
-												
+
 											default:
 												echo 'El módulo '.$this->columna[$indice].' no existe';
 												break;
@@ -1363,12 +1364,12 @@ public function tabla() {
 									else {
 										?>
 										<td bgcolor="<?=$fondo_color;?>" class='tabla_listado_celda <?=$animacion?>'>
-											<?=$fila[$i]?> 
+											<?=$fila[$i]?>
 										</td>
 										<?php
 									}
 								}
-								?>  
+								?>
 								</tr>
 								<?php
 								$cnt++;
@@ -1381,11 +1382,11 @@ public function tabla() {
 							</td>
 							<?php
 							}
-						
+
 						$resultados -> free();
 						?>
 						</table>
-						
+
 						<?php
 						if ($this -> boton_submit==1) {
 							?>
@@ -1406,31 +1407,31 @@ public function tabla() {
 						var rtn = sourceURL.split("?")[0],
 							params_arr = [],
 							queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : ""; // If ternario. Busca en la cadena sourceURL un '?', si lo halla trocea la misma (split) por el '?'.
-							
+
 						//~ Comprobamos si existen parámetros enviados mediante GET (si existe '?' en la url y si hay algo después).
-						if (typeof(queryString) == 'undefined' || queryString == '') 
+						if (typeof(queryString) == 'undefined' || queryString == '')
 							var parametro = '?'; // Si no hay '?' o no tiene nada después, el separador que usaremos será '?'.
 						else {
 							var parametro = '&'; // En caso de que sí exista algún GET, el separador será '&'.
 
 							params_arr = queryString.split("&"); // Introduce en el array params_arr los valores resultado de separar por '&'.
-							
+
 							// El bucle for recorre el array y comprueba si el valor del array en la posición actual es la clave (key) que pasamos a la función.
 							for (var i = params_arr.length - 1; i >= 0; i -= 1) {
 								param = params_arr[i].split("=")[0];
-								
+
 								if (params_arr[i].split("=")[0] === key) {
 									params_arr.splice(i, 1); // Si existe la clave (key) en el array, la elimina.
 								}
 							}
-							
+
 							// Reconstruye la url concatenando los valores del array params_arr separados por '&'.
 							rtn = rtn + '?' + params_arr.join("&");
 						}
-						
+
 						return {rtn:rtn,parametro:parametro}; // Devuelve un objeto que contiene rtn (la url) y parametro (el separador que se empleará).
 					}
-					
+
 					function eliminar(id) {
 						var url = window.location.href; // Variable que contiene la url actual.
 						if (confirm('¿Seguro que quiere eliminarlo?')) {
@@ -1440,17 +1441,55 @@ public function tabla() {
 							document.location.href = url.rtn + url.parametro + 'delid='+id+'&mensaje=Elemento borrado con éxito.';
 						}
 					}
-					
+
 					function desactivar(id) {
-						var url = window.location.href; 
+						var url = window.location.href;
 						if (confirm('<?=$this -> desactivar_texto_confirmar?>')) {
 							url = removeParam('did',url);
 							url = removeParam('mensaje',url.rtn);
 							document.location.href = url.rtn + url.parametro + 'did='+id+'&mensaje=Elemento borrado con éxito.';
 						}
 					}
+
+					function paginadora(act){
+						var lindex = $('#pagina > option:last').index();
+						var sindex = $('#pagina > option[selected]').index();
+
+						switch(act){
+							case 'inicio':
+								if (sindex != 0){
+									$('#pagina > option:first').attr('selected','selected');
+									$('#<?=$this->form_id;?>').submit();
+									}
+							break;
+
+							case 'anterior':
+								if (sindex > 0){
+									$('#pagina > option:eq('+(sindex-1)+')').attr('selected','selected');
+									$('#<?=$this->form_id;?>').submit();
+									}
+							break;
+
+							case 'siguiente':
+								if(sindex < lindex){
+									$('#pagina > option[selected] + option').attr('selected','selected');
+									$('#<?=$this->form_id;?>').submit();
+									}
+							break;
+
+							case 'final':
+								if (sindex != lindex){
+									$('#pagina > option:last').attr('selected','selected');
+									$('#<?=$this->form_id;?>').submit();
+									}
+							break;
+
+							default:
+							break;
+							}
+						}
 				</script>
-				
+
 				<?php
 				if ($this -> paginacion == 1) {
 					?>
@@ -1460,15 +1499,8 @@ public function tabla() {
 							<table cellspacing="2" cellpadding="2" border="0" style="text-align:center; margin: 10px;">
 								<tr>
 									<td style="text-align:left; padding-left:20px;" class="search">
-										<script>
-											function cambiar(accion, nombre_parametro) {
-												var url = window.location.href;
-												url = removeParam(nombre_parametro,url);
-												window.location.href = url.rtn + url.parametro +  nombre_parametro + '=' + accion;
-												}
-										</script>
 										Mostrar #
-										<select name="pagesize" id="pagesize" style="width:75px;" onchange='cambiar(this.form.pagesize.value, "pagesize")'>
+										<select name="pagesize" id="pagesize" style="width:75px;" onchange='submit();'>
 											<?php
 											foreach ($this -> pagesize_opciones AS $size) {
 												?>
@@ -1479,7 +1511,7 @@ public function tabla() {
 										</select>
 									</td>
 									<td style="text-align:left; padding-left:20px;" >
-										<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="cambiar(0,'pagina')">
+										<div class="button2-right" title="Iniciar" style="cursor:pointer;font-family:Arial;" id="lnkFirst" onclick="paginadora('inicio');">
 											<div class="start" style="cursor:pointer">
 												<span>
 													<nobr>Iniciar</nobr>
@@ -1488,13 +1520,13 @@ public function tabla() {
 										</div>
 									</td>
 									<td style="text-align:left;">
-										<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="cambiar(<?=($pagina>0)?$pagina-1:'0'?>, 'pagina')">
+										<div class="button2-right" title="Anterior" style="cursor:pointer;font-family:Arial;" id="lnkPrev" onclick="paginadora('anterior');">
 											<div class="prev"><span>Anterior</span></div>
 										</div>
 									</td>
 									<td class="search" style="padding:0px 10px 0px 10px; text-align:left;">
 										Página
-										<select name="pagina" id="pagina" style="width:75px;" onchange='cambiar(this.form.pagina.value, "pagina")'>
+										<select name="pagina" id="pagina" style="width:75px;" onchange='submit()'>
 											<?php
 											for ($i=1; $i<=$this -> paginas_total ;$i++) {
 												?>
@@ -1506,12 +1538,12 @@ public function tabla() {
 										de <?=$this -> paginas_total;?>
 									</td>
 									<td style="text-align:right;">
-										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" <?php if ($this -> paginas_total != $pagina) { ?> onclick="cambiar(<?=($pagina>1)?$pagina+1:'2'?>, 'pagina')" <?php } else { ?> <?php }?>>
+										<div class="button2-left" title="Siguiente" style="cursor:pointer;font-family:Arial;" id="lnkNext" onclick="paginadora('siguiente');">
 											<div class="next" style="cursor:pointer"><span>Siguiente</span></div>
 										</div>
 									</td>
 									<td style="padding-right:20px; text-align:right;">
-										<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="cambiar(<?=$this -> paginas_total?>, 'pagina')">
+										<div class="button2-left" title="Final" style="cursor:pointer; font-family:Arial;" onclick="paginadora('final');">
 											<div class="end">
 												<span>
 													<nobr>Final</nobr>
