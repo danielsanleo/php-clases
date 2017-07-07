@@ -5,8 +5,7 @@ class base
     # ----------------
     public $consulta = 'SELECT nombre,id as Ficha from oficinas';
     public $debug = False;
-<<<<<<< HEAD
-	
+
     # Variables Globales
     # ------------------
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
@@ -16,9 +15,6 @@ class base
     public $db;
     private $url_listado;
     
-=======
-
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
     // ORDENACIÓN
     # Orden predeterminado que mostrará la tabla.
     # Array en el que pasamos los parámetros en la forma nº de columna a ordenar => tipo de ordenación.
@@ -60,22 +56,8 @@ class base
 	//~ public $filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');
 	public $filtros_where_tipo = array();
 	public $filtros_boton_buscar = True;  # Muestra el boton submit
-<<<<<<< HEAD
-	
-    
-    # MODULOS  EJ: $columna = array('2' => 'enlace'); 
-=======
-
-    # Variables Globales
-    # ------------------
-    //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
-    public $ruta_archivo_config = 'config.php';
-    public $db_charset = 'utf8';
-    public $protocolo = 'http://';
-    public $db;
 
     # MODULOS  EJ: $columna = array('2' => 'enlace');
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
     # -----------------------------------
     # Array donde definir los modulos a utilizar
     public $columna = array();
@@ -289,12 +271,8 @@ public function __construct($ruta) {
 	unset($ruta);
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
 	$this -> db -> set_charset($this -> db_charset);
-<<<<<<< HEAD
 	
 	$this -> url_listado = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-=======
-	$this -> action = $_SERVER['PHP_SELF'].((!empty($_GET['action']))?'?action='.$_GET['action']:'');
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
     }
 # El destructor cierra la conexión con la BBDD
 public function __destruct() {
@@ -532,13 +510,7 @@ public function tabla() {
 				}
 
 			$where = ' WHERE ';
-<<<<<<< HEAD
-			
-=======
 
-			//~ $patron_where = '/\(.*?\)(*SKIP)(*FAIL)|(WHERE)/';
-			//~ $patron_group = '/\(.*?\)(*SKIP)(*FAIL)|(GROUP BY)/';
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
 			$patron_where = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(WHERE)/';
 			$patron_group = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(GROUP BY)/';
 
@@ -551,13 +523,7 @@ public function tabla() {
 
 				# Comprobamos si existe el GROUP BY
 				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-<<<<<<< HEAD
-				
-=======
 
-				$pos_group = $matches[0][1];
-
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
 				# Si existe el group lo separamos de la consulta principal temporalmente
 				if ($matches[0][1]) {
 					$group = ' '.substr($this -> consulta, $matches[0][1]);
@@ -571,20 +537,10 @@ public function tabla() {
 			else {
 				# Comprobamos si existe el GROUP BY
 				preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE);
-<<<<<<< HEAD
 				
 				if ($matches[0][1]) {
 					$group = substr($this -> consulta, $matches[0][1]);
 					$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
-=======
-
-				$pos_group = $matches[0][1];
-				unset($matches);
-
-				if ($pos_group) {
-					$group = substr($this -> consulta, $pos_group);
-					$this -> consulta = substr($this -> consulta, 0, $pos_group);
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
 					}
 				}
 
@@ -641,14 +597,9 @@ public function tabla() {
 				}
 				$where .= ')';
 			}
-<<<<<<< HEAD
-			
-		
-=======
 
 
 
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
 		# Concatenamos el WHERE
 		if (!empty($flag)) {
 			$this -> consulta .= $where;
@@ -740,19 +691,9 @@ public function tabla() {
 		unset($this -> consulta);
 
 		// Total de páginas y registros
-<<<<<<< HEAD
         $total_registros = $this -> db -> query('SELECT FOUND_ROWS()') -> fetch_array()[0];
         
         $this -> paginas_total = ceil($total_registros/$this->pagesize);
-        
-=======
-        $total_registros = $this -> db -> query("SELECT FOUND_ROWS()") -> fetch_array()[0];
-
-        $this -> paginas_total = ceil($total_registros/$this->pagesize);
-
-        $url_formulario = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
         ?>
         <style>
             <?php
@@ -950,11 +891,7 @@ public function tabla() {
 
 														foreach ($letras as $letra) {
 															?>
-<<<<<<< HEAD
 															<a href="<?=$this -> url_listado;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> | 	
-=======
-															<a href="<?=$url_formulario;?>&letra=<?=$letra?>" class="enlacehome"><?=strtoupper($letra)?></a> |
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
 															<?php
 															}
 														?>
@@ -1079,40 +1016,6 @@ public function tabla() {
 												?>
 										</table>
 									</div>
-<<<<<<< HEAD
-=======
-									<?php
-									### Incluimos los scripts necesarios para los filtros
-									# Calendario
-
-									if (in_array('fecha', $this -> filtros) || in_array('periodo', $this -> filtros)) {
-										?>
-										<script>
-											$.datepicker.regional['es'] = {
-												  closeText: 'Cerrar',
-												  prevText: '<Ant',
-												  nextText: 'Sig>',
-												  currentText: 'Hoy',
-												  monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-												  monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
-												  dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-												  dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
-												  dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
-												  weekHeader: 'Sm',
-												  dateFormat: 'dd/mm/yy',
-												  firstDay: 1,
-												  isRTL: false,
-												  showMonthAfterYear: false,
-												  yearSuffix: ''
-												  };
-
-											$.datepicker.setDefaults($.datepicker.regional['es']);
-											$(".datepicker").datepicker();
-										</script>
-										<?php
-										}
-									?>
->>>>>>> a41288f4de748c17342a82039ff8bb0128691bbc
 								</td>
 							</tr>
 							<?php
