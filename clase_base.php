@@ -761,7 +761,9 @@ public function tabla() {
 					<tr>
 						<td>
 							<?php
+							echo "<pre>";
 							print_r($this -> columna);
+							echo "</pre>";
 							?>
 						</td>
 					</tr>
