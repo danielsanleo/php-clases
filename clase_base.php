@@ -776,7 +776,7 @@ public function tabla() {
                                     <table id='sub_tabla_segunda'>
                                     <tr>
                                         <td id='sub_tabla_segunda_td'>
-											<a href="<?=$_GET['action']?>">
+											<a href="<?=$_SERVER['REQUEST_URI'].'?'.http_build_query($_GET)?>">
 												<img id='sub_tabla_segunda_img' src="<?=$this->tabla_imagen?>" alt="<?=$this->sub_tabla_segunda_img_alt?>" >
 											</a>
 										</td>
@@ -1488,7 +1488,6 @@ public function tabla() {
 				<?php
 				if ($this -> paginacion == 1) {
 					?>
-					<br>
 					<tr>
 						<td align='center' class="bordeLateral">
 							<table cellspacing="2" cellpadding="2" border="0" style="text-align:center; margin: 10px;">
@@ -1550,7 +1549,6 @@ public function tabla() {
 							</table>
 						</td>
 					</tr>
-					<br>
 				<?php
 				}
 
