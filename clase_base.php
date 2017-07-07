@@ -762,6 +762,26 @@ public function tabla() {
 			# Primera Tabla: Contiene todo el listado
 			?>
 			<table id='tabla_primera' width="100%" class='<?=$this->tabla_primera_class;?>' border="0" cellspacing="0" cellpadding="20">
+                <?php
+                if ($this -> debug) {
+					?>
+					<tr>
+						<td>
+							<strong>Variables del servidor</strong>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<?php
+							echo "<pre>";
+							print_r($_SERVER);
+							echo "</pre>";
+							?>						
+						</td>
+					</tr>
+					<?php
+					}
+                ?>
 				<tr>
 					<td>
                     <?php
