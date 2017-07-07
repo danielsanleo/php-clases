@@ -270,9 +270,7 @@ public function __construct($ruta) {
 	unset($ruta);
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
 	$this -> db -> set_charset($this -> db_charset);
-	
 	$this -> url_listado = $_SERVER['REQUEST_SCHEME'].$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-    print_r($_ENV);
     }
 # El destructor cierra la conexión con la BBDD
 public function __destruct() {
