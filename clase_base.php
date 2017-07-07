@@ -11,7 +11,6 @@ class base
     //Archivo de configuracion, donde toma los datos para la conexion a la base de datos
     public $ruta_archivo_config = 'config.php';
     public $db_charset = 'utf8';
-    public $protocolo = 'http://';
     public $db;
     private $url_listado;
     
@@ -272,7 +271,8 @@ public function __construct($ruta) {
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
 	$this -> db -> set_charset($this -> db_charset);
 	
-	$this -> url_listado = $this -> protocolo.$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+	$this -> url_listado = $_SERVER['REQUEST_SCHEME'].$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+    print_r($_ENV);
     }
 # El destructor cierra la conexión con la BBDD
 public function __destruct() {
@@ -750,6 +750,7 @@ public function tabla() {
                 <?php
                 ### Información de depuracion
                 if ($this -> debug) {
+					echo realpath('.');
 					?>
 					<tr>
 						<td>
@@ -894,13 +895,13 @@ public function tabla() {
 								<script>
 									function myFunction() {
 										setTimeout(function(){
-										var tabla = document.getElementById('tabla_mensaje_texto');
+										var tabla = document.getElementById('tr_mensaje_texto');
 										tabla.parentNode.removeChild(tabla);
 										}, <?=$this->mensaje_tiempo?>);
 									}
 									myFunction();
 								</script>
-								<tr class='mensaje_fila'>
+								<tr id='tr_mensaje_texto' class='mensaje_fila'>
 									<td align='center'>
 										<table id='tabla_mensaje_texto' width="45%" class="<?=$this->tabla_mensaje_class?>" border="0" style='text-align:center;' cellpadding="4" cellspacing="0" bgcolor="#BBBBBB" >
 											<tr>
