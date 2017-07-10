@@ -264,18 +264,6 @@ class base
     public $pagesize_opciones = array(10,15,20,25,50,100,150,200,250,300,350);
     private $paginas_total;
 
-# El constructor realiza la conexion con la BBDD
-public function __construct($ruta) {
-	require($ruta);
-	unset($ruta);
-	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
-	$this -> db -> set_charset($this -> db_charset);
-	$this -> url_listado = $_SERVER['REQUEST_SCHEME'].$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
-    }
-# El destructor cierra la conexión con la BBDD
-public function __destruct() {
-    $this -> db -> close();
-    }
 
 private function limpiarArray($array) {
 	$array = array_map('trim', $array);
@@ -428,6 +416,20 @@ private function str_replace_first($from, $to, $subject) {
 	return preg_replace($from, $to, $subject, 1);
 	}
 
+# El constructor realiza la conexion con la BBDD
+public function __construct($ruta) {
+	require($ruta);
+	unset($ruta);
+	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
+	$this -> db -> set_charset($this -> db_charset);
+	$this -> url_listado = $_SERVER['REQUEST_SCHEME'].$_SERVER['HTTP_HOST'].':'.$_SERVER['SERVER_PORT'].$_SERVER['REQUEST_URI'];
+    }
+
+# El destructor cierra la conexión con la BBDD
+public function __destruct() {
+    $this -> db -> close();
+    }
+    
 public function tabla() {
         if ($this -> debug) {
 			echo '<strong>Memoria Inicial:</strong> '.memory_get_usage().' Bytes <br>';
@@ -502,7 +504,7 @@ public function tabla() {
 						break;
 					}
 				}
-				
+
 			$patron_where = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(WHERE)/';
 			$patron_group = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(GROUP BY)/';
 			
@@ -617,6 +619,7 @@ public function tabla() {
 				$clave++;
 				$this -> consulta .= $this -> db -> real_escape_string($clave).' '.$this -> db -> real_escape_string($valor).(($clave-1 != $ultima_clave)?', ':'');
 			}
+			
 		}
 		else if (!empty($this -> orden_predeterminado)) {
 			$this -> consulta .= ' ORDER BY ';
@@ -628,6 +631,7 @@ public function tabla() {
 			foreach ($this -> orden_predeterminado as $clave => $valor) {
 				$this -> consulta .= ($clave+1)." $valor".(($clave != $ultima_clave)?', ':'');
 			}
+			unset($ultima_clave);
 		}
 
 
@@ -660,9 +664,10 @@ public function tabla() {
 
 			$this -> consulta = $this -> str_replace_first('SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $this->consulta);
 			$this -> consulta .= ' LIMIT '.$this -> pagesize.' OFFSET '.$comienzo;
+			unset($comienzo);
 			}
 
-        $resultados = $this -> db -> query($this->consulta) or die ('<br><strong>Error en la consulta:</strong><br>'.mysqli_error($this -> db).'<br>');
+        $resultados = $this -> db -> query($this -> consulta) or die ('<br><strong>Error en la consulta:</strong><br>'.mysqli_error($this -> db).'<br>');
         
 		// Total de páginas y registros
         $total_registros = $this -> db -> query('SELECT FOUND_ROWS()') -> fetch_array()[0];
@@ -748,7 +753,6 @@ public function tabla() {
                 <?php
                 ### Información de depuracion
                 if ($this -> debug) {
-					echo realpath('.');
 					?>
 					<tr>
 						<td>
@@ -1165,6 +1169,9 @@ public function tabla() {
 										?>
 										<a href='<?=$_SERVER['PHP_SELF'].(!empty($_GET)?'?'.http_build_query($_GET).'&':'?').'ordenar='.$ordenar0?>'><?=$casilla?><?=(!empty($ordenar_icono))?"<img src='$ordenar_icono' alt='Ordenar'>":''?></a>
 										<?php
+										
+										unset($ordenar_icono);
+										unset($ordenar0);
 									}
 								    else {
 										echo $casilla;
@@ -1172,8 +1179,6 @@ public function tabla() {
 									?>
 								</td>
 								<?php
-
-								# El array columnas no se utiliza (revisar)
 								$columnas[] = $casilla;
 
 								$n_columnas++;
