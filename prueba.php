@@ -43,7 +43,7 @@
 					require("clase_base.php");
 					
 					$base = new base('config.php');
-					$base -> debug = True; 
+					//~ $base -> debug = True; 
 					
 					$base -> abcedario = False; 
 					$base -> buscar = False; 

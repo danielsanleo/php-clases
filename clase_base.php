@@ -469,7 +469,6 @@ public function tabla() {
 
         # Eliminamos ; al final de la consulta en caso de que exista
         $this -> consulta = str_ireplace(';', '', $this -> consulta);
-
 		
 		# Comprobamos si existe un ORDER BY (para eliminarlo, ya que hay que definirlo mediante el PHP) e informamos de ello
 		$patron_order = '/\(.+(?>[^(.+)]|(?R))+.+\)(*SKIP)(*FAIL)|(ORDER BY)/';
@@ -527,13 +526,11 @@ public function tabla() {
 
 				$where = ' AND ';
 				}
-			else {
-				# Comprobamos si existe el GROUP BY
-				if (preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE)) {
+			# Comprobamos si existe el GROUP BY
+			elseif (preg_match($patron_group, $this -> consulta, $matches, PREG_OFFSET_CAPTURE)) {
 					$group = substr($this -> consulta, $matches[0][1]);
 					$this -> consulta = substr($this -> consulta, 0, $matches[0][1]);
 					}
-				}
 			
 			unset($patron_where);
 			unset($patron_group);
@@ -867,56 +864,61 @@ public function tabla() {
                             </tr>
                         </table>
 
-                        <?php
-                        if ($this-> migasdepan==1) {
-                            ?>
-                            <tr>
-                                <td style='padding: 8px;' bgcolor="#222222">
-                                    <div class="migasoff">
-                                        <?php
-                                        $total_enlaces = count($this->migas);
-                                        $contador = 0;
-                                        foreach ($this-> migas as $texto => $enlace) {
-                                            ?>
-                                            <a href="<?=$enlace?>" class="textoBlanco"> <?=$texto?> <?=($contador < $total_enlaces-1)?'»':''; ?></a>
-                                            <?php
-                                            $contador++;
-                                            }
-                                        ?>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php
-                            }
+						<?php
+						if ($this-> migasdepan==1) {
+							?>
+							<tr>
+								<td style='padding: 8px;' bgcolor="#222222">
+									<div class="migasoff">
+										<?php
+										$total_enlaces = count($this->migas);
+										$contador = 0;
+										foreach ($this-> migas as $texto => $enlace) {
+											?>
+											<a href="<?=$enlace?>" class="textoBlanco"> <?=$texto?> <?=($contador < $total_enlaces-1)?'»':''; ?></a>
+											<?php
+											$contador++;
+											}
+										?>
+									</div>
+								</td>
+							</tr>
+							<?php
+							}
 
-							# Mensaje a mostrar en caso de que exista en la URL
-							# A los tres segundos se borra
-							if (!empty($_GET['mensaje'])) {
-								$_GET['mensaje'] = htmlspecialchars($_GET['mensaje'], ENT_QUOTES, 'UTF-8');
-								?>
-								<script>
-									function myFunction() {
-										setTimeout(function(){
-										var tabla = document.getElementById('tr_mensaje_texto');
-										tabla.parentNode.removeChild(tabla);
-										}, <?=$this->mensaje_tiempo?>);
-									}
-									myFunction();
-								</script>
-								<tr id='tr_mensaje_texto' class='mensaje_fila'>
-									<td align='center'>
-										<table id='tabla_mensaje_texto' width="45%" class="<?=$this->tabla_mensaje_class?>" border="0" style='text-align:center;' cellpadding="4" cellspacing="0" bgcolor="#BBBBBB" >
-											<tr>
-												<td><div style='text-align:center;'><img src="<?=$this->mensaje_imagen?>" alt="Informacion" border="0" align="absmiddle">&nbsp;<span class='textoBlanco'><?=$_GET['mensaje'];?></span></div></td>
-											</tr>
-										</table>
-									</td>
-								</tr>
-                            <?php
-                          }
+						# Mensaje a mostrar en caso de que exista en la URL
+						# A los tres segundos se borra
+						if (!empty($_GET['mensaje'])) {
+							?>
+							<script>
+								function myFunction() {
+									setTimeout(function(){
+									var tabla = document.getElementById('tr_mensaje_texto');
+									tabla.parentNode.removeChild(tabla);
+									}, <?=$this -> mensaje_tiempo?>);
+								}
+								myFunction();
+							</script>
 
-                        # Antiguo nuevo_registro
-                        # Ahora es el menu de la tabla
+							<tr id='tr_mensaje_texto' class='mensaje_fila'>
+								<td align='center'>
+									<table id='tabla_mensaje_texto' width="45%" class="<?=$this->tabla_mensaje_class?>" border="0" style='text-align:center;' cellpadding="4" cellspacing="0" bgcolor="#BBBBBB" >
+										<tr>
+											<td>
+												<div style='text-align:center;'><img src="<?=$this->mensaje_imagen?>" alt="Informacion" border="0" align="absmiddle">&nbsp;
+												<span class='textoBlanco'>
+												<?=htmlspecialchars($_GET['mensaje'])?>
+												</span></div>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						<?php
+						}
+
+						# Antiguo nuevo_registro
+						# Ahora es el menu de la tabla
 						if ($this -> menu == true) {
 							?>
 							<tr class='nuevo_registro_fila'>
