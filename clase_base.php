@@ -1095,6 +1095,7 @@ public function tabla() {
 							<?php
 						}
 
+
 						## Total de registros encontrados
 						if ($this -> mostrar_total_registros == true && $total_registros > 0) {
 							?>
