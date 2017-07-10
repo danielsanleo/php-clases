@@ -1206,6 +1206,7 @@ public function tabla() {
 								else {
 								  $fondo_color = '#CBCBCB';
 								}
+								
 								?>
 								<tr>
 								<?php
@@ -1219,12 +1220,12 @@ public function tabla() {
 										?>
 										<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
 										<?php
-										if (!empty($this->columna[$i])) {
-											$tmp = $this->columna[$i];
+										if (!empty($this -> columna[$i])) {
+											$tmp = $this -> columna[$i];
 											$indice = $i;
 										}
-										elseif (!empty($this->columna[$columnas[$i]])) {
-											$tmp = $this->columna[$columnas[$i]];
+										elseif (!empty($this -> columna[$columnas[$i]])) {
+											$tmp = $this -> columna[$columnas[$i]];
 											$indice = $columnas[$i];
 										}
 
@@ -1303,9 +1304,7 @@ public function tabla() {
 												break;
 
 											case 'moneda':
-												?>
-												<?=money_format('%+n', $fila[$i])?> <?=$this -> moneda_divisa?>
-												<?php
+												echo money_format('%+n', $fila[$i])?> <?=$this -> moneda_divisa;
 												break;
 
 											case 'fecha':
@@ -1313,16 +1312,14 @@ public function tabla() {
 													echo DateTime::createFromFormat($this -> fecha_formato_entrada, $fila[$i]) -> format($this -> fecha_formato_salida);
 													}
 												else {
-													?>
-													<?=$fila[$i]?>
-													<?php
+													echo $fila[$i];
 													}
 
 												break;
 
 											case 'estado':
 
-												if ( array_key_exists($fila[$i],$this -> estados)) {
+												if ( array_key_exists($fila[$i],$this -> estados) ) {
 													?>
 													<?=$this -> estados[$fila[$i]]?>
 													<?php
@@ -1337,37 +1334,37 @@ public function tabla() {
 											case 'mensaje':
 												?>
 												<div class="tooltip"> <img class="mensaje_imagen" src="<?=$this->mensaje_img_ruta?>">
-												  <span class="tooltiptext">
-													  <?php
-													  if (!empty($this->mensaje_consulta)) {
-														  # Si la variable clave_primaria existe filtramos la consulta del mensaje por el id correspondiente
-														  # para mostrar el mensaje en funcion de la fila. Para ello concatenamos Con la sintaxis: Temporal = Consulta + clave_primaria
-														  if (!empty($fila[$i])) {
-															  $this->mensaje_consulta_tmp = $this->mensaje_consulta.$fila[$i];
-															  }
-														  else {
-															  $this->mensaje_consulta_tmp = $this->mensaje_consulta;
-															  }
+													<span class="tooltiptext">
+														<?php
+														if (!empty($this->mensaje_consulta)) {
+															# Si la variable clave_primaria existe filtramos la consulta del mensaje por el id correspondiente
+															# para mostrar el mensaje en funcion de la fila. Para ello concatenamos Con la sintaxis: Temporal = Consulta + clave_primaria
+															if (!empty($fila[$i])) {
+																$this->mensaje_consulta_tmp = $this->mensaje_consulta.$fila[$i];
+																}
+															else {
+																$this->mensaje_consulta_tmp = $this->mensaje_consulta;
+															}
 
-														  $resultados_mensaje = $this -> db -> query($this->mensaje_consulta_tmp);
+															$resultados_mensaje = $this -> db -> query($this->mensaje_consulta_tmp);
 
-														  while ($resultado2 = mysqli_fetch_array($resultados_mensaje)) {
+															while ($resultado2 = mysqli_fetch_array($resultados_mensaje)) {
 																# El array campos permite elegir que columnas de la consulta del mensaje se muestran
 																foreach ($this->campos as $row) {
 																	echo $resultado2[$row].' ';
-																	}
-															  echo $this->mensaje_codigo_posterior;
-															  }
+																}
+																echo $this->mensaje_codigo_posterior;
+															}
 
-														   $resultados_mensaje -> free();
+															$resultados_mensaje -> free();
 
-														  // Reinicializamos la variable
-														  $this->mensaje_consulta_tmp='';
-														  }
-													  else {
-														echo $fila[$i];
+															// Reinicializamos la variable
+															$this -> mensaje_consulta_tmp = '';
 														}
-														?>
+														else {
+															echo $fila[$i];
+														}
+													?>
 													</span>
 												</div>
 												<?php
@@ -1387,12 +1384,14 @@ public function tabla() {
 														?>
 												</select>
 												<?php
+												$registros -> free();
+												
 												break;
 
 											case 'ajax':
-												if (!empty($this->ajx_id[$indice]))
-													$this->ajx_params[$indice][$this->ajx_id[$indice]] = $fila[$indice];
-												$json_generado = json_encode($this->ajx_params[$indice]);
+												if (!empty($this -> ajx_id[$indice]))
+													$this -> ajx_params[$indice][$this -> ajx_id[$indice]] = $fila[$indice];
+												$json_generado = json_encode($this -> ajx_params[$indice]);
 												?>
 												<div style='text-align:center;' >
 													<img src="<?=$this->ajx_img[$indice]?>" alt="<?=$this->ajx_title[$indice]?>" title="<?=$this->ajx_title[$indice]?>" style='width: 16px; cursor: pointer' onClick='$.<?=$this->ajx_method[$indice]?>("<?=$this->ajx_url[$indice]?>", <?=$json_generado?>)<?=($this->debug)?'.done(function(data){alert(data)})':'';?>' <?=(!empty($this->ajx_img_dwn[$indice]))?'onmousedown=\'$(this).attr("src", "'.$this->ajx_img_dwn[$indice].'")\' onmouseup=\'$(this).attr("src", "'.$this->ajx_img[$indice].'")\'':'';?>>
@@ -1421,6 +1420,9 @@ public function tabla() {
 								<?php
 								$cnt++;
 							}
+							unset($cnt);
+							unset($fondo_color);
+							unset($animacion);
 						}
 						else {
 							?>
@@ -1547,7 +1549,7 @@ public function tabla() {
 							break;
 
 							case 'siguiente':
-								if(sindex < lindex){
+								if (sindex < lindex){
 									$('#pagina > option[selected] + option').attr('selected','selected');
 									$('#<?=$this->form_id;?>').submit();
 									}
@@ -1579,7 +1581,7 @@ public function tabla() {
 											<?php
 											foreach ($this -> pagesize_opciones AS $size) {
 												?>
-												<option value="<?=$size?>" <?=($this->pagesize==$size)?'selected':'';?>><?=$size?></option>
+												<option value="<?=$size?>" <?=($this -> pagesize == $size)?'selected':'';?>><?=$size?></option>
 												<?php
 												}
 											?>
@@ -1603,7 +1605,7 @@ public function tabla() {
 										Página
 										<select name="pagina" id="pagina" style="width:75px;" onchange='submit()'>
 											<?php
-											for ($i=1; $i<=$this -> paginas_total ;$i++) {
+											for ($i=1; $i <= $this -> paginas_total ;$i++) {
 												?>
 												<option value="<?=$i?>" <?=($pagina == $i)?' selected':''?>><?=$i?></option>
 												<?php
