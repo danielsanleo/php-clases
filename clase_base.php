@@ -1532,11 +1532,11 @@ public function tabla() {
 						}
 					}
 
-					function paginadora(act){
+					function paginadora(act) {
 						var lindex = $('#pagina > option:last').index();
 						var sindex = $('#pagina > option[selected]').index();
 
-						switch(act){
+						switch(act) {
 							case 'inicio':
 								if (sindex != 0){
 									$('#pagina > option:first').attr('selected','selected');
