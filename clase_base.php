@@ -417,16 +417,16 @@ private function str_replace_first($from, $to, $subject) {
 	}
 
 # El constructor realiza la conexion con la BBDD
-public function __construct($ruta) {
+private function __construct($ruta) {
 	require($ruta);
 	unset($ruta);
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
 	$this -> db -> set_charset($this -> db_charset);
-	$this -> url_listado = $_SERVER['REQUEST_SCHEME'].$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	$this -> url_listado = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
     }
 
 # El destructor cierra la conexión con la BBDD
-public function __destruct() {
+private function __destruct() {
     $this -> db -> close();
     }
     
