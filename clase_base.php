@@ -417,7 +417,7 @@ private function str_replace_first($from, $to, $subject) {
 	}
 
 # El constructor realiza la conexion con la BBDD
-private function __construct($ruta) {
+public function __construct($ruta) {
 	require($ruta);
 	unset($ruta);
 	$this -> db = new mysqli("$db_host", "$db_usuario","$db_clave", "$db_nombre") or die('Falló la conexión con MySQL: <br>'.$db -> connect_error.'<br>');
