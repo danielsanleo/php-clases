@@ -1309,6 +1309,10 @@ public function tabla() {
 											case 'moneda':
 												echo money_format('%+n', $fila[$i])?> <?=$this -> moneda_divisa;
 												break;
+												
+											case 'porciento':
+												echo $fila[$i].'%';
+												break;
 
 											case 'fecha':
 												if (!empty($fila[$i])) {
