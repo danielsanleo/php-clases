@@ -1416,7 +1416,7 @@ public function tabla() {
 									}
 									else {
 										?>
-										<td bgcolor="<?=$fondo_color;?>" class='tabla_listado_celda <?=$animacion?>'>
+										<td align='center' bgcolor="<?=$fondo_color;?>" class='tabla_listado_celda <?=$animacion?>'>
 											<?=$fila[$i]?>
 										</td>
 										<?php
