@@ -950,7 +950,7 @@ public function tabla() {
 												if ($_POST && !empty($this -> filtros)) {
 													?>
 													<tr>
-														<td colspan='2' align='right'><a href='<?=$this -> url_listado?>'><img src='images/boton-elim-filtro.png'></a></td>
+														<td colspan='2' align='right'><a href='http://<?=$this -> url_listado?>'><img src='images/boton-elim-filtro.png'></a></td>
 													</tr>
 													<?php
 													}
@@ -1221,7 +1221,7 @@ public function tabla() {
 									if (!empty($this->columna[$i]) || !empty($this->columna[$columnas[$i]]) ) {
 
 										?>
-										<td class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
+										<td align='center' class='tabla_listado_celda <?=$animacion?>' bgcolor="<?=$fondo_color;?>">
 										<?php
 										if (!empty($this -> columna[$i])) {
 											$tmp = $this -> columna[$i];
