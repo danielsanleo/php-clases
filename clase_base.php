@@ -36,7 +36,7 @@ class base
 	# Ademas podemos especificar mas de una columna en la que realice la busqueda
 
 	# Array con los filtros a crear, contiene el total de filtros
-	//~ public $filtros = array(1 => 'buscar', 2 => 'select', 3 => 'select');
+	//~ public $filtros = array(1 => 'buscar', 2 => 'select_a_uno', 3 => 'select_a_muchos', 4 => 'select');
 	public $filtros = array();
 
 	# Array con los nombres visibles de los campos
@@ -48,12 +48,12 @@ class base
 	public $filtros_consultas = array();
 
 	# Columnas de la BBDD a la que aplicar los filtros, podemos especificar un solo valor o un array con varios
-	//~ public $filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia');
+	//~ public $filtros_where = array(1 => array('referencia', 'descripcion'), 2 => 'id_fabricante', 3 => 'id_subfamilia', 4 => 'articulos.id IN (SELECT articulos_proveedores.id_articulo FROM articulos_proveedores WHERE id="{}")');
+	//~ El tipo 'select_a_muchos' SUSTITUIRÁ el valor buscado por los caracteres {}
 	public $filtros_where = array();
-
+	
+	
 	# Array con los operadores correspondientes a cada filtro, son los mismos que podemos utilizar en las sentencias SQL
-	//~ public $filtros_where_tipo = array(1 => 'LIKE', 2 => '=', 3 => '=');
-	public $filtros_where_tipo = array();
 	public $filtros_boton_buscar = True;  # Muestra el boton submit
 
     # MODULOS  EJ: $columna = array('2' => 'enlace');
@@ -367,8 +367,14 @@ private function createCondition ($tipo, $columna, $valor) {
 				return ' '.$columna.' LIKE "%'.$valor.'%"';	
 				break;
 
-			case 'select':
+			case 'select_a_uno':
 				return ' '.$columna.' = "'.$valor.'"';
+				break;
+
+
+			case 'select_a_muchos':
+				
+				return  str_replace ( '{}' ,  $valor, $columna);
 				break;
 
 			case 'checkboxes':
@@ -1023,7 +1029,8 @@ public function tabla() {
 																<?php
 															break;
 
-														case 'select':
+														case 'select_a_muchos':
+														case 'select_a_uno':
 																?>
 																<td>
 																	<div align="left" class="texto">
