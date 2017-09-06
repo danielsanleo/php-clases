@@ -1076,6 +1076,16 @@ public function tabla() {
 																</td>
 																<?php
 															break;
+															
+														default:
+																?>
+																<td>
+																	<div align="left" class="texto widget">
+																		El tipo de filtro: '<?=$filtro?>' no existe
+																	</div>
+																</td>
+																<?php
+															break;
 														}
 
 													if ( $r == 1 ) {
