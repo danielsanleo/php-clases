@@ -1295,22 +1295,26 @@ public function tabla() {
 												</a>
 												<?php
 												break;
+												
 
 											case 'lista':
-												$listas = $this -> db -> query($this -> lista_consulta.$fila[$i]) or die ($this -> db -> error);
-												?>
-												<ul>
-												<?php
-												while ($lista = $listas -> fetch_array()) {
+												$listas = $this -> db -> query(str_replace('{}',$fila[$i], $this -> lista_consulta)) or die ($this -> db -> error);
+												
+												if ($listas -> num_rows > 0) {
 													?>
-														<li><?=$lista[0]?></li>
+													<ul>
+													<?php
+													while ($lista = $listas -> fetch_array()) {
+														?>
+															<li><?=$lista[0]?></li>
+														<?php
+														}
+
+													$listas -> free();
+													?>
+													</ul>
 													<?php
 													}
-
-												$listas -> free();
-												?>
-												</ul>
-												<?php
 												break;
 
 											case 'moneda':
